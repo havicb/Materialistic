@@ -13,13 +13,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.news.News
 import com.example.hackernews.news.NewsAdapter
+import com.google.android.material.navigation.NavigationView
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var newsAdapter: NewsAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var actionBarToggle: ActionBarDrawerToggle
+    private lateinit var navigationView: NavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +45,8 @@ class MainActivity : AppCompatActivity(){
         recyclerView.layoutManager = LinearLayoutManager(this)
         initNewsAdapter()
         recyclerView.adapter = newsAdapter
+        navigationView = findViewById(R.id.navigation_view)
+        navigationView.setNavigationItemSelectedListener(this)
     }
 
     private fun initNewsAdapter() {
@@ -61,6 +65,24 @@ class MainActivity : AppCompatActivity(){
             tempNews.add(News(3, "Novi video na youtube", "youtube.com", "john doe", "13h"))
             tempNews.add(News(4, "Vijest autoskole centar", "autoskolacentar.ba", "noke", "6h"))
     return tempNews;
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.side_top_stories -> {
+                Toast.makeText(this, "Clicked on top stories", Toast.LENGTH_SHORT).show()
+            }
+            R.id.side_catch_up -> {
+                Toast.makeText(this, "Clicked on catch up", Toast.LENGTH_SHORT).show()
+            }
+            R.id.side_new_stories -> {
+                Toast.makeText(this, "Clicked on new stories", Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                Toast.makeText(this, "Else", Toast.LENGTH_SHORT).show()
+            }
+        }
+    return true
     }
 
 
