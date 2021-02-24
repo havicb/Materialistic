@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/side_top_stories"
+        android:title="Top stories" />
+
+    <item
+        android:id="@+id/side_catch_up"
+        android:title="Catch up" />
+
+    <item
+        android:id="@+id/side_new_stories"
+        android:title="New stories" />
+
+
+    <item
+        android:id="@+id/side_more_stories"
+        android:title="More sections" />
+
+    <group
+        android:id="@+id/more_section_group"
+        android:visible="false">
+
+        <item
+            android:id="@+id/best_stories"
+            android:title="Best stories" />
+
+        <item
+            android:id="@+id/show_hn"
+            android:title="Show HN" />
+
+        <item
+            android:id="@+id/ask_hn"
+            android:title="Ask HN" />
+
+        <item
+            android:id="@+id/jobs"
+            android:title="Jobs" />
+
+    </group>
+
+    <group android:name="saved_submit_group">
+        <item
+            android:id="@+id/side_saved_stories"
+            android:title="Saved Stories" />
+
+        <item
+            android:id="@+id/side_submit_to_hn"
+            android:title="Submit to HN" />
+
+    </group>
+
+    <item
+        android:id="@+id/side_feedback"
+        android:title="Feedback" />
+
+    <item
+        android:id="@+id/side_settings"
+        android:title="Settings" />
+
+</menu>
