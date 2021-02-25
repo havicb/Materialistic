@@ -21,7 +21,6 @@
             android:background="@color/news_id_color"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/news_recyclerView"
             android:layout_width="match_parent"
@@ -30,7 +29,6 @@
             android:scrollbars="vertical" />
     </LinearLayout>
 
-
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
@@ -38,8 +36,8 @@
         android:layout_gravity="start"
         android:background="@color/news_id_color"
         android:divider="@color/black"
+        app:headerLayout="@layout/navigation_header"
         app:itemIconPadding="40dp"
-        app:menu="@menu/sidebar_menu"
-        />
+        app:menu="@menu/sidebar_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

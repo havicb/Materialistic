@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Adapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.hackernews.auth.LoginDialog
 import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.news.News
 import com.example.hackernews.news.NewsAdapter
@@ -28,7 +30,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.mainToolbar)
+        setNavigationHeader()
         setUpMainRecyclerView()
+    }
+
+    private fun setNavigationHeader() {
+        val loginNavigationHeader = binding.navigationView.getHeaderView(0).setOnClickListener {
+            Toast.makeText(this, "Clicked on login", Toast.LENGTH_SHORT).show()
+            startLoginDialog()
+        }
+    }
+
+    private fun startLoginDialog() {
+        val loginDialog = LoginDialog()
+        loginDialog.show(supportFragmentManager, "Login dialog")
     }
 
     private fun initDrawerLayout() {
