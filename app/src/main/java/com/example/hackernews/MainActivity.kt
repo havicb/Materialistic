@@ -4,14 +4,13 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
-import android.widget.Adapter
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.auth.LoginDialog
+import com.example.hackernews.constants.Constants
+import com.example.hackernews.data.CallApi
 import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.news.News
 import com.example.hackernews.news.NewsAdapter
@@ -32,6 +31,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(binding.mainToolbar)
         setNavigationHeader()
         setUpMainRecyclerView()
+        val apiCall = CallApi(this)
+        apiCall.getStories()
     }
 
     private fun setNavigationHeader() {

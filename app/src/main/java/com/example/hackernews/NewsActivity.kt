@@ -2,13 +2,10 @@ package com.example.hackernews
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.TextView
-import android.widget.Toolbar
-import androidx.viewpager2.widget.ViewPager2
+import com.example.hackernews.constants.Constants
 import com.example.hackernews.databinding.ActivityNewsBinding
 import com.example.hackernews.news.News
 import com.example.hackernews.news.NewsTabsAdapter
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class NewsActivity : AppCompatActivity() {
