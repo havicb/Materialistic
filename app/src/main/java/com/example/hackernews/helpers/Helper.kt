@@ -5,17 +5,17 @@ import java.time.Instant
 
 class Helper {
     companion object {
-        fun trimUrl(newsUrl: String?) : String {
+        fun trimUrl(newsUrl: String?): String {
             return newsUrl ?: " "
         }
 
-        private fun findEndOfMainUrl(newsUrl: String) : Int {
+        private fun findEndOfMainUrl(newsUrl: String): Int {
             println("Proslijedio $newsUrl")
-            for(i in 0..newsUrl.length-1) {
-                if(newsUrl[i] == '/')
+            for (i in 0..newsUrl.length - 1) {
+                if (newsUrl[i] == '/')
                     return i
             }
-            return newsUrl.length-1
+            return newsUrl.length - 1
         }
 
         fun toHours(unixTime: String): Long {
@@ -27,7 +27,4 @@ class Helper {
             return (publishedAgo / 3600).toLong()
         }
     }
-
-
-
 }

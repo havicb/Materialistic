@@ -52,5 +52,4 @@ class NewsActivity : AppCompatActivity() {
         binding.newsUserPublished.text = passedNews?.by
         binding.newsTimePublished.text = passedNews?.time.toString()
     }
-
 }

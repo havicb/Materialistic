@@ -21,11 +21,11 @@ class LoginDialog : AppCompatDialogFragment() {
         initViews(builder)
         tvUsernameRequiredMessage.visibility = View.GONE
         tvPasswordRequiredMessage.visibility = View.GONE
-        builder.setPositiveButton("Register") {dialog, which ->
+        builder.setPositiveButton("Register") { dialog, which ->
             Toast.makeText(activity, "Clicked register", Toast.LENGTH_SHORT).show()
             // register logic
         }
-        builder.setNegativeButton("Login") {dialog, which ->
+        builder.setNegativeButton("Login") { dialog, which ->
             Toast.makeText(activity, "Clicked login", Toast.LENGTH_SHORT).show()
             // login logic
         }

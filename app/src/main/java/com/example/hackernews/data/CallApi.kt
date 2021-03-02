@@ -20,11 +20,10 @@ class CallApi(val context: Context) {
     lateinit var retrofit: Retrofit
 
     fun getStories(newsDataType: NewsDataType, newsAdapter: NewsAdapter) {
-
-            retrofit = Retrofit.Builder()
-           .baseUrl(Api.BASE_URL)
-           .addConverterFactory(GsonConverterFactory.create())
-           .build()
+        retrofit = Retrofit.Builder()
+                .baseUrl(Api.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
 
         val service = retrofit.create(NewsService::class.java)
         val newsType = NewsDataType.convertValue(newsDataType)
@@ -34,12 +33,12 @@ class CallApi(val context: Context) {
 
         call.enqueue(object : Callback<List<Int>> {
             override fun onResponse(call: Call<List<Int>>, response: Response<List<Int>>) {
-                if(response.isSuccessful) {
-                    for(i in 0..response.body()!!.size-1) {
+                if (response.isSuccessful) {
+                    for (i in 0..response.body()!!.size - 1) {
                         storiesIds.add(response.body()!![i])
                         loadNews(response.body()!![i], newsAdapter)
                     }
-                }else {
+                } else {
                     // todo
                 }
             }
@@ -50,7 +49,7 @@ class CallApi(val context: Context) {
     }
 
     private fun loadNews(id: Int, newsAdapter: NewsAdapter) {
-            retrofit = Retrofit.Builder()
+        retrofit = Retrofit.Builder()
                 .baseUrl(Api.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -61,12 +60,12 @@ class CallApi(val context: Context) {
         call.enqueue(object : Callback<NewsM> {
             var instance = 0
             override fun onResponse(call: Call<NewsM>, response: Response<NewsM>) {
-                if(response.isSuccessful) {
+                if (response.isSuccessful) {
                     val trimedUrl = Helper.trimUrl(response.body()!!.url)
                     response.body()?.time = Helper.toHours(response.body()?.time.toString())
                     newsAdapter.addNews(response.body()!!)
-                }else {
-                    when(response.code()) {
+                } else {
+                    when (response.code()) {
                         400 -> {
                             Toast.makeText(context, "Bad request", Toast.LENGTH_SHORT).show()
                         }

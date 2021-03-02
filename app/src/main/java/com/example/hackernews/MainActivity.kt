@@ -58,7 +58,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         supportActionBar!!.setDisplayShowHomeEnabled(true)
     }
 
-
     private fun setUpMainRecyclerView() {
         recyclerView = binding.newsRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -98,6 +97,4 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     return true
     }
-
-
 }

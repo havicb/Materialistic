@@ -20,7 +20,6 @@ class NewsCommentFragment : Fragment(), View.OnClickListener {
         view.findViewById<TextView>(R.id.tvComment).setText("This is comment tab")
     }
 
-
     override fun onClick(v: View?) {
         TODO("Not yet implemented")
     }

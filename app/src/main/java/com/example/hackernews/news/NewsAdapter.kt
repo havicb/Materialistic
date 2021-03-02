@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.R
 import com.example.hackernews.models.NewsM
 
-class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listener: (NewsM) -> Unit) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>(){
+class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listener: (NewsM) -> Unit) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
     inner class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var tvID: TextView
@@ -40,7 +40,6 @@ class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listen
         holder.tvNewsUrl.text = allNews[position].url
         holder.tvNewsTimePublished.text = allNews[position].time.toString()
         holder.tvNewsPublisher.text = allNews[position].by
-
     }
 
     override fun getItemCount(): Int {
@@ -54,7 +53,7 @@ class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listen
     }
 
     fun addNews(news: NewsM) {
-        news.id = allNews.size+1
+        news.id = allNews.size + 1
         allNews.add(news)
         notifyDataSetChanged()
     }
