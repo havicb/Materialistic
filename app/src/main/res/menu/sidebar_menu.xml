@@ -3,14 +3,17 @@
 
     <item
         android:id="@+id/side_top_stories"
+        android:icon="@drawable/top_stories_icon"
         android:title="Top stories" />
 
     <item
         android:id="@+id/side_catch_up"
+        android:icon="@drawable/catch_up_icon"
         android:title="Catch up" />
 
     <item
         android:id="@+id/side_new_stories"
+        android:icon="@drawable/new_stories_icon"
         android:title="New stories" />
 
 
@@ -43,20 +46,24 @@
     <group android:name="saved_submit_group">
         <item
             android:id="@+id/side_saved_stories"
+            android:icon="@drawable/submit_icon"
             android:title="Saved Stories" />
 
         <item
             android:id="@+id/side_submit_to_hn"
+            android:icon="@drawable/submit_to_hn_icon"
             android:title="Submit to HN" />
 
     </group>
 
     <item
         android:id="@+id/side_feedback"
+        android:icon="@drawable/ic_baseline_feedback_24"
         android:title="Feedback" />
 
     <item
         android:id="@+id/side_settings"
+        android:icon="@drawable/settings_icon"
         android:title="Settings" />
 
 </menu>

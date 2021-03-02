@@ -1,0 +1,15 @@
+package com.example.hackernews.models
+
+import java.io.Serializable
+
+data class NewsM(
+        val by: String,
+        val descendants: Int,
+        var id: Int,
+        val kids: List<Int>,
+        val score: Int,
+        var time: Long,
+        val title: String,
+        val type: String,
+        var url: String
+) : Serializable

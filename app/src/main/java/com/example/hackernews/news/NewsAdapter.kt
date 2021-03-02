@@ -6,8 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.R
+import com.example.hackernews.models.NewsM
 
-class NewsAdapter(val allNews: ArrayList<News>, val listener: (News) -> Unit) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>(){
+class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listener: (NewsM) -> Unit) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>(){
 
     inner class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var tvID: TextView
@@ -34,15 +35,32 @@ class NewsAdapter(val allNews: ArrayList<News>, val listener: (News) -> Unit) : 
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.tvID.text = allNews[position].newsId.toString()
-        holder.tvTitle.text = allNews.get(position).newsTitle
-        holder.tvNewsUrl.text = allNews[position].newsUrl
-        holder.tvNewsTimePublished.text = allNews[position].newsTimePublished
-        holder.tvNewsPublisher.text = allNews[position].newsPublisher
+        holder.tvID.text = allNews[position].id.toString()
+        holder.tvTitle.text = allNews.get(position).title
+        holder.tvNewsUrl.text = allNews[position].url
+        holder.tvNewsTimePublished.text = allNews[position].time.toString()
+        holder.tvNewsPublisher.text = allNews[position].by
 
     }
 
     override fun getItemCount(): Int {
         return allNews.size;
+    }
+
+    fun addNews(myList: ArrayList<NewsM>) {
+        clear()
+        allNews = myList
+        notifyDataSetChanged()
+    }
+
+    fun addNews(news: NewsM) {
+        news.id = allNews.size+1
+        allNews.add(news)
+        notifyDataSetChanged()
+    }
+
+    fun clear() {
+        allNews.clear()
+        notifyDataSetChanged()
     }
 }

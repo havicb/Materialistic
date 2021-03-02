@@ -38,6 +38,8 @@
         android:divider="@color/black"
         app:headerLayout="@layout/navigation_header"
         app:itemIconPadding="40dp"
+        app:itemHorizontalPadding="15dp"
+        android:layout_marginVertical="0dp"
         app:menu="@menu/sidebar_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
