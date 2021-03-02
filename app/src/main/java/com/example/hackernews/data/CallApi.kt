@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.hackernews.constants.Api
 import com.example.hackernews.helpers.Helper
+import com.example.hackernews.models.Comment
 import com.example.hackernews.models.NewsM
 import com.example.hackernews.news.NewsAdapter
 import com.example.hackernews.news.NewsDataType
@@ -83,4 +84,25 @@ class CallApi(val context: Context) {
             }
         })
     }
+
+    fun loadComments(id: Int) {
+        retrofit = Retrofit.Builder()
+                .baseUrl(Api.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+        val service = retrofit.create(NewsService::class.java)
+        val call = service.getComments(id)
+
+        call.enqueue(object : Callback<Comment>{
+            override fun onResponse(call: Call<Comment>, response: Response<Comment>) {
+                // todo
+            }
+            override fun onFailure(call: Call<Comment>, t: Throwable) {
+                // todo
+            }
+        })
+
+    }
+
 }

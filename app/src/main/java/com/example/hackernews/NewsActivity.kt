@@ -2,8 +2,13 @@ package com.example.hackernews
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.hackernews.comments.CommentsAdapter
 import com.example.hackernews.constants.Constants
 import com.example.hackernews.databinding.ActivityNewsBinding
+import com.example.hackernews.models.Comment
 import com.example.hackernews.models.NewsM
 import com.example.hackernews.news.NewsTabsAdapter
 import com.google.android.material.tabs.TabLayoutMediator
@@ -11,6 +16,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 class NewsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNewsBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
