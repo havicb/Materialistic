@@ -14,6 +14,7 @@ import com.example.hackernews.data.CallApi
 import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.news.News
 import com.example.hackernews.news.NewsAdapter
+import com.example.hackernews.news.NewsDataType
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -32,7 +33,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setNavigationHeader()
         setUpMainRecyclerView()
         val apiCall = CallApi(this)
-        apiCall.getStories()
+        apiCall.getStoriesIds(NewsDataType.TOP_STORIES)
     }
 
     private fun setNavigationHeader() {
