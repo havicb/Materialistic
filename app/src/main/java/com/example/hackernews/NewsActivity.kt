@@ -1,22 +1,27 @@
 package com.example.hackernews
 
+import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.hackernews.comments.CommentsAdapter
+import android.widget.Toast
+import androidx.fragment.app.FragmentTransaction
 import com.example.hackernews.constants.Constants
+import com.example.hackernews.data.CallApi
 import com.example.hackernews.databinding.ActivityNewsBinding
-import com.example.hackernews.models.Comment
 import com.example.hackernews.models.NewsM
+import com.example.hackernews.news.NewsArticleFragment
 import com.example.hackernews.news.NewsTabsAdapter
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class NewsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNewsBinding
-
+    val selectedNews: NewsM by lazy {
+        intent.getSerializableExtra(Constants.SELECTED_NEWS) as NewsM
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +30,26 @@ class NewsActivity : AppCompatActivity() {
         setUpToolbar()
         setUpNews()
         initViewPagerAndTabs()
+        Log.d("CURRENT TAB ITEM -> ", "${binding.viewPager.currentItem}")
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if(tab?.text == "ARTICLE") {
+                    binding.llFragmentWebView.visibility = View.GONE
+                }else {
+                    binding.llFragment.visibility = View.VISIBLE
+                }
+            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                if(tab?.text == "ARTICLE") {
+                    binding.llFragmentWebView.visibility = View.VISIBLE
+                }else {
+                    binding.llFragment.visibility = View.GONE
+                }
+            }
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                Toast.makeText(this@NewsActivity, "onTabReSelectedCalled", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     private fun setUpToolbar() {
@@ -36,20 +61,18 @@ class NewsActivity : AppCompatActivity() {
     }
 
     private fun initViewPagerAndTabs() {
-        val clickedNews = intent.getSerializableExtra(Constants.SELECTED_NEWS) as? NewsM
-        binding.viewPager.adapter = NewsTabsAdapter(clickedNews!!, this)
+        binding.viewPager.adapter = NewsTabsAdapter(selectedNews!!, this)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             if(position == 0) {
-                tab.setText("5 comments")
+                tab.text = "${selectedNews.kids?.size ?: "0"} comments"
             }else {
-                tab.setText("ARTICLE")
+                tab.text = "ARTICLE"
             }
         }.attach()
     }
 
     private fun setUpNews() {
-        val currentNews = intent.getSerializableExtra(Constants.SELECTED_NEWS) as? NewsM
-        setData(currentNews)
+        setData(selectedNews)
     }
 
     private fun setData(passedNews: NewsM?) {

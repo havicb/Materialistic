@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/news_toolbar"
@@ -88,15 +88,53 @@
             android:layout_height="40dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/news_info"
-            app:tabTextColor="@color/black" />
+            app:tabTextColor="@color/black"
+            />
 
     </LinearLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="550dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/llFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/news_info">
+
+        <fragment
+            android:id="@+id/newsCommentFragment"
+            class="com.example.hackernews.news.NewsCommentFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llFragmentWebView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/news_info">
+
+        <fragment
+            android:id="@+id/articleCommentFragment"
+            class="com.example.hackernews.news.NewsCommentFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    </LinearLayout>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

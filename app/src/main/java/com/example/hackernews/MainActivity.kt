@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         newsAdapter = NewsAdapter(listener = {
             intent = Intent(this, NewsActivity::class.java)
             intent.putExtra(Constants.SELECTED_NEWS, it)
-            apiCall.loadComments(it.id)
             startActivity(intent)
         })
     }

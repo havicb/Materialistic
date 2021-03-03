@@ -6,7 +6,7 @@ data class NewsM(
         val by: String,
         val descendants: Int,
         var id: Int,
-        val kids: List<Int>,
+        val kids: List<Int>?,
         val score: Int,
         var time: Long,
         val title: String,

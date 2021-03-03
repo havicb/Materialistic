@@ -43,7 +43,7 @@ class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listen
     }
 
     override fun getItemCount(): Int {
-        return allNews.size;
+        return allNews.size
     }
 
     fun addNews(myList: ArrayList<NewsM>) {
