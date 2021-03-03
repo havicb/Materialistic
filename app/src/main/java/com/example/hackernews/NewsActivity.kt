@@ -31,21 +31,23 @@ class NewsActivity : AppCompatActivity() {
         setUpNews()
         initViewPagerAndTabs()
         Log.d("CURRENT TAB ITEM -> ", "${binding.viewPager.currentItem}")
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                if(tab?.text == "ARTICLE") {
+                if (tab?.text == "ARTICLE") {
                     binding.llFragmentWebView.visibility = View.GONE
-                }else {
+                } else {
                     binding.llFragment.visibility = View.VISIBLE
                 }
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab?) {
-                if(tab?.text == "ARTICLE") {
+                if (tab?.text == "ARTICLE") {
                     binding.llFragmentWebView.visibility = View.VISIBLE
-                }else {
+                } else {
                     binding.llFragment.visibility = View.GONE
                 }
             }
+
             override fun onTabReselected(tab: TabLayout.Tab?) {
                 Toast.makeText(this@NewsActivity, "onTabReSelectedCalled", Toast.LENGTH_LONG).show()
             }
@@ -63,9 +65,9 @@ class NewsActivity : AppCompatActivity() {
     private fun initViewPagerAndTabs() {
         binding.viewPager.adapter = NewsTabsAdapter(selectedNews!!, this)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            if(position == 0) {
+            if (position == 0) {
                 tab.text = "${selectedNews.kids?.size ?: "0"} comments"
-            }else {
+            } else {
                 tab.text = "ARTICLE"
             }
         }.attach()

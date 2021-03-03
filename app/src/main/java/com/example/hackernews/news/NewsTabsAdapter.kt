@@ -12,9 +12,9 @@ class NewsTabsAdapter(val clickedNews: NewsM, val fragmentActivity: FragmentActi
     }
 
     override fun createFragment(position: Int): Fragment {
-        if(position == 0)
+        if (position == 0)
             return NewsCommentFragment(clickedNews, fragmentActivity)
-    return NewsArticleFragment(clickedNews.url)
+        return NewsArticleFragment(clickedNews.url)
     }
 
 }

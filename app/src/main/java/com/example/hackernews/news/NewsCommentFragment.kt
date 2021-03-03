@@ -37,7 +37,7 @@ class NewsCommentFragment(val selectedNews: NewsM? = null, context: Context? = n
         commentRecyclerView.adapter = commentAdapter
     }
 
-    fun loadComments()  {
+    fun loadComments() {
         apiCall?.loadComments(selectedNews!!, commentAdapter)
     }
 

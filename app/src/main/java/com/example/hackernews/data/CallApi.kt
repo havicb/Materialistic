@@ -43,6 +43,7 @@ class CallApi(val context: Context) {
                     Helper.printErrorCodes(context, response.code())
                 }
             }
+
             override fun onFailure(call: Call<List<Int>>, t: Throwable) {
                 Toast.makeText(context, "Call failed", Toast.LENGTH_LONG).show()
             }
@@ -59,28 +60,30 @@ class CallApi(val context: Context) {
                     Helper.printErrorCodes(context, response.code())
                 }
             }
+
             override fun onFailure(call: Call<NewsM>, t: Throwable) {
                 Log.d("Failed to load news", "${t.message}")
             }
         })
     }
 
-    fun loadComments(selectedNews: NewsM, commentsAdapter: CommentsAdapter) : Boolean{
+    fun loadComments(selectedNews: NewsM, commentsAdapter: CommentsAdapter): Boolean {
         val service = retrofit.create(NewsService::class.java)
-        if(selectedNews.kids?.isEmpty() == true) {
+        if (selectedNews.kids?.isEmpty() == true) {
             return false
         }
-        for(i in selectedNews.kids!!.indices) {
+        for (i in selectedNews.kids!!.indices) {
             val call = service.getComments(selectedNews.kids[i])
-            call.enqueue(object : Callback<Comment>{
+            call.enqueue(object : Callback<Comment> {
                 override fun onResponse(call: Call<Comment>, response: Response<Comment>) {
-                    if(response.isSuccessful) {
+                    if (response.isSuccessful) {
                         commentsAdapter.addComment(response.body()!!)
                         Log.d("ADDED COMMENT -> ", "${response.body()}")
-                    }else {
+                    } else {
                         Helper.printErrorCodes(context, response.code())
                     }
                 }
+
                 override fun onFailure(call: Call<Comment>, t: Throwable) {
                     Log.d("Failed to load comments..", "${t.message}")
                 }

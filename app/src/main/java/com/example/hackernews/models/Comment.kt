@@ -1,5 +1,7 @@
 package com.example.hackernews.models
 
+import java.io.Serializable
+
 data class Comment(
         val by: String,
         val id: Int,
@@ -8,4 +10,4 @@ data class Comment(
         val text: String,
         val time: Long,
         val type: String
-)
+) : Serializable

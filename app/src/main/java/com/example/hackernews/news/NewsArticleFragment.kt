@@ -25,6 +25,6 @@ class NewsArticleFragment(val url: String) : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-
+        //todo
     }
 }
