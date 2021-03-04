@@ -17,8 +17,9 @@ import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.news.NewsAdapter
 import com.example.hackernews.news.NewsDataType
 import com.google.android.material.navigation.NavigationView
+import java.io.Serializable
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, Serializable {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var newsAdapter: NewsAdapter
@@ -35,7 +36,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setNavigationHeader()
         setUpMainRecyclerView()
         apiCall.getStories(NewsDataType.TOP_STORIES, newsAdapter)
-
     }
 
     private fun setNavigationHeader() {

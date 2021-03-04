@@ -16,8 +16,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.Serializable
 
-class CallApi(val context: Context) {
+class CallApi(val context: Context) : Serializable{
 
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
@@ -67,11 +68,11 @@ class CallApi(val context: Context) {
         })
     }
 
-    fun loadComments(selectedNews: NewsM, commentsAdapter: CommentsAdapter): Boolean {
+    fun loadComments(selectedNews: NewsM, commentsAdapter: CommentsAdapter): Unit {
         val service = retrofit.create(NewsService::class.java)
-        if (selectedNews.kids?.isEmpty() == true) {
-            return false
-        }
+        Log.d("LOAD COMMENTS", "${selectedNews}")
+        if (selectedNews.kids?.isEmpty() == true)
+            return
         for (i in selectedNews.kids!!.indices) {
             val call = service.getComments(selectedNews.kids[i])
             call.enqueue(object : Callback<Comment> {
@@ -80,6 +81,7 @@ class CallApi(val context: Context) {
                         commentsAdapter.addComment(response.body()!!)
                         Log.d("ADDED COMMENT -> ", "${response.body()}")
                     } else {
+                        Log.d("FAILED TO LOAD", "COMMENT")
                         Helper.printErrorCodes(context, response.code())
                     }
                 }
@@ -89,6 +91,5 @@ class CallApi(val context: Context) {
                 }
             })
         }
-        return true
     }
 }

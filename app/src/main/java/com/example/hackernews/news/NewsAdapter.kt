@@ -26,6 +26,7 @@ class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listen
             view.setOnClickListener {
                 listener.invoke(allNews[adapterPosition])
             }
+
         }
     }
 

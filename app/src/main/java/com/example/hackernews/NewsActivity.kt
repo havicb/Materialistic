@@ -3,6 +3,7 @@ package com.example.hackernews
 import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.telecom.Call
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -12,6 +13,7 @@ import com.example.hackernews.data.CallApi
 import com.example.hackernews.databinding.ActivityNewsBinding
 import com.example.hackernews.models.NewsM
 import com.example.hackernews.news.NewsArticleFragment
+import com.example.hackernews.news.NewsCommentFragment
 import com.example.hackernews.news.NewsTabsAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -22,6 +24,9 @@ class NewsActivity : AppCompatActivity() {
     val selectedNews: NewsM by lazy {
         intent.getSerializableExtra(Constants.SELECTED_NEWS) as NewsM
     }
+    val apiCall: CallApi by lazy {
+        CallApi(this@NewsActivity)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +35,6 @@ class NewsActivity : AppCompatActivity() {
         setUpToolbar()
         setUpNews()
         initViewPagerAndTabs()
-        Log.d("CURRENT TAB ITEM -> ", "${binding.viewPager.currentItem}")
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab?.text == "ARTICLE") {
@@ -49,7 +53,7 @@ class NewsActivity : AppCompatActivity() {
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
-                Toast.makeText(this@NewsActivity, "onTabReSelectedCalled", Toast.LENGTH_LONG).show()
+
             }
         })
     }
@@ -62,11 +66,18 @@ class NewsActivity : AppCompatActivity() {
         }
     }
 
+
     private fun initViewPagerAndTabs() {
-        binding.viewPager.adapter = NewsTabsAdapter(selectedNews!!, this)
+        val myViewPager = NewsTabsAdapter(selectedNews, this)
+        Log.d("FORWARDING API -> ", "$apiCall")
+        myViewPager.addFragment(NewsCommentFragment.newInstance(selectedNews, apiCall))
+        myViewPager.addFragment(NewsArticleFragment.newInstance(selectedNews))
+        binding.viewPager.adapter = myViewPager
+        Log.d("ARG -> ", "${(binding.viewPager.adapter as NewsTabsAdapter).fragments[0].arguments}")
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             if (position == 0) {
                 tab.text = "${selectedNews.kids?.size ?: "0"} comments"
+                (myViewPager.fragments[0] as NewsCommentFragment).loadComments(selectedNews, apiCall)
             } else {
                 tab.text = "ARTICLE"
             }
