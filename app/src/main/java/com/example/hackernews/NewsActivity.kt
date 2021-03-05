@@ -27,6 +27,9 @@ class NewsActivity : AppCompatActivity() {
     val apiCall: CallApi by lazy {
         CallApi(this@NewsActivity)
     }
+    val viewPager: NewsTabsAdapter by lazy {
+        NewsTabsAdapter(selectedNews, this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,17 +41,18 @@ class NewsActivity : AppCompatActivity() {
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab?.text == "ARTICLE") {
-                    binding.llFragmentWebView.visibility = View.GONE
+                    binding.llFragmentWebView.visibility = View.VISIBLE
                 } else {
-                    binding.llFragment.visibility = View.VISIBLE
+                    (viewPager.fragments[0] as NewsCommentFragment).loadComments(selectedNews, apiCall)
+                    binding.llFragment.visibility = View.GONE
                 }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
                 if (tab?.text == "ARTICLE") {
-                    binding.llFragmentWebView.visibility = View.VISIBLE
+                    binding.llFragmentWebView.visibility = View.GONE
                 } else {
-                    binding.llFragment.visibility = View.GONE
+                    binding.llFragment.visibility = View.VISIBLE
                 }
             }
 
@@ -68,16 +72,12 @@ class NewsActivity : AppCompatActivity() {
 
 
     private fun initViewPagerAndTabs() {
-        val myViewPager = NewsTabsAdapter(selectedNews, this)
-        Log.d("FORWARDING API -> ", "$apiCall")
-        myViewPager.addFragment(NewsCommentFragment.newInstance(selectedNews, apiCall))
-        myViewPager.addFragment(NewsArticleFragment.newInstance(selectedNews))
-        binding.viewPager.adapter = myViewPager
-        Log.d("ARG -> ", "${(binding.viewPager.adapter as NewsTabsAdapter).fragments[0].arguments}")
+        viewPager.addFragment(NewsCommentFragment.newInstance(selectedNews, apiCall))
+        viewPager.addFragment(NewsArticleFragment.newInstance(selectedNews))
+        binding.viewPager.adapter = viewPager
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             if (position == 0) {
                 tab.text = "${selectedNews.kids?.size ?: "0"} comments"
-                (myViewPager.fragments[0] as NewsCommentFragment).loadComments(selectedNews, apiCall)
             } else {
                 tab.text = "ARTICLE"
             }

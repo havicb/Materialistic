@@ -14,11 +14,10 @@ class NewsTabsAdapter(val clickedNews: NewsM, val fragmentActivity: FragmentActi
     }
 
     override fun getItemCount(): Int {
-        return 2
+        return fragments.size
     }
 
     fun addFragment(fragment: Fragment) {
-        Log.d("FRAGMENT ADDED -> ", "$fragment")
         fragments.add(fragment)
     }
 

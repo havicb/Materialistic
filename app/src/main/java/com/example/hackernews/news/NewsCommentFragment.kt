@@ -37,8 +37,6 @@ class NewsCommentFragment : Fragment(), View.OnClickListener {
             args.putSerializable("CALL", api)
             val fragment = NewsCommentFragment()
             fragment.arguments = args
-            Log.d("FRAGMENTS -> ", "${fragment.requireArguments().getSerializable(Constants.SELECTED_NEWS)}")
-            Log.d("API ->", "${fragment.requireArguments().getSerializable("CALL")}")
             return fragment
         }
     }
@@ -53,7 +51,6 @@ class NewsCommentFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d("ON VIEW CREATED", "CREATED")
         commentRecyclerView = view.findViewById(R.id.news_comments)
         commentRecyclerView.layoutManager = LinearLayoutManager(context)
         commentRecyclerView.adapter = commentAdapter
@@ -62,8 +59,7 @@ class NewsCommentFragment : Fragment(), View.OnClickListener {
 
     fun loadComments(selectedNews: NewsM?, callApi: CallApi) {
         apiCall = callApi
-        Log.d("LOAD COMMENTS -> ", "${apiCall}")
-        apiCall?.loadComments(selectedNews!!, commentAdapter)
+        apiCall.loadComments(selectedNews!!, commentAdapter)
     }
 
     override fun onClick(v: View?) {

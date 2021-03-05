@@ -21,14 +21,12 @@ class NewsArticleFragment() : Fragment(), View.OnClickListener {
             args.putSerializable(Constants.SELECTED_NEWS, news)
             val fragment = NewsArticleFragment()
             fragment.arguments = args
-            Log.d("FRAGMENTS ARTICLE-> ", "${fragment.arguments}")
             return fragment
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("ARGUMENTS", arguments.toString())
         // todo implement
     }
 
@@ -37,12 +35,16 @@ class NewsArticleFragment() : Fragment(), View.OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        /*
         val webView = view.findViewById<WebView>(R.id.web_view)
         webView.webViewClient = WebViewClient()
         webView.loadUrl("https://facebook.com")
         Log.d("ARGUMENTS", arguments.toString())
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true
+        */
+        val textView = view.findViewById<TextView>(R.id.tv_article)
+        textView.text = "Loading web view..."
     }
 
     override fun onClick(v: View?) {

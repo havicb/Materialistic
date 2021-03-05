@@ -19,7 +19,46 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="@color/news_id_color"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Top stories"/>
+
+            <LinearLayout
+                android:id="@+id/llToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_toolbar_last_update"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/black"
+                    android:visibility="visible"
+                    android:layout_marginLeft="-50dp"
+                    android:layout_marginRight="100dp"
+                    android:text="@string/last_updated_1_min_ago"
+                    android:layout_marginTop="10dp"
+                    />
+
+                <SearchView
+                    android:id="@+id/search_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center"
+                    android:iconifiedByDefault="true"
+                    app:showAsAction="collapseActionView"
+                    android:queryHint="Search HN"
+                    android:layout_marginLeft="16dp"/>
+
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/news_recyclerView"

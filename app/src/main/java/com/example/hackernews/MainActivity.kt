@@ -1,15 +1,19 @@
 package com.example.hackernews
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.telecom.Call
+import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.marginEnd
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Slide
 import com.example.hackernews.auth.LoginDialog
 import com.example.hackernews.constants.Constants
 import com.example.hackernews.data.CallApi
@@ -28,6 +32,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navigationView: NavigationView
     private val apiCall = CallApi(this)
 
+    @SuppressLint("RtlHardcoded", "RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -36,6 +41,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setNavigationHeader()
         setUpMainRecyclerView()
         apiCall.getStories(NewsDataType.TOP_STORIES, newsAdapter)
+        setSupportActionBar(binding.mainToolbar)
+        supportActionBar?.title = "Title"
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+        binding.searchView.setOnSearchClickListener {
+            removeFromToolbar()
+        }
+        binding.searchView.setOnCloseListener {
+            addToToolbar()
+            false
+        }
+    }
+
+    private fun removeFromToolbar() {
+        binding.tvToolbarLastUpdate.visibility = View.GONE
+    }
+
+    private fun addToToolbar() {
+        binding.tvToolbarLastUpdate.visibility = View.VISIBLE
     }
 
     private fun setNavigationHeader() {
