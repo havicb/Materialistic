@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         apiCall.getStories(NewsDataType.TOP_STORIES, newsAdapter)
         setSupportActionBar(binding.mainToolbar)
         supportActionBar?.title = "Title"
-        supportActionBar?.setDisplayShowTitleEnabled(true)
         binding.searchView.setOnSearchClickListener {
             removeFromToolbar()
         }
@@ -114,8 +113,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 apiCall.getStories(NewsDataType.NEW_STORIES, newsAdapter)
                 newsAdapter.clear()
             }
-            else -> {
-                Toast.makeText(this, "Else", Toast.LENGTH_SHORT).show()
+            R.id.side_feedback -> {
+                Toast.makeText(this, "Clicked on feedback", Toast.LENGTH_LONG).show()
+            }
+            R.id.side_saved_stories -> {
+                Toast.makeText(this, "Clicked on saved stories", Toast.LENGTH_LONG).show()
+            }
+            R.id.side_settings -> {
+                Toast.makeText(this, "Clicked on settings", Toast.LENGTH_LONG).show()
+            }
+            R.id.side_submit_to_hn -> {
+                Toast.makeText(this, "Clicked on submit to HN", Toast.LENGTH_LONG).show()
             }
         }
     return true
