@@ -2,17 +2,19 @@ package com.example.hackernews.auth
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.example.hackernews.R
 
-class LoginDialog : AppCompatDialogFragment() {
+class LoginDialog(context: Context) : AppCompatDialogFragment() {
 
-    private lateinit var tvUsername: TextView
-    private lateinit var tvPassword: TextView
+    private lateinit var etUsername: EditText
+    private lateinit var etPassword: EditText
     private lateinit var tvUsernameRequiredMessage: TextView
     private lateinit var tvPasswordRequiredMessage: TextView
 
@@ -22,22 +24,35 @@ class LoginDialog : AppCompatDialogFragment() {
         tvUsernameRequiredMessage.visibility = View.GONE
         tvPasswordRequiredMessage.visibility = View.GONE
         builder.setPositiveButton("Register") { dialog, which ->
-            Toast.makeText(activity, "Clicked register", Toast.LENGTH_SHORT).show()
-            // register logic
+            val username = etUsername.text.toString().trim() { it <= ' '}
+            val password = etPassword.text.toString().trim() { it <= ' '}
+            context?.let { RegisterUser.registerUser(it, username, password) }
         }
         builder.setNegativeButton("Login") { dialog, which ->
-            Toast.makeText(activity, "Clicked login", Toast.LENGTH_SHORT).show()
-            // login logic
+            val username = etUsername.text.toString().trim() { it <= ' '}
+            val password = etPassword.text.toString().trim() { it <= ' '}
+
         }
         return builder.create()
     }
 
+    private fun validateForm() : Boolean {
+        if(etUsername.text.toString().isEmpty()) {
+            tvUsernameRequiredMessage.visibility = View.VISIBLE
+            return false
+        } else if(etPassword.text.toString().isEmpty()) {
+            tvPasswordRequiredMessage.visibility = View.VISIBLE
+            return false
+        }
+        return true
+    }
+
     private fun initViews(builder: AlertDialog.Builder) {
         val view = layoutInflater.inflate(R.layout.login_layout, null)
-        builder.setTitle("Login")
+        builder.setTitle("Login to hacker news")
         builder.setView(view)
-        tvUsername = view.findViewById(R.id.edit_username)
-        tvPassword = view.findViewById(R.id.edit_password)
+        etUsername = view.findViewById(R.id.edit_username)
+        etPassword = view.findViewById(R.id.edit_password)
         tvUsernameRequiredMessage = view.findViewById(R.id.tv_username_required_message)
         tvPasswordRequiredMessage = view.findViewById(R.id.tv_password_required_message)
     }

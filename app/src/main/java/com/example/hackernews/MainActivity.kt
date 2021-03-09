@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setUpMainRecyclerView()
         apiCall.getStories(NewsDataType.TOP_STORIES, newsAdapter)
         setSupportActionBar(binding.mainToolbar)
-        supportActionBar?.title = "Title"
         binding.searchView.setOnSearchClickListener {
             removeFromToolbar()
         }
@@ -62,13 +61,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun setNavigationHeader() {
         val loginNavigationHeader = binding.navigationView.getHeaderView(0).setOnClickListener {
-            Toast.makeText(this, "Clicked on login", Toast.LENGTH_SHORT).show()
             startLoginDialog()
         }
     }
 
     private fun startLoginDialog() {
-        val loginDialog = LoginDialog()
+        val loginDialog = LoginDialog(this)
         loginDialog.show(supportFragmentManager, "Login dialog")
     }
 
