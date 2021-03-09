@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.example.hackernews.R
 
@@ -26,12 +25,12 @@ class LoginDialog(context: Context) : AppCompatDialogFragment() {
         builder.setPositiveButton("Register") { dialog, which ->
             val username = etUsername.text.toString().trim() { it <= ' '}
             val password = etPassword.text.toString().trim() { it <= ' '}
-            context?.let { RegisterUser.registerUser(it, username, password) }
+            context?.let { AuthUser.registerUser(it, username, password) }
         }
         builder.setNegativeButton("Login") { dialog, which ->
             val username = etUsername.text.toString().trim() { it <= ' '}
             val password = etPassword.text.toString().trim() { it <= ' '}
-
+            context?.let { AuthUser.loginUser(it, username, password) }
         }
         return builder.create()
     }
