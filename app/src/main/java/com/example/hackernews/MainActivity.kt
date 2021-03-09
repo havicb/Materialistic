@@ -14,6 +14,7 @@ import androidx.core.view.marginEnd
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Slide
+import com.example.hackernews.auth.AuthUser
 import com.example.hackernews.auth.LoginDialog
 import com.example.hackernews.constants.Constants
 import com.example.hackernews.data.CallApi
@@ -45,9 +46,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.searchView.setOnSearchClickListener {
             removeFromToolbar()
         }
+
         binding.searchView.setOnCloseListener {
             addToToolbar()
             false
+        }
+    }
+
+    private fun updateUI() {
+        if(AuthUser.isUserLogedIn() != null) {
+
+        }else {
+
         }
     }
 

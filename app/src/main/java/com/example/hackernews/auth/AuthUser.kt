@@ -3,10 +3,7 @@ package com.example.hackernews.auth
 import android.R
 import android.content.Context
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.*
 
 
 class AuthUser{
@@ -44,7 +41,7 @@ class AuthUser{
             }
         return false
         }
-
+// todo jesam
         fun loginUser(context: Context, username: String, password: String) : Boolean {
             if(validateForm(username, password)) {
                 firebaseAuth.signInWithEmailAndPassword(username, password)
@@ -70,6 +67,10 @@ class AuthUser{
                 return true
             }
             return false
+        }
+
+        fun isUserLogedIn() : String? {
+            return firebaseAuth.currentUser.email
         }
 
         private fun validateForm(username: String, password: String) : Boolean {
