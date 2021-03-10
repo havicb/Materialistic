@@ -4,23 +4,26 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.core.view.marginEnd
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Slide
+import com.example.hackernews.auth.AuthState
 import com.example.hackernews.auth.AuthUser
 import com.example.hackernews.auth.LoginDialog
+import com.example.hackernews.callbacks.LoginCallback
 import com.example.hackernews.constants.Constants
 import com.example.hackernews.data.CallApi
 import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.news.NewsAdapter
 import com.example.hackernews.news.NewsDataType
+import com.example.hackernews.swipes.SwipeToSave
 import com.google.android.material.navigation.NavigationView
 import java.io.Serializable
 
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var recyclerView: RecyclerView
     private lateinit var actionBarToggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
+    private lateinit var loginCallback: LoginCallback
     private val apiCall = CallApi(this)
 
     @SuppressLint("RtlHardcoded", "RestrictedApi")
@@ -51,13 +55,35 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             addToToolbar()
             false
         }
+        onLoggedIn()
     }
 
-    private fun updateUI() {
-        if(AuthUser.isUserLogedIn() != null) {
+    private fun onLoggedIn() {
+        loginCallback = object : LoginCallback{
+            override fun onLoggedIn(username: String?) {
+                updateUI(username, AuthState.LOGGED_IN)
+            }
+            override fun onLoggedFailed() {
+                updateUI(null, AuthState.LOGIN_FAILED)
+            }
+        }
+    }
 
-        }else {
-
+    private fun updateUI(username: String?, authState: AuthState) {
+        if(authState == AuthState.LOGGED_IN) {
+            val logOutText = binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.nav_header_login_textView)
+            val logOutBtn = binding.navigationView.getHeaderView(0).findViewById<Button>(R.id.log_out_btn)
+            logOutText.text = username
+            logOutBtn.visibility = View.VISIBLE
+            binding.drawerLayout.closeDrawer(Gravity.START)
+            logOutBtn.setOnClickListener {
+                AuthUser.logOut()
+                binding.drawerLayout.closeDrawer(Gravity.START)
+                logOutBtn.visibility = View.GONE
+                logOutText.text = "Login"
+            }
+        }else if(authState == AuthState.LOGIN_FAILED) {
+            binding.drawerLayout.closeDrawer(Gravity.START)
         }
     }
 
@@ -76,7 +102,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun startLoginDialog() {
-        val loginDialog = LoginDialog(this)
+        val loginDialog = LoginDialog(loginCallback,this@MainActivity)
         loginDialog.show(supportFragmentManager, "Login dialog")
     }
 
@@ -95,6 +121,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         recyclerView.adapter = newsAdapter
         navigationView = findViewById(R.id.navigation_view)
         navigationView.setNavigationItemSelectedListener(this)
+
+        val swipeHandler = object : SwipeToSave(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = recyclerView.adapter as NewsAdapter
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(binding.newsRecyclerView)
     }
 
     private fun initNewsAdapter() {

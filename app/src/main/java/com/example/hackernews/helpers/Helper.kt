@@ -2,6 +2,7 @@ package com.example.hackernews.helpers
 
 import android.content.Context
 import android.os.Build
+import android.widget.EditText
 import android.widget.Toast
 import java.time.Instant
 
@@ -29,5 +30,10 @@ class Helper {
                 }
             }
         }
+
+        fun trimEditText(field: EditText) : String {
+            return field.text.toString().trim() { it <= ' '}
+        }
+
     }
 }
