@@ -7,10 +7,15 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.example.hackernews.R
+import com.example.hackernews.callbacks.Callback
+import com.example.hackernews.callbacks.LoginCallback
+import com.example.hackernews.helpers.Helper
+import java.lang.Exception
 
-class LoginDialog(context: Context) : AppCompatDialogFragment() {
+class LoginDialog(val listener: LoginCallback, val callContext: Context) : AppCompatDialogFragment() {
 
     private lateinit var etUsername: EditText
     private lateinit var etPassword: EditText
@@ -23,16 +28,42 @@ class LoginDialog(context: Context) : AppCompatDialogFragment() {
         tvUsernameRequiredMessage.visibility = View.GONE
         tvPasswordRequiredMessage.visibility = View.GONE
         builder.setPositiveButton("Register") { dialog, which ->
-            val username = etUsername.text.toString().trim() { it <= ' '}
-            val password = etPassword.text.toString().trim() { it <= ' '}
-            context?.let { AuthUser.registerUser(it, username, password) }
+            val username = Helper.trimEditText(etUsername)
+            val password = Helper.trimEditText(etPassword)
+            registerUser(username, password)
         }
         builder.setNegativeButton("Login") { dialog, which ->
-            val username = etUsername.text.toString().trim() { it <= ' '}
-            val password = etPassword.text.toString().trim() { it <= ' '}
-            context?.let { AuthUser.loginUser(it, username, password) }
+            val username = Helper.trimEditText(etUsername)
+            val password = Helper.trimEditText(etPassword)
+            loginUser(username, password)
+
         }
         return builder.create()
+    }
+
+    private fun loginUser(username: String, password: String) {
+        AuthUser.loginUser(username, password, object : Callback {
+            override fun onSuccess() {
+                Toast.makeText(callContext, "Logged in", Toast.LENGTH_LONG).show()
+                listener.onLoggedIn(username)
+            }
+            override fun onError(ex: Exception) {
+                Toast.makeText(callContext, ex.message, Toast.LENGTH_LONG).show()
+                listener.onLoggedFailed()
+            }
+        })
+
+    }
+
+    private fun registerUser(username: String, password: String) {
+        AuthUser.registerUser(username, password, object : Callback {
+            override fun onSuccess() {
+                Toast.makeText(callContext, "Welcome $username", Toast.LENGTH_LONG).show()
+            }
+            override fun onError(ex: Exception) {
+                Toast.makeText(callContext, ex.message, Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     private fun validateForm() : Boolean {

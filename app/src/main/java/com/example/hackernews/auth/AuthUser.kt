@@ -3,10 +3,10 @@ package com.example.hackernews.auth
 import android.R
 import android.content.Context
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.example.hackernews.callbacks.Callback
+import com.example.hackernews.callbacks.LoginCallback
+import com.google.firebase.auth.*
+import java.lang.Exception
 
 
 class AuthUser{
@@ -14,68 +14,47 @@ class AuthUser{
     companion object {
         private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-        fun registerUser(context: Context, username: String, password: String) : Boolean {
-            if(validateForm(username, password)) {
-                firebaseAuth.createUserWithEmailAndPassword(username, password)
-                    .addOnCompleteListener {
-                        if(it.isSuccessful)
-                            Toast.makeText(
-                                context,
-                                "You have succesffuly registered",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        else {
-                            try {
-                                throw it.exception!!
-                            } catch (e: FirebaseAuthWeakPasswordException) {
-                                Toast.makeText(context, e.reason, Toast.LENGTH_LONG).show()
-                            } catch (e: FirebaseAuthInvalidCredentialsException) {
-                                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-                            } catch (e: FirebaseAuthUserCollisionException) {
-                                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-                            } catch (e: Exception) {
-                                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-                            }
-                        }
-                    }.addOnCanceledListener {
-                        Toast.makeText(context, "Failed to register", Toast.LENGTH_LONG).show()
-                    }
-                return true
+        fun registerUser(username: String, password: String, callback: Callback) {
+            if(!validateForm(username, password))
+                return
+            firebaseAuth.createUserWithEmailAndPassword(username, password).addOnCompleteListener {
+                if(it.isSuccessful) {
+                    callback.onSuccess()
+                } else {
+                    callback.onError(it.exception as Exception)
+                }
             }
-        return false
         }
 
-        fun loginUser(context: Context, username: String, password: String) : Boolean {
-            if(validateForm(username, password)) {
-                firebaseAuth.signInWithEmailAndPassword(username, password)
-                        .addOnCompleteListener {
-                            if(it.isSuccessful)
-                                Toast.makeText(
-                                        context,
-                                        "Welcome ${firebaseAuth.currentUser.email}",
-                                        Toast.LENGTH_LONG
-                                ).show()
-                            else {
-                                try {
-                                    throw it.exception!!
-                                }  catch (e: FirebaseAuthInvalidCredentialsException) {
-                                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-                                } catch (e: Exception) {
-                                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-                                }
-                            }
-                        }.addOnCanceledListener {
-                            Toast.makeText(context, "Failed to login", Toast.LENGTH_LONG).show()
-                        }
-                return true
+        fun loginUser(username: String, password: String, callback: Callback) {
+            if(!validateForm(username, password))
+                return
+            firebaseAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener {
+                if(it.isSuccessful) {
+                    callback.onSuccess()
+                }
+                else {
+                    callback.onError(it.exception as Exception)
+                }
             }
-            return false
+        }
+
+        fun getUser() : String? {
+            return firebaseAuth.currentUser.email
+        }
+
+        fun loggedIn(loginCallback: LoginCallback) {
+            if(firebaseAuth.currentUser == null)
+                return
+            loginCallback.onLoggedIn(firebaseAuth.currentUser.email)
+        }
+
+        fun logOut() {
+            firebaseAuth.signOut()
         }
 
         private fun validateForm(username: String, password: String) : Boolean {
             return (username.isNotEmpty() && password.isNotEmpty())
         }
     }
-
-
 }
