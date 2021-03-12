@@ -17,17 +17,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.auth.AuthState
 import com.example.hackernews.auth.AuthUser
 import com.example.hackernews.auth.LoginDialog
+import com.example.hackernews.callbacks.LoadDataCallback
 import com.example.hackernews.callbacks.LoginCallback
 import com.example.hackernews.constants.Constants
 import com.example.hackernews.data.CallApi
 import com.example.hackernews.databinding.ActivityMainBinding
+import com.example.hackernews.models.NewsM
 import com.example.hackernews.news.NewsAdapter
 import com.example.hackernews.news.NewsDataType
 import com.example.hackernews.swipes.SwipeToSave
 import com.google.android.material.navigation.NavigationView
 import java.io.Serializable
+import java.lang.Exception
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, Serializable {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+        Serializable, LoadDataCallback {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var newsAdapter: NewsAdapter
@@ -45,7 +49,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(binding.mainToolbar)
         setNavigationHeader()
         setUpMainRecyclerView()
-        apiCall.getStories(NewsDataType.TOP_STORIES, newsAdapter)
+        apiCall.getStories(NewsDataType.TOP_STORIES, this)
+
         setSupportActionBar(binding.mainToolbar)
         binding.searchView.setOnSearchClickListener {
             removeFromToolbar()
@@ -56,6 +61,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             false
         }
         onLoggedIn()
+    }
+
+    override fun onSuccess(news: NewsM) {
+        newsAdapter.addNews(news)
+    }
+
+    override fun onFailed(ex: Exception) {
+        Toast.makeText(this, "Failed to load data -> ${ex.message}", Toast.LENGTH_SHORT).show()
     }
 
     private fun onLoggedIn() {
@@ -144,7 +157,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.side_top_stories -> {
                 newsAdapter.clear()
                 binding.drawerLayout.closeDrawer(Gravity.START)
-                apiCall.getStories(NewsDataType.TOP_STORIES, newsAdapter)
+                apiCall.getStories(NewsDataType.TOP_STORIES, this)
             }
             R.id.side_catch_up -> {
                 binding.drawerLayout.closeDrawer(Gravity.START)
@@ -152,7 +165,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.side_new_stories -> {
                 binding.drawerLayout.closeDrawer(Gravity.START)
-                apiCall.getStories(NewsDataType.NEW_STORIES, newsAdapter)
+                apiCall.getStories(NewsDataType.NEW_STORIES, this)
                 newsAdapter.clear()
             }
             R.id.side_feedback -> {

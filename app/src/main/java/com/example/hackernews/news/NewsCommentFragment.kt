@@ -59,7 +59,7 @@ class NewsCommentFragment : Fragment(), View.OnClickListener {
 
     fun loadComments(selectedNews: NewsM?, callApi: CallApi) {
         apiCall = callApi
-        apiCall.loadComments(selectedNews!!, commentAdapter)
+//        apiCall.loadComments(selectedNews!!, commentAdapter)
     }
 
     override fun onClick(v: View?) {
