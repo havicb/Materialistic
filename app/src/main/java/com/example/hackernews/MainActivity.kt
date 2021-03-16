@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -19,19 +20,21 @@ import com.example.hackernews.auth.AuthUser
 import com.example.hackernews.auth.LoginDialog
 import com.example.hackernews.callbacks.LoadDataCallback
 import com.example.hackernews.callbacks.LoginCallback
+import com.example.hackernews.callbacks.OnSwipe
 import com.example.hackernews.constants.Constants
 import com.example.hackernews.data.CallApi
+import com.example.hackernews.data.UserPostDAO
 import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.models.NewsM
 import com.example.hackernews.news.NewsAdapter
 import com.example.hackernews.news.NewsDataType
-import com.example.hackernews.swipes.SwipeToSave
+import com.example.hackernews.swipes.Swipes
 import com.google.android.material.navigation.NavigationView
 import java.io.Serializable
 import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-        Serializable, LoadDataCallback {
+        Serializable, LoadDataCallback, OnSwipe {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var newsAdapter: NewsAdapter
@@ -39,6 +42,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var actionBarToggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
     private lateinit var loginCallback: LoginCallback
+    private val userPostDAO = UserPostDAO()
     private val apiCall = CallApi(this)
 
     @SuppressLint("RtlHardcoded", "RestrictedApi")
@@ -50,7 +54,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setNavigationHeader()
         setUpMainRecyclerView()
         apiCall.getStories(NewsDataType.TOP_STORIES, this)
-
         setSupportActionBar(binding.mainToolbar)
         binding.searchView.setOnSearchClickListener {
             removeFromToolbar()
@@ -61,6 +64,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             false
         }
         onLoggedIn()
+    }
+
+    override fun onLeft(currentElement: Int) {
+        val tokenUser = AuthUser.getToken()
+        val newsId = newsAdapter.getNews(currentElement)!!.id
+        if(tokenUser == null) {
+            Toast.makeText(this, "You need to be logged in!", Toast.LENGTH_LONG).show()
+        }else {
+            Toast.makeText(this, "Saving story..", Toast.LENGTH_LONG).show()
+            userPostDAO.savePost(tokenUser, newsId)
+        }
+    }
+
+    override fun onRight(currentElement: Int) {
+        Toast.makeText(this, "Title swiped", Toast.LENGTH_LONG).show()
     }
 
     override fun onSuccess(news: NewsM) {
@@ -75,6 +93,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         loginCallback = object : LoginCallback{
             override fun onLoggedIn(username: String?) {
                 updateUI(username, AuthState.LOGGED_IN)
+                Log.d("TOKEN", AuthUser.getToken()!!)
             }
             override fun onLoggedFailed() {
                 updateUI(null, AuthState.LOGIN_FAILED)
@@ -134,13 +153,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         recyclerView.adapter = newsAdapter
         navigationView = findViewById(R.id.navigation_view)
         navigationView.setNavigationItemSelectedListener(this)
-
-        val swipeHandler = object : SwipeToSave(this) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val adapter = recyclerView.adapter as NewsAdapter
-            }
-        }
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        val itemTouchHelper = ItemTouchHelper(Swipes(this, this))
         itemTouchHelper.attachToRecyclerView(binding.newsRecyclerView)
     }
 
@@ -172,7 +185,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(this, "Clicked on feedback", Toast.LENGTH_LONG).show()
             }
             R.id.side_saved_stories -> {
-                Toast.makeText(this, "Clicked on saved stories", Toast.LENGTH_LONG).show()
+                binding.drawerLayout.closeDrawer(Gravity.START)
+                newsAdapter.clear()
+                apiCall.getStories(NewsDataType.SAVED_STORIES, this)
             }
             R.id.side_settings -> {
                 Toast.makeText(this, "Clicked on settings", Toast.LENGTH_LONG).show()

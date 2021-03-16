@@ -3,16 +3,20 @@ package com.example.hackernews.news
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.R
 import com.example.hackernews.models.NewsM
 
-class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listener: (NewsM) -> Unit) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
+class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listener: (NewsM) -> Unit,
+                var savedNews: ArrayList<NewsM> = ArrayList<NewsM>()) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
     inner class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var tvID: TextView
         val tvTitle: TextView
+        val tvNewsScore: TextView
         val tvNewsUrl: TextView
         val tvNewsTimePublished: TextView
         val tvNewsPublisher: TextView
@@ -21,12 +25,12 @@ class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listen
             tvID = view.findViewById(R.id.news_id)
             tvTitle = view.findViewById(R.id.news_title)
             tvNewsPublisher = view.findViewById(R.id.news_publisher)
+            tvNewsScore = view.findViewById(R.id.news_score)
             tvNewsUrl = view.findViewById(R.id.news_url)
             tvNewsTimePublished = view.findViewById(R.id.time_published)
             view.setOnClickListener {
                 listener.invoke(allNews[adapterPosition])
             }
-
         }
     }
 
@@ -36,8 +40,9 @@ class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listen
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.tvID.text = allNews[position].id.toString()
-        holder.tvTitle.text = allNews.get(position).title
+        holder.tvID.text = allNews[position].idToShow.toString()
+        holder.tvTitle.text = allNews[position].title
+        holder.tvNewsScore.text = allNews[position].score.toString()
         holder.tvNewsUrl.text = allNews[position].url
         holder.tvNewsTimePublished.text = allNews[position].time.toString()
         holder.tvNewsPublisher.text = allNews[position].by
@@ -53,9 +58,23 @@ class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listen
         notifyDataSetChanged()
     }
 
+    fun getNews(currentPosition: Int) : NewsM? {
+        return allNews[currentPosition]
+    }
+
     fun addNews(news: NewsM) {
-        news.id = allNews.size + 1
+        news.idToShow = allNews.size + 1
         allNews.add(news)
+        notifyDataSetChanged()
+    }
+
+    fun saveNews(news: NewsM) {
+        savedNews.add(news)
+        notifyDataSetChanged()
+    }
+
+    fun deleteNews(news: NewsM) {
+        savedNews.remove(news)
         notifyDataSetChanged()
     }
 

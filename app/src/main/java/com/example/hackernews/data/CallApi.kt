@@ -1,6 +1,9 @@
 package com.example.hackernews.data
 
 import android.content.Context
+import android.util.Log
+import android.util.Log.d
+import com.example.hackernews.auth.AuthUser
 import com.example.hackernews.callbacks.LoadDataCallback
 import com.example.hackernews.constants.Api
 import com.example.hackernews.helpers.Helper
@@ -28,85 +31,29 @@ class CallApi(val context: Context) : Serializable{
     // this code works, but it is pretty slow, 10 news per sec
     // try to find causer
     fun getStories(newsDataType: NewsDataType, loadData: LoadDataCallback) {
+        val allNews = ArrayList<NewsM>()
         CoroutineScope(Dispatchers.IO).launch {
-           val storiesIds = retrofit.getStoriesIds(newsDataType.rawValue).body()
-            val allNews = ArrayList<NewsM>()
-            val iterator = (0..storiesIds!!.size).iterator()
-            iterator.forEach {
-                val news = loadNews(iterator.nextInt())
+            val storiesIds = retrofit.getStoriesIds(newsDataType.rawValue).body() as ArrayList<Int>
+            (storiesIds.indices).forEach {
+                val news = loadNews(storiesIds[it])
                 allNews.add(news!!)
                 withContext(Dispatchers.Main) {
-                    if(storiesIds.isNotEmpty() && allNews.isNotEmpty())
+                    if(storiesIds.isNotEmpty() && allNews.isNotEmpty()) {
                         loadData.onSuccess(news)
+                    }
                     else
                         loadData.onFailed(throw Exception("Failed to load data"))
                 }
-                iterator.next()
             }
-
         }
     }
 
-    private suspend fun loadNews(newsId: Int) : NewsM? {
+     suspend fun loadNews(newsId: Int) : NewsM? {
         return retrofit.getSingleStory(newsId).body().also { newsM ->
             newsM?.time = Helper.toHours(newsM?.time.toString())
         }
     }
-/*
-    private fun loadNews(id: Int, newsAdapter: NewsAdapter) {
-        newsApi.getSingleStory(id).enqueue(object : Callback<NewsM> {
-            override fun onResponse(call: Call<NewsM>, response: Response<NewsM>) {
-                if (response.isSuccessful) {
-                    response.body()?.time = Helper.toHours(response.body()?.time.toString())
-                    newsAdapter.addNews(response.body()!!)
-                } else {
-                    Helper.printErrorCodes(context, response.code())
-                }
-            }
-
-            override fun onFailure(call: Call<NewsM>, t: Throwable) {
-                Log.d("Failed to load news", "${t.message}")
-            }
-        })
-    }
-
-    fun getStories(newsDataType: NewsDataType, newsAdapter: NewsAdapter) {
-        val storiesIds = ArrayList<Int>()
-        val call = newsApi.getStoriesIds(newsDataType.rawValue).enqueue(object : Callback<List<Int>> {
-            override fun onResponse(call: Call<List<Int>>, response: Response<List<Int>>) {
-                if (response.isSuccessful) {
-                    for (i in response.body()!!.indices) {
-                        storiesIds.add(response.body()!![i])
-                        loadNews(response.body()!![i], newsAdapter)
-                    }
-                } else {
-                    Helper.printErrorCodes(context, response.code())
-                }
-            }
-
-            override fun onFailure(call: Call<List<Int>>, t: Throwable) {
-                Toast.makeText(context, "Call failed", Toast.LENGTH_LONG).show()
-            }
-        })
-    }
-
-    private fun loadNews(id: Int, newsAdapter: NewsAdapter) {
-        newsApi.getSingleStory(id).enqueue(object : Callback<NewsM> {
-            override fun onResponse(call: Call<NewsM>, response: Response<NewsM>) {
-                if (response.isSuccessful) {
-                    response.body()?.time = Helper.toHours(response.body()?.time.toString())
-                    newsAdapter.addNews(response.body()!!)
-                } else {
-                    Helper.printErrorCodes(context, response.code())
-                }
-            }
-
-            override fun onFailure(call: Call<NewsM>, t: Throwable) {
-                Log.d("Failed to load news", "${t.message}")
-            }
-        })
-    }
-
+    /*
     fun loadComments(selectedNews: NewsM, commentsAdapter: CommentsAdapter): Unit {
         val service = retrofit.create(NewsService::class.java)
         Log.d("LOAD COMMENTS", "${selectedNews}")

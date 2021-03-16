@@ -5,7 +5,8 @@ import java.io.Serializable
 data class NewsM(
         val by: String,
         val descendants: Int,
-        var id: Int,
+        val id: Int,
+        var idToShow: Int,
         val kids: List<Int>?,
         val score: Int,
         var time: Long,

@@ -43,6 +43,10 @@ class AuthUser{
             return firebaseAuth.currentUser.email
         }
 
+        fun getToken() : String? {
+            return firebaseAuth.currentUser.uid
+        }
+
         fun loggedIn(loginCallback: LoginCallback) {
             if(firebaseAuth.currentUser == null)
                 return
