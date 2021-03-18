@@ -1,5 +1,6 @@
 package com.example.hackernews.news
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.telecom.Call
@@ -31,13 +32,8 @@ class NewsCommentFragment : Fragment(), View.OnClickListener {
 
 
     companion object {
-        fun newInstance(selectedNews: NewsM? = null, api: CallApi) : NewsCommentFragment {
-            val args = Bundle()
-            args.putSerializable(Constants.SELECTED_NEWS, selectedNews)
-            args.putSerializable("CALL", api)
-            val fragment = NewsCommentFragment()
-            fragment.arguments = args
-            return fragment
+        fun newInstance() : NewsCommentFragment {
+            return NewsCommentFragment()
         }
     }
 
@@ -50,17 +46,33 @@ class NewsCommentFragment : Fragment(), View.OnClickListener {
         return inflater.inflate(R.layout.news_comments_tab_layout, container, false)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Toast.makeText(context, "CALLED ON VIEW CREATED", Toast.LENGTH_SHORT).show()
         commentRecyclerView = view.findViewById(R.id.news_comments)
         commentRecyclerView.layoutManager = LinearLayoutManager(context)
+        loadComments()
         commentRecyclerView.adapter = commentAdapter
+        if(commentAdapter.itemCount > 0) {
+            commentRecyclerView.visibility = View.VISIBLE
+        }else {
+            val commentText = view.findViewById<TextView>(R.id.tv_comments)
+            commentText.visibility = View.VISIBLE
+            commentText.text = "No comments for particular news"
+        }
+    }
+
+    fun loadComments() {
+        var commentList = ArrayList<Comment>()
+        for(i in 0..5) {
+            commentList.add(Comment("someName", 1231321, null, 1231312, "Some dummy comment",
+                    1231293, "Comment"))
+        }
+        commentAdapter.addComments(commentList)
+        Log.d("Adapter size -> ", commentAdapter.itemCount.toString())
     }
 
 
-    fun loadComments(selectedNews: NewsM?, callApi: CallApi) {
-        apiCall = callApi
-//        apiCall.loadComments(selectedNews!!, commentAdapter)
-    }
 
     override fun onClick(v: View?) {
         TODO("Not yet implemented")

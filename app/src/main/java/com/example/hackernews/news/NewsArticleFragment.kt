@@ -1,5 +1,6 @@
 package com.example.hackernews.news
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.hackernews.NewsActivity
 import com.example.hackernews.R
 import com.example.hackernews.constants.Constants
 import com.example.hackernews.models.NewsM
@@ -34,17 +36,14 @@ class NewsArticleFragment() : Fragment(), View.OnClickListener {
         return inflater.inflate(R.layout.news_article_tab_layout, container, false)
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        /*
-        val webView = view.findViewById<WebView>(R.id.web_view)
+        val webView = view.findViewById<WebView>(R.id.article_web_view)
+        val activity = activity as NewsActivity
         webView.webViewClient = WebViewClient()
-        webView.loadUrl("https://facebook.com")
-        Log.d("ARGUMENTS", arguments.toString())
+        webView.loadUrl(activity.getUrl())
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true
-        */
-        val textView = view.findViewById<TextView>(R.id.tv_article)
-        textView.text = "Loading web view..."
     }
 
     override fun onClick(v: View?) {

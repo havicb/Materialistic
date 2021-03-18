@@ -40,7 +40,13 @@ class CommentsAdapter(var allComments: ArrayList<Comment> = ArrayList()
     }
 
     fun addComments(comments: ArrayList<Comment>) {
+        clear()
         allComments.addAll(comments)
+        notifyDataSetChanged()
+    }
+
+    private fun clear() {
+        allComments.clear()
         notifyDataSetChanged()
     }
 

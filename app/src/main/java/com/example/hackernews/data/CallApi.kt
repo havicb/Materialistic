@@ -2,9 +2,6 @@ package com.example.hackernews.data
 
 import android.content.Context
 import android.util.Log
-import android.util.Log.d
-import com.example.hackernews.auth.AuthUser
-import com.example.hackernews.callbacks.CallBackLoadPostIdDAO
 import com.example.hackernews.callbacks.LoadDataCallback
 import com.example.hackernews.constants.Api
 import com.example.hackernews.helpers.Helper

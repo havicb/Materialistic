@@ -1,8 +1,6 @@
 package com.example.hackernews.data
 
-import android.content.Context
 import android.util.Log
-import com.example.hackernews.callbacks.CallBackLoadPostIdDAO
 import com.example.hackernews.callbacks.LoadDataCallback
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

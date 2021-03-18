@@ -31,6 +31,14 @@ class NewsActivity : AppCompatActivity() {
         NewsTabsAdapter(selectedNews, this)
     }
 
+    val articleFragment: NewsArticleFragment by lazy {
+        NewsArticleFragment.newInstance(selectedNews)
+    }
+
+    val newsCommentFragment: NewsCommentFragment by lazy {
+        NewsCommentFragment.newInstance()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewsBinding.inflate(layoutInflater)
@@ -43,7 +51,6 @@ class NewsActivity : AppCompatActivity() {
                 if (tab?.text == "ARTICLE") {
                     binding.llFragmentWebView.visibility = View.VISIBLE
                 } else {
-                    (viewPager.fragments[0] as NewsCommentFragment).loadComments(selectedNews, apiCall)
                     binding.llFragment.visibility = View.GONE
                 }
             }
@@ -72,8 +79,8 @@ class NewsActivity : AppCompatActivity() {
 
 
     private fun initViewPagerAndTabs() {
-        viewPager.addFragment(NewsCommentFragment.newInstance(selectedNews, apiCall))
-        viewPager.addFragment(NewsArticleFragment.newInstance(selectedNews))
+        viewPager.addFragment(newsCommentFragment)
+        viewPager.addFragment(articleFragment)
         binding.viewPager.adapter = viewPager
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             if (position == 0) {
@@ -83,6 +90,11 @@ class NewsActivity : AppCompatActivity() {
             }
         }.attach()
     }
+
+    fun getUrl() : String {
+        return selectedNews.url
+    }
+
 
     private fun setUpNews() {
         setData(selectedNews)
