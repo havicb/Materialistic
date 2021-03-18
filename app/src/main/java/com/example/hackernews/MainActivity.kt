@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onSuccess(news: NewsM) {
+        Log.d("Adding news -> ", news.toString())
         newsAdapter.addNews(news)
     }
 
@@ -187,7 +188,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.side_saved_stories -> {
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 newsAdapter.clear()
-                apiCall.getStories(NewsDataType.SAVED_STORIES, this)
+                apiCall.stopLoadingNews()
+                AuthUser.getToken()?.let { userPostDAO.loadPosts(it, this, this.apiCall) }
             }
             R.id.side_settings -> {
                 Toast.makeText(this, "Clicked on settings", Toast.LENGTH_LONG).show()

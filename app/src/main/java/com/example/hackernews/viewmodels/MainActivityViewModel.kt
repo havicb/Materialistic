@@ -15,6 +15,4 @@ class MainActivityViewModel(application: Application, val loadDataCallback: Load
     private val apiCall: CallApi by lazy {
         CallApi(application)
     }
-
-
 }

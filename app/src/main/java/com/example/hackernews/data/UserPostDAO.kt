@@ -2,6 +2,7 @@ package com.example.hackernews.data
 
 import android.content.Context
 import android.util.Log
+import com.example.hackernews.callbacks.CallBackLoadPostIdDAO
 import com.example.hackernews.callbacks.LoadDataCallback
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -17,7 +18,7 @@ class UserPostDAO() {
         databaseRef.child(userToken).push().setValue(postID)
     }
 
-    fun loadPosts(userToken: String, callback: LoadDataCallback) : ArrayList<Int> {
+    fun loadPosts(userToken: String, loadDataCallback: LoadDataCallback, api: CallApi) : ArrayList<Int> {
         val posts = ArrayList<Int>()
         val query = databaseRef.child(userToken).addListenerForSingleValueEvent(object :
             ValueEventListener {
@@ -27,7 +28,10 @@ class UserPostDAO() {
                     return
                 }
                 snapshot.children.forEach {
-                    Log.d("LOADING POST", it.value.toString())
+                    // zovi funkciju i proslijedi joj ID
+                    val id = it.value as Long
+                    println("STORY $id")
+                    api.loadSingleNews(id.toInt(), loadDataCallback)
                 }
             }
             override fun onCancelled(error: DatabaseError) {

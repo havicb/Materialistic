@@ -4,16 +4,17 @@ import android.content.Context
 import android.util.Log
 import android.util.Log.d
 import com.example.hackernews.auth.AuthUser
+import com.example.hackernews.callbacks.CallBackLoadPostIdDAO
 import com.example.hackernews.callbacks.LoadDataCallback
 import com.example.hackernews.constants.Api
 import com.example.hackernews.helpers.Helper
 import com.example.hackernews.models.NewsM
 import com.example.hackernews.news.NewsDataType
 import com.example.hackernews.services.NewsService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.Serializable
@@ -27,12 +28,11 @@ class CallApi(val context: Context) : Serializable{
                 .addConverterFactory(GsonConverterFactory.create())
                 .build().create(NewsService::class.java)
     }
+    private var job: Job? = null
 
-    // this code works, but it is pretty slow, 10 news per sec
-    // try to find causer
     fun getStories(newsDataType: NewsDataType, loadData: LoadDataCallback) {
         val allNews = ArrayList<NewsM>()
-        CoroutineScope(Dispatchers.IO).launch {
+        job = CoroutineScope(Dispatchers.IO).launch {
             val storiesIds = retrofit.getStoriesIds(newsDataType.rawValue).body() as ArrayList<Int>
             (storiesIds.indices).forEach {
                 val news = loadNews(storiesIds[it])
@@ -46,6 +46,23 @@ class CallApi(val context: Context) : Serializable{
                 }
             }
         }
+    }
+
+    fun stopLoadingNews() {
+        job!!.cancel()
+    }
+
+    fun loadSingleNews(newsId: Int, callback: LoadDataCallback) {
+        val service = retrofit.loadSingleStory(newsId).enqueue(object : Callback<NewsM?> {
+            override fun onResponse(call: Call<NewsM?>, response: Response<NewsM?>) {
+                Log.d("Loading news id -> ", newsId.toString())
+                callback.onSuccess(response.body()!!)
+            }
+
+            override fun onFailure(call: Call<NewsM?>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 
      suspend fun loadNews(newsId: Int) : NewsM? {
