@@ -48,6 +48,11 @@ class CallApi(val context: Context) : Serializable{
         }
     }
 
+    /* before this function i was like how it is possible to load 200 news, when i have only 10 in my database..
+     so i started debuging.. and debuging..
+     2 days later I realize even when i click on saved story, this job continues to work on different thread
+     and function loads me news from database, but it continue to load remaining news from TOP_STORIES
+     I just tried with this function, and guess what? It works :D*/
     fun stopLoadingNews() {
         job!!.cancel()
     }
