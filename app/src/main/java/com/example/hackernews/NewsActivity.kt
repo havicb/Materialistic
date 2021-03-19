@@ -8,9 +8,13 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.FragmentTransaction
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.MarginPageTransformer
+import com.example.hackernews.callbacks.LoadCommentCallback
 import com.example.hackernews.constants.Constants
 import com.example.hackernews.data.CallApi
 import com.example.hackernews.databinding.ActivityNewsBinding
+import com.example.hackernews.models.Comment
 import com.example.hackernews.models.NewsM
 import com.example.hackernews.news.NewsArticleFragment
 import com.example.hackernews.news.NewsCommentFragment
@@ -67,6 +71,8 @@ class NewsActivity : AppCompatActivity() {
 
             }
         })
+        binding.viewPager.adapter = viewPager
+        getParentComments(null)
     }
 
     private fun setUpToolbar() {
@@ -89,6 +95,20 @@ class NewsActivity : AppCompatActivity() {
                 tab.text = "ARTICLE"
             }
         }.attach()
+    }
+
+    fun getParentComments(recyclerView: RecyclerView?)  {
+        apiCall.loadComments(selectedNews.kids!!, object : LoadCommentCallback{
+            override fun onCommentLoaded(comment: Comment) {
+                newsCommentFragment.commentAdapter.addComment(comment)
+                if(recyclerView != null)
+                    recyclerView.adapter = newsCommentFragment.commentAdapter
+            }
+
+            override fun onFailedToLoad(ex: Exception) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 
     fun getUrl() : String {

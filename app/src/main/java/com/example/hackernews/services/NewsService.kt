@@ -14,9 +14,10 @@ interface NewsService {
     @GET("/v0/item/{id}.json")
     suspend fun getSingleStory(@Path("id") id: Int): Response<NewsM>
 
-    @GET("/v0/item/{id}.json")
-    suspend fun getComments(@Path("id") id: Int): Call<Comment>
 
     @GET("/v0/item/{id}.json")
     fun loadSingleStory(@Path("id") id: Int): Call<NewsM>
+
+    @GET("/v0/item/{id}.json")
+    fun loadSingleComment(@Path("id") id: Int): Call<Comment>
 }

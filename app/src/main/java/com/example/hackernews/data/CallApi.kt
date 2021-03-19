@@ -2,9 +2,12 @@ package com.example.hackernews.data
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
+import com.example.hackernews.callbacks.LoadCommentCallback
 import com.example.hackernews.callbacks.LoadDataCallback
 import com.example.hackernews.constants.Api
 import com.example.hackernews.helpers.Helper
+import com.example.hackernews.models.Comment
 import com.example.hackernews.models.NewsM
 import com.example.hackernews.news.NewsDataType
 import com.example.hackernews.services.NewsService
@@ -45,6 +48,24 @@ class CallApi(val context: Context) : Serializable{
         }
     }
 
+    fun loadComments(commentsId: List<Int>, loadCommentCallback: LoadCommentCallback) {
+        commentsId.indices.forEach{
+            loadComment(commentsId[it], loadCommentCallback)
+        }
+    }
+
+    private fun loadComment(commentId: Int, loadCommentCallback: LoadCommentCallback) {
+        val service = retrofit.loadSingleComment(commentId).enqueue(object : Callback<Comment>{
+            override fun onResponse(call: Call<Comment>, response: Response<Comment>) {
+                loadCommentCallback.onCommentLoaded(response.body()!!)
+            }
+
+            override fun onFailure(call: Call<Comment>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
     /* before this function i was like how it is possible to load 200 news, when i have only 10 in my database..
      so i started debuging.. and debuging..
      2 days later I realize even when i click on saved story, this job continues to work on different thread
@@ -72,31 +93,5 @@ class CallApi(val context: Context) : Serializable{
             newsM?.time = Helper.toHours(newsM?.time.toString())
         }
     }
-    /*
-    fun loadComments(selectedNews: NewsM, commentsAdapter: CommentsAdapter): Unit {
-        val service = retrofit.create(NewsService::class.java)
-        Log.d("LOAD COMMENTS", "${selectedNews}")
-        if (selectedNews.kids?.isEmpty() == true)
-            return
-        for (i in selectedNews.kids!!.indices) {
-            val call = service.getComments(selectedNews.kids[i])
-            call.enqueue(object : Callback<Comment> {
-                override fun onResponse(call: Call<Comment>, response: Response<Comment>) {
-                    if (response.isSuccessful) {
-                        commentsAdapter.addComment(response.body()!!)
-                        Log.d("ADDED COMMENT -> ", "${response.body()}")
-                    } else {
-                        Log.d("FAILED TO LOAD", "COMMENT")
-                        Helper.printErrorCodes(context, response.code())
-                    }
-                }
-
-                override fun onFailure(call: Call<Comment>, t: Throwable) {
-                    Log.d("Failed to load comments..", "${t.message}")
-                }
-            })
-        }
-    }
-*/
 }
 

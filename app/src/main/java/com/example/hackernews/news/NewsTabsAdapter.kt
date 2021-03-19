@@ -19,6 +19,7 @@ class NewsTabsAdapter(val clickedNews: NewsM, val fragmentActivity: FragmentActi
 
     fun addFragment(fragment: Fragment) {
         fragments.add(fragment)
+        notifyDataSetChanged()
     }
 
     override fun createFragment(position: Int): Fragment {

@@ -47,6 +47,6 @@ class NewsArticleFragment() : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        //todo
+        // todo
     }
 }
