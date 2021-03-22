@@ -51,6 +51,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.mainToolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
         setNavigationHeader()
         setUpMainRecyclerView()
         apiCall.getStories(NewsDataType.TOP_STORIES, this)
@@ -82,7 +84,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onSuccess(news: NewsM) {
-        Log.d("Adding news -> ", news.toString())
         newsAdapter.addNews(news)
     }
 
@@ -140,11 +141,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun initDrawerLayout() {
-        val drawerLayout = binding.drawerLayout
-        actionBarToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name)
-        drawerLayout.addDrawerListener(actionBarToggle)
+        val actionBarToggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.mainToolbar, 0,0)
+        binding.drawerLayout.addDrawerListener(actionBarToggle)
+        actionBarToggle.isDrawerIndicatorEnabled = true
         actionBarToggle.syncState()
-        supportActionBar!!.setDisplayShowHomeEnabled(true)
     }
 
     private fun setUpMainRecyclerView() {
@@ -165,6 +165,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             startActivity(intent)
         })
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        binding.drawerLayout.openDrawer(Gravity.START)
+        return super.onOptionsItemSelected(item)
+    }
+
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
