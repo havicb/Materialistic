@@ -50,18 +50,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.mainToolbar)
+        setSupportActionBar(binding.appBarMain.mainToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
         setNavigationHeader()
         setUpMainRecyclerView()
         apiCall.getStories(NewsDataType.TOP_STORIES, this)
-        setSupportActionBar(binding.mainToolbar)
-        binding.searchView.setOnSearchClickListener {
+        setSupportActionBar(binding.appBarMain.mainToolbar)
+        binding.appBarMain.searchView.setOnSearchClickListener {
             removeFromToolbar()
         }
 
-        binding.searchView.setOnCloseListener {
+        binding.appBarMain.searchView.setOnCloseListener {
             addToToolbar()
             false
         }
@@ -122,11 +122,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun removeFromToolbar() {
-        binding.tvToolbarLastUpdate.visibility = View.GONE
+        binding.appBarMain.tvToolbarLastUpdate.visibility = View.GONE
     }
 
     private fun addToToolbar() {
-        binding.tvToolbarLastUpdate.visibility = View.VISIBLE
+        binding.appBarMain.tvToolbarLastUpdate.visibility = View.VISIBLE
     }
 
     private fun setNavigationHeader() {
@@ -141,21 +141,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun initDrawerLayout() {
-        val actionBarToggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.mainToolbar, 0,0)
+        val actionBarToggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.appBarMain.mainToolbar, 0,0)
         binding.drawerLayout.addDrawerListener(actionBarToggle)
         actionBarToggle.isDrawerIndicatorEnabled = true
         actionBarToggle.syncState()
     }
 
     private fun setUpMainRecyclerView() {
-        recyclerView = binding.newsRecyclerView
+        recyclerView = binding.appBarMain.contentMain.newsRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
         initNewsAdapter()
         recyclerView.adapter = newsAdapter
         navigationView = findViewById(R.id.navigation_view)
         navigationView.setNavigationItemSelectedListener(this)
         val itemTouchHelper = ItemTouchHelper(Swipes(this, this))
-        itemTouchHelper.attachToRecyclerView(binding.newsRecyclerView)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     private fun initNewsAdapter() {
