@@ -25,17 +25,17 @@ import com.google.android.material.tabs.TabLayoutMediator
 class NewsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNewsBinding
-    val selectedNews: NewsM by lazy {
+    private val selectedNews: NewsM by lazy {
         intent.getSerializableExtra(Constants.SELECTED_NEWS) as NewsM
     }
-    val apiCall: CallApi by lazy {
+    private val apiCall: CallApi by lazy {
         CallApi(this@NewsActivity)
     }
-    val viewPager: NewsTabsAdapter by lazy {
+    private val viewPager: NewsTabsAdapter by lazy {
         NewsTabsAdapter(selectedNews, this)
     }
 
-    val articleFragment: NewsArticleFragment by lazy {
+    private val articleFragment: NewsArticleFragment by lazy {
         NewsArticleFragment.newInstance(selectedNews)
     }
 

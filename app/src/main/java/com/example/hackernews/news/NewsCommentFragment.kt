@@ -1,14 +1,11 @@
 package com.example.hackernews.news
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
-import android.telecom.Call
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,11 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.NewsActivity
 import com.example.hackernews.R
 import com.example.hackernews.comments.CommentsAdapter
-import com.example.hackernews.constants.Constants
 import com.example.hackernews.data.CallApi
-import com.example.hackernews.databinding.ActivityMainBinding.inflate
 import com.example.hackernews.models.Comment
-import com.example.hackernews.models.NewsM
 
 class NewsCommentFragment : Fragment(), View.OnClickListener {
 
@@ -29,8 +23,8 @@ class NewsCommentFragment : Fragment(), View.OnClickListener {
     val commentAdapter: CommentsAdapter by lazy {
         CommentsAdapter()
     }
-    private lateinit var apiCall: CallApi
 
+    private lateinit var apiCall: CallApi
 
     companion object {
         fun newInstance() : NewsCommentFragment {

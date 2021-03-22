@@ -1,17 +1,47 @@
 package com.example.hackernews.helpers
 
 import android.content.Context
+import android.icu.text.RelativeDateTimeFormatter
 import android.os.Build
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import java.time.Instant
 
 class Helper {
     companion object {
+
+        @RequiresApi(Build.VERSION_CODES.N)
+        fun humanReadableDate(hours: Long) : String {
+            val format = RelativeDateTimeFormatter.getInstance()
+            var relativeUnit = RelativeDateTimeFormatter.RelativeUnit.HOURS
+            var tempHours = hours
+            if(hours > 24) {
+                relativeUnit = RelativeDateTimeFormatter.RelativeUnit.DAYS
+                tempHours /= 24
+            }
+            return format.format(tempHours.toDouble(), RelativeDateTimeFormatter.Direction.LAST, relativeUnit)
+        }
+
+        fun getMainUrl(fullUrl: String?) : String {
+            if(fullUrl == null)
+                return ""
+            val trimmedFirstPart = fullUrl.removeRange(0, 8)
+            val mainUrlEndIndex = findMainUrlEnd(trimmedFirstPart)
+            var finalUrl = ""
+            if(mainUrlEndIndex != -1)
+               finalUrl = trimmedFirstPart.removeRange(mainUrlEndIndex, trimmedFirstPart.length)
+            return finalUrl
+        }
+
+        private fun findMainUrlEnd(fullUrl: String) : Int {
+            return fullUrl.indexOf('/')
+        }
+
         fun toHours(unixTime: String): Long {
             var unixNow: Long = 0
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                unixNow = Instant.now().getEpochSecond()
+                unixNow = Instant.now().epochSecond
             }
             val publishedAgo = unixNow - unixTime.toInt()
             return (publishedAgo / 3600).toLong()
