@@ -13,20 +13,15 @@ class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listen
                 var savedNews: ArrayList<NewsM> = ArrayList<NewsM>()) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
     inner class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var tvID: TextView
-        val tvTitle: TextView
-        val tvNewsScore: TextView
-        val tvNewsUrl: TextView
-        val tvNewsTimePublished: TextView
-        val tvNewsPublisher: TextView
+        var tvID: TextView = view.findViewById(R.id.news_id)
+        val tvTitle: TextView = view.findViewById(R.id.news_title)
+        val tvNewsScore: TextView = view.findViewById(R.id.news_score)
+        val tvNewsUrl: TextView = view.findViewById(R.id.news_url)
+        val tvNewsTimePublished: TextView = view.findViewById(R.id.time_published)
+        val tvNewsPublisher: TextView = view.findViewById(R.id.news_publisher)
+        val tvCommentsNum: TextView = view.findViewById(R.id.tv_num_comments)
 
         init {
-            tvID = view.findViewById(R.id.news_id)
-            tvTitle = view.findViewById(R.id.news_title)
-            tvNewsPublisher = view.findViewById(R.id.news_publisher)
-            tvNewsScore = view.findViewById(R.id.news_score)
-            tvNewsUrl = view.findViewById(R.id.news_url)
-            tvNewsTimePublished = view.findViewById(R.id.time_published)
             view.setOnClickListener {
                 listener.invoke(allNews[adapterPosition])
             }
@@ -45,6 +40,7 @@ class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listen
         holder.tvNewsUrl.text = Helper.getMainUrl(allNews[position].url)
         holder.tvNewsTimePublished.text = Helper.humanReadableDate(allNews[position].time)
         holder.tvNewsPublisher.text = allNews[position].by
+        holder.tvCommentsNum.text = Helper.countList(allNews[position].kids).toString()
     }
 
     override fun getItemCount(): Int {

@@ -12,6 +12,13 @@ class Helper {
     companion object {
 
         @RequiresApi(Build.VERSION_CODES.N)
+
+        fun countList(list: List<Int>?) : Int {
+            if(list == null)
+                return 0
+        return list.size
+        }
+
         fun humanReadableDate(hours: Long) : String {
             val format = RelativeDateTimeFormatter.getInstance()
             var relativeUnit = RelativeDateTimeFormatter.RelativeUnit.HOURS
@@ -25,7 +32,7 @@ class Helper {
 
         fun getMainUrl(fullUrl: String?) : String {
             if(fullUrl == null)
-                return ""
+                return "news.ycombinator.com"
             val trimmedFirstPart = fullUrl.removeRange(0, 8)
             val mainUrlEndIndex = findMainUrlEnd(trimmedFirstPart)
             var finalUrl = ""

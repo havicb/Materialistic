@@ -14,6 +14,7 @@ import com.example.hackernews.callbacks.LoadCommentCallback
 import com.example.hackernews.constants.Constants
 import com.example.hackernews.data.CallApi
 import com.example.hackernews.databinding.ActivityNewsBinding
+import com.example.hackernews.helpers.Helper
 import com.example.hackernews.models.Comment
 import com.example.hackernews.models.NewsM
 import com.example.hackernews.news.NewsArticleFragment
@@ -78,6 +79,7 @@ class NewsActivity : AppCompatActivity() {
     private fun setUpToolbar() {
         setSupportActionBar(binding.newsToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         binding.newsToolbar.setNavigationOnClickListener {
             onBackPressed()
         }
@@ -122,8 +124,8 @@ class NewsActivity : AppCompatActivity() {
 
     private fun setData(passedNews: NewsM?) {
         binding.newsTitle.text = passedNews?.title
-        binding.newsUrl.text = passedNews?.url
+        binding.newsUrl.text = Helper.getMainUrl(passedNews?.url)
         binding.newsUserPublished.text = passedNews?.by
-        binding.newsTimePublished.text = passedNews?.time.toString()
+        binding.newsTimePublished.text = passedNews?.time?.let { Helper.humanReadableDate(it) }
     }
 }
