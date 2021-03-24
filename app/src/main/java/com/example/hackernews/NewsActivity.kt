@@ -1,15 +1,8 @@
 package com.example.hackernews
 
-import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.telecom.Call
-import android.util.Log
-import android.view.View
-import android.widget.Toast
-import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.MarginPageTransformer
 import com.example.hackernews.callbacks.LoadCommentCallback
 import com.example.hackernews.constants.Constants
 import com.example.hackernews.data.CallApi
@@ -17,8 +10,6 @@ import com.example.hackernews.databinding.ActivityNewsBinding
 import com.example.hackernews.helpers.Helper
 import com.example.hackernews.models.Comment
 import com.example.hackernews.models.NewsM
-import com.example.hackernews.news.NewsArticleFragment
-import com.example.hackernews.news.NewsCommentFragment
 import com.example.hackernews.news.NewsTabsAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -36,12 +27,12 @@ class NewsActivity : AppCompatActivity() {
         NewsTabsAdapter(selectedNews, this)
     }
 
-    private val articleFragment: NewsArticleFragment by lazy {
-        NewsArticleFragment.newInstance(selectedNews)
+    private val articleFragment: ArticleFragment by lazy {
+        ArticleFragment.newInstance(selectedNews.url)
     }
 
-    val newsCommentFragment: NewsCommentFragment by lazy {
-        NewsCommentFragment.newInstance()
+    val newsCommentFragment: CommentFragment by lazy {
+        CommentFragment.newInstance()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,19 +44,14 @@ class NewsActivity : AppCompatActivity() {
         initViewPagerAndTabs()
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                if (tab?.text == "ARTICLE") {
-                    binding.llFragmentWebView.visibility = View.VISIBLE
-                } else {
-                    binding.llFragment.visibility = View.GONE
-                }
+                if(tab!!.text == "ARTICLE")
+                    articleFragment.navigateToAnotherFragment()
+                else
+                    newsCommentFragment.navigateToAnotherFragment()
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
-                if (tab?.text == "ARTICLE") {
-                    binding.llFragmentWebView.visibility = View.GONE
-                } else {
-                    binding.llFragment.visibility = View.VISIBLE
-                }
+
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {

@@ -9,7 +9,7 @@ import com.example.hackernews.models.NewsM
 
 class NewsTabsAdapter(val clickedNews: NewsM, val fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
 
-    val fragments: ArrayList<Fragment> by lazy {
+    private val fragments: ArrayList<Fragment> by lazy {
         ArrayList<Fragment>()
     }
 
