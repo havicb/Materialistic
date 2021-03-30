@@ -2,11 +2,15 @@ package com.example.hackernews
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.example.hackernews.callbacks.LoadCommentCallback
 import com.example.hackernews.constants.Constants
 import com.example.hackernews.data.CallApi
 import com.example.hackernews.databinding.ActivityNewsBinding
+import com.example.hackernews.databinding.FragmentCommentBinding
 import com.example.hackernews.helpers.Helper
 import com.example.hackernews.models.Comment
 import com.example.hackernews.models.NewsM
@@ -17,18 +21,20 @@ import com.google.android.material.tabs.TabLayoutMediator
 class NewsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNewsBinding
+
     private val selectedNews: NewsM by lazy {
         intent.getSerializableExtra(Constants.SELECTED_NEWS) as NewsM
     }
     private val apiCall: CallApi by lazy {
         CallApi(this@NewsActivity)
     }
-    private val viewPager: NewsTabsAdapter by lazy {
-        NewsTabsAdapter(selectedNews, this)
-    }
+
+    private lateinit var adapter: NewsTabsAdapter
+    private lateinit var tabLayout: TabLayout
+    private lateinit var viewPager: ViewPager2
 
     private val articleFragment: ArticleFragment by lazy {
-        ArticleFragment.newInstance(selectedNews.url)
+        ArticleFragment.newInstance()
     }
 
     val newsCommentFragment: CommentFragment by lazy {
@@ -42,24 +48,7 @@ class NewsActivity : AppCompatActivity() {
         setUpToolbar()
         setUpNews()
         initViewPagerAndTabs()
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                if(tab!!.text == "ARTICLE")
-                    articleFragment.navigateToAnotherFragment()
-                else
-                    newsCommentFragment.navigateToAnotherFragment()
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-
-            }
-        })
-        binding.viewPager.adapter = viewPager
-        getParentComments(null)
+       // getParentComments(null)
     }
 
     private fun setUpToolbar() {
@@ -73,16 +62,35 @@ class NewsActivity : AppCompatActivity() {
 
 
     private fun initViewPagerAndTabs() {
-        viewPager.addFragment(newsCommentFragment)
-        viewPager.addFragment(articleFragment)
-        binding.viewPager.adapter = viewPager
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            if (position == 0) {
-                tab.text = "${selectedNews.kids?.size ?: "0"} comments"
-            } else {
-                tab.text = "ARTICLE"
+        tabLayout = binding.tabLayout
+        viewPager = binding.viewPager2
+
+        adapter = NewsTabsAdapter(supportFragmentManager, lifecycle)
+
+        viewPager.adapter = adapter
+
+        tabLayout.addTab(tabLayout.newTab().setText("Comments"))
+        tabLayout.addTab(tabLayout.newTab().setText("Article"))
+
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                viewPager.currentItem = tab!!.position
             }
-        }.attach()
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+        })
+
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                tabLayout.selectTab(tabLayout.getTabAt(position))
+            }
+        })
     }
 
     fun getParentComments(recyclerView: RecyclerView?)  {
@@ -98,7 +106,6 @@ class NewsActivity : AppCompatActivity() {
             }
         })
     }
-
     fun getUrl() : String {
         return selectedNews.url
     }

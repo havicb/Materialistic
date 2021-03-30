@@ -15,49 +15,29 @@ import androidx.navigation.fragment.findNavController
 import com.example.hackernews.databinding.FragmentArticleBinding
 import com.example.hackernews.interfaces.Navigable
 
-private const val ARG_PARAM1 = "URL"
+class ArticleFragment : Fragment() {
 
-class ArticleFragment : Fragment(), Navigable {
-
-    private var param1: String? = null
     private lateinit var binding: FragmentArticleBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("ARGUMENTS", arguments.toString())
-        arguments?.let {
-            Log.d("ARG", it.getString(ARG_PARAM1).toString())
-            param1 = it.getString(ARG_PARAM1)
-        }
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Toast.makeText(context, "$param1", Toast.LENGTH_SHORT).show()
         binding = FragmentArticleBinding.inflate(layoutInflater)
         binding.articleWebView.webViewClient = WebViewClient()
         binding.articleWebView.loadUrl("github.com")
-        val webSettings = binding.articleWebView.settings
-        webSettings.javaScriptEnabled = true
-        return binding.root
-    }
 
-    override fun navigateToAnotherFragment() {
-        view?.post {
-            findNavController().navigate(R.id.action_articleFragment_to_commentFragment)
-        }
+        return binding.root
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: String) =
+        fun newInstance() =
             ArticleFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                }
             }
     }
 }
