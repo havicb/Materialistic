@@ -1,22 +1,18 @@
 package com.example.hackernews
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
-import androidx.navigation.findNavController
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.hackernews.callbacks.LoadCommentCallback
 import com.example.hackernews.constants.Constants
 import com.example.hackernews.data.CallApi
 import com.example.hackernews.databinding.ActivityNewsBinding
-import com.example.hackernews.databinding.FragmentCommentBinding
 import com.example.hackernews.helpers.Helper
 import com.example.hackernews.models.Comment
 import com.example.hackernews.models.NewsM
 import com.example.hackernews.news.NewsTabsAdapter
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 
 class NewsActivity : AppCompatActivity() {
 
@@ -34,7 +30,7 @@ class NewsActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
 
     private val articleFragment: ArticleFragment by lazy {
-        ArticleFragment.newInstance()
+        ArticleFragment.newInstance(selectedNews.url)
     }
 
     val newsCommentFragment: CommentFragment by lazy {
@@ -48,7 +44,7 @@ class NewsActivity : AppCompatActivity() {
         setUpToolbar()
         setUpNews()
         initViewPagerAndTabs()
-       // getParentComments(null)
+        // getParentComments(null)
     }
 
     private fun setUpToolbar() {
@@ -65,14 +61,14 @@ class NewsActivity : AppCompatActivity() {
         tabLayout = binding.tabLayout
         viewPager = binding.viewPager2
 
-        adapter = NewsTabsAdapter(supportFragmentManager, lifecycle)
+        adapter = NewsTabsAdapter(supportFragmentManager, lifecycle, selectedNews)
 
         viewPager.adapter = adapter
 
         tabLayout.addTab(tabLayout.newTab().setText("Comments"))
         tabLayout.addTab(tabLayout.newTab().setText("Article"))
 
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 viewPager.currentItem = tab!!.position
             }
@@ -86,18 +82,18 @@ class NewsActivity : AppCompatActivity() {
             }
         })
 
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 tabLayout.selectTab(tabLayout.getTabAt(position))
             }
         })
     }
 
-    fun getParentComments(recyclerView: RecyclerView?)  {
-        apiCall.loadComments(selectedNews.kids!!, object : LoadCommentCallback{
+    fun getParentComments(recyclerView: RecyclerView?) {
+        apiCall.loadComments(selectedNews.kids!!, object : LoadCommentCallback {
             override fun onCommentLoaded(comment: Comment) {
                 newsCommentFragment.commentAdapter.addComment(comment)
-                if(recyclerView != null)
+                if (recyclerView != null)
                     recyclerView.adapter = newsCommentFragment.commentAdapter
             }
 
@@ -106,7 +102,8 @@ class NewsActivity : AppCompatActivity() {
             }
         })
     }
-    fun getUrl() : String {
+
+    fun getUrl(): String {
         return selectedNews.url
     }
 

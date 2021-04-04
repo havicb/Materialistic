@@ -16,12 +16,16 @@ class UserPostDAO() {
         databaseRef.child(userToken).push().setValue(postID)
     }
 
-    fun loadPosts(userToken: String, loadDataCallback: LoadDataCallback, api: CallApi) : ArrayList<Int> {
+    fun loadPosts(
+        userToken: String,
+        loadDataCallback: LoadDataCallback,
+        api: CallApi
+    ): ArrayList<Int> {
         val posts = ArrayList<Int>()
         val query = databaseRef.child(userToken).addListenerForSingleValueEvent(object :
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                if(!snapshot.hasChildren()) {
+                if (!snapshot.hasChildren()) {
                     Log.d("Saved post", "No children")
                     return
                 }
@@ -32,10 +36,11 @@ class UserPostDAO() {
                     api.loadSingleNews(id.toInt(), loadDataCallback)
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
         })
-    return posts
+        return posts
     }
 }

@@ -9,8 +9,10 @@ import com.example.hackernews.R
 import com.example.hackernews.helpers.Helper
 import com.example.hackernews.models.NewsM
 
-class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listener: (NewsM) -> Unit,
-                var savedNews: ArrayList<NewsM> = ArrayList<NewsM>()) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
+class NewsAdapter(
+    var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listener: (NewsM) -> Unit,
+    var savedNews: ArrayList<NewsM> = ArrayList<NewsM>()
+) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
     inner class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var tvID: TextView = view.findViewById(R.id.news_id)
@@ -53,7 +55,7 @@ class NewsAdapter(var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listen
         notifyDataSetChanged()
     }
 
-    fun getNews(currentPosition: Int) : NewsM? {
+    fun getNews(currentPosition: Int): NewsM? {
         return allNews[currentPosition]
     }
 

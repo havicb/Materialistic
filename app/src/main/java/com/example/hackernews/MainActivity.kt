@@ -2,7 +2,6 @@ package com.example.hackernews
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -12,6 +11,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,10 +31,9 @@ import com.example.hackernews.news.NewsDataType
 import com.example.hackernews.swipes.Swipes
 import com.google.android.material.navigation.NavigationView
 import java.io.Serializable
-import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-        Serializable, LoadDataCallback, OnSwipe {
+    Serializable, LoadDataCallback, OnSwipe {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var newsAdapter: NewsAdapter
@@ -71,9 +70,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onLeft(currentElement: Int) {
         val tokenUser = AuthUser.getToken()
         val newsId = newsAdapter.getNews(currentElement)!!.id
-        if(tokenUser == null) {
+        if (tokenUser == null) {
             Toast.makeText(this, "You need to be logged in!", Toast.LENGTH_LONG).show()
-        }else {
+        } else {
             Toast.makeText(this, "Saving story..", Toast.LENGTH_LONG).show()
             userPostDAO.savePost(tokenUser, newsId)
         }
@@ -92,11 +91,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun onLoggedIn() {
-        loginCallback = object : LoginCallback{
+        loginCallback = object : LoginCallback {
             override fun onLoggedIn(username: String?) {
                 updateUI(username, AuthState.LOGGED_IN)
                 Log.d("TOKEN", AuthUser.getToken()!!)
             }
+
             override fun onLoggedFailed() {
                 updateUI(null, AuthState.LOGIN_FAILED)
             }
@@ -104,9 +104,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun updateUI(username: String?, authState: AuthState) {
-        if(authState == AuthState.LOGGED_IN) {
-            val logOutText = binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.nav_header_login_textView)
-            val logOutBtn = binding.navigationView.getHeaderView(0).findViewById<Button>(R.id.log_out_btn)
+        if (authState == AuthState.LOGGED_IN) {
+            val logOutText = binding.navigationView.getHeaderView(0)
+                .findViewById<TextView>(R.id.nav_header_login_textView)
+            val logOutBtn =
+                binding.navigationView.getHeaderView(0).findViewById<Button>(R.id.log_out_btn)
             logOutText.text = username
             logOutBtn.visibility = View.VISIBLE
             binding.drawerLayout.closeDrawer(Gravity.START)
@@ -116,7 +118,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 logOutBtn.visibility = View.GONE
                 logOutText.text = "Login"
             }
-        }else if(authState == AuthState.LOGIN_FAILED) {
+        } else if (authState == AuthState.LOGIN_FAILED) {
             binding.drawerLayout.closeDrawer(Gravity.START)
         }
     }
@@ -136,12 +138,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun startLoginDialog() {
-        val loginDialog = LoginDialog(loginCallback,this@MainActivity)
+        val loginDialog = LoginDialog(loginCallback, this@MainActivity)
         loginDialog.show(supportFragmentManager, "Login dialog")
     }
 
     private fun initDrawerLayout() {
-        val actionBarToggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.appBarMain.mainToolbar, 0,0)
+        val actionBarToggle =
+            ActionBarDrawerToggle(this, binding.drawerLayout, binding.appBarMain.mainToolbar, 0, 0)
         binding.drawerLayout.addDrawerListener(actionBarToggle)
         actionBarToggle.isDrawerIndicatorEnabled = true
         actionBarToggle.syncState()
@@ -172,9 +175,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.side_top_stories -> {
                 newsAdapter.clear()
                 binding.drawerLayout.closeDrawer(Gravity.START)
@@ -205,6 +207,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(this, "Clicked on submit to HN", Toast.LENGTH_LONG).show()
             }
         }
-    return true
+        return true
     }
 }

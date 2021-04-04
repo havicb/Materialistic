@@ -2,7 +2,6 @@ package com.example.hackernews.data
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import com.example.hackernews.callbacks.LoadCommentCallback
 import com.example.hackernews.callbacks.LoadDataCallback
 import com.example.hackernews.constants.Api
@@ -18,15 +17,14 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.Serializable
-import java.lang.Exception
 
-class CallApi(val context: Context) : Serializable{
+class CallApi(val context: Context) : Serializable {
 
     private val retrofit: NewsService by lazy {
         Retrofit.Builder()
-                .baseUrl(Api.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build().create(NewsService::class.java)
+            .baseUrl(Api.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build().create(NewsService::class.java)
     }
     private var job: Job? = null
 
@@ -38,10 +36,9 @@ class CallApi(val context: Context) : Serializable{
                 val news = loadNews(storiesIds[it])
                 allNews.add(news!!)
                 withContext(Dispatchers.Main) {
-                    if(storiesIds.isNotEmpty() && allNews.isNotEmpty()) {
+                    if (storiesIds.isNotEmpty() && allNews.isNotEmpty()) {
                         loadData.onSuccess(news)
-                    }
-                    else
+                    } else
                         loadData.onFailed(throw Exception("Failed to load data"))
                 }
             }
@@ -49,13 +46,13 @@ class CallApi(val context: Context) : Serializable{
     }
 
     fun loadComments(commentsId: List<Int>, loadCommentCallback: LoadCommentCallback) {
-        commentsId.indices.forEach{
+        commentsId.indices.forEach {
             loadComment(commentsId[it], loadCommentCallback)
         }
     }
 
     private fun loadComment(commentId: Int, loadCommentCallback: LoadCommentCallback) {
-        val service = retrofit.loadSingleComment(commentId).enqueue(object : Callback<Comment>{
+        val service = retrofit.loadSingleComment(commentId).enqueue(object : Callback<Comment> {
             override fun onResponse(call: Call<Comment>, response: Response<Comment>) {
                 loadCommentCallback.onCommentLoaded(response.body()!!)
             }
@@ -88,7 +85,7 @@ class CallApi(val context: Context) : Serializable{
         })
     }
 
-     suspend fun loadNews(newsId: Int) : NewsM? {
+    suspend fun loadNews(newsId: Int): NewsM? {
         return retrofit.getSingleStory(newsId).body().also { newsM ->
             newsM?.time = Helper.toHours(newsM?.time.toString())
         }

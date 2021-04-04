@@ -1,6 +1,5 @@
 package com.example.hackernews.comments
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.R
 import com.example.hackernews.models.Comment
 
-class CommentsAdapter(var allComments: ArrayList<Comment> = ArrayList()
+class CommentsAdapter(
+    var allComments: ArrayList<Comment> = ArrayList()
 ) : RecyclerView.Adapter<CommentsAdapter.CommentsViewHolder>() {
 
     inner class CommentsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
