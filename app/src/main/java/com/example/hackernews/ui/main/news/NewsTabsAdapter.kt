@@ -1,12 +1,12 @@
-package com.example.hackernews.news
+package com.example.hackernews.ui.main.news
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.hackernews.ArticleFragment
-import com.example.hackernews.CommentFragment
-import com.example.hackernews.models.NewsM
+import com.example.hackernews.ui.main.article.ArticleFragment
+import com.example.hackernews.ui.main.comment.CommentFragment
+import com.example.hackernews.data.model.NewsM
 
 class NewsTabsAdapter(
     fragmentManager: FragmentManager,

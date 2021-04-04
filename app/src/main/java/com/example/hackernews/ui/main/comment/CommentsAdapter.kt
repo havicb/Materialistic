@@ -1,4 +1,4 @@
-package com.example.hackernews.comments
+package com.example.hackernews.ui.main.comment
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.R
-import com.example.hackernews.models.Comment
+import com.example.hackernews.data.model.Comment
 
 class CommentsAdapter(
     var allComments: ArrayList<Comment> = ArrayList()

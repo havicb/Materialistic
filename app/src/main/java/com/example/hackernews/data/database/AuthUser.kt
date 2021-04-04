@@ -1,8 +1,5 @@
-package com.example.hackernews.auth
+package com.example.hackernews.data.database
 
-import android.R
-import android.content.Context
-import android.widget.Toast
 import com.example.hackernews.callbacks.Callback
 import com.example.hackernews.callbacks.LoginCallback
 import com.google.firebase.auth.*

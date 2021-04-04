@@ -1,4 +1,4 @@
-package com.example.hackernews.constants
+package com.example.hackernews.data.constants
 
 object Api {
     const val BASE_URL = "https://hacker-news.firebaseio.com/v0/"

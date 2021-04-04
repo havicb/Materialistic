@@ -1,4 +1,4 @@
-package com.example.hackernews.models
+package com.example.hackernews.data.model
 
 import java.io.Serializable
 

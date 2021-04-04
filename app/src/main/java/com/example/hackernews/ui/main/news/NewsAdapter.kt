@@ -1,4 +1,4 @@
-package com.example.hackernews.news
+package com.example.hackernews.ui.main.news
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.R
-import com.example.hackernews.helpers.Helper
-import com.example.hackernews.models.NewsM
+import com.example.hackernews.data.helpers.Helper
+import com.example.hackernews.data.model.NewsM
 
 class NewsAdapter(
     var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listener: (NewsM) -> Unit,

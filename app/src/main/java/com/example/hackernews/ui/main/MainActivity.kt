@@ -1,4 +1,4 @@
-package com.example.hackernews
+package com.example.hackernews.ui.main
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -15,19 +15,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.hackernews.R
 import com.example.hackernews.auth.AuthState
-import com.example.hackernews.auth.AuthUser
+import com.example.hackernews.data.database.AuthUser
 import com.example.hackernews.auth.LoginDialog
 import com.example.hackernews.callbacks.LoadDataCallback
 import com.example.hackernews.callbacks.LoginCallback
 import com.example.hackernews.callbacks.OnSwipe
-import com.example.hackernews.constants.Constants
-import com.example.hackernews.data.CallApi
-import com.example.hackernews.data.UserPostDAO
+import com.example.hackernews.data.constants.Constants
+import com.example.hackernews.data.api.CallApi
+import com.example.hackernews.data.database.UserPostDAO
 import com.example.hackernews.databinding.ActivityMainBinding
-import com.example.hackernews.models.NewsM
-import com.example.hackernews.news.NewsAdapter
-import com.example.hackernews.news.NewsDataType
+import com.example.hackernews.data.model.NewsM
+import com.example.hackernews.ui.main.news.NewsAdapter
+import com.example.hackernews.ui.main.news.NewsDataType
 import com.example.hackernews.swipes.Swipes
 import com.google.android.material.navigation.NavigationView
 import java.io.Serializable
@@ -49,13 +50,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.appBarMain.mainToolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
+        setUpScreen()
+    }
+
+    private fun setUpScreen() {
+        setUpToolbar()
         setNavigationHeader()
         setUpMainRecyclerView()
         apiCall.getStories(NewsDataType.TOP_STORIES, this)
+        onLoggedIn()
+    }
+
+    private fun setUpToolbar() {
         setSupportActionBar(binding.appBarMain.mainToolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
         binding.appBarMain.searchView.setOnSearchClickListener {
             removeFromToolbar()
         }
@@ -64,7 +73,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             addToToolbar()
             false
         }
-        onLoggedIn()
     }
 
     override fun onLeft(currentElement: Int) {

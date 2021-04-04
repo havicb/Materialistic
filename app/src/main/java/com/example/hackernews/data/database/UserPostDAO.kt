@@ -1,7 +1,8 @@
-package com.example.hackernews.data
+package com.example.hackernews.data.database
 
 import android.util.Log
 import com.example.hackernews.callbacks.LoadDataCallback
+import com.example.hackernews.data.api.CallApi
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -10,7 +11,6 @@ import com.google.firebase.database.ValueEventListener
 class UserPostDAO() {
     private val firebaseDB = FirebaseDatabase.getInstance()
     private val databaseRef = firebaseDB.getReference("saved_user_post")
-
 
     fun savePost(userToken: String, postID: Int) {
         databaseRef.child(userToken).push().setValue(postID)

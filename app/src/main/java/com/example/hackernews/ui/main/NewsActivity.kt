@@ -1,17 +1,19 @@
-package com.example.hackernews
+package com.example.hackernews.ui.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.example.hackernews.ui.main.article.ArticleFragment
 import com.example.hackernews.callbacks.LoadCommentCallback
-import com.example.hackernews.constants.Constants
-import com.example.hackernews.data.CallApi
+import com.example.hackernews.data.constants.Constants
+import com.example.hackernews.data.api.CallApi
 import com.example.hackernews.databinding.ActivityNewsBinding
-import com.example.hackernews.helpers.Helper
-import com.example.hackernews.models.Comment
-import com.example.hackernews.models.NewsM
-import com.example.hackernews.news.NewsTabsAdapter
+import com.example.hackernews.data.helpers.Helper
+import com.example.hackernews.data.model.Comment
+import com.example.hackernews.data.model.NewsM
+import com.example.hackernews.ui.main.news.NewsTabsAdapter
+import com.example.hackernews.ui.main.comment.CommentFragment
 import com.google.android.material.tabs.TabLayout
 
 class NewsActivity : AppCompatActivity() {

@@ -1,6 +1,6 @@
 package com.example.hackernews.callbacks
 
-import com.example.hackernews.models.Comment
+import com.example.hackernews.data.model.Comment
 
 interface LoadCommentCallback {
     fun onCommentLoaded(comment: Comment)

@@ -85,16 +85,14 @@
                 tools:text="belmin"
                 android:textSize="14sp"/>
         </LinearLayout>
-
-
     </LinearLayout>
-
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ll_news_info"
+        android:background="@color/news_id_color"
         app:tabTextColor="@color/black" />
 
     <androidx.viewpager2.widget.ViewPager2

@@ -12,7 +12,8 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.example.hackernews.R
 import com.example.hackernews.callbacks.Callback
 import com.example.hackernews.callbacks.LoginCallback
-import com.example.hackernews.helpers.Helper
+import com.example.hackernews.data.database.AuthUser
+import com.example.hackernews.data.helpers.Helper
 import java.lang.Exception
 
 class LoginDialog(val listener: LoginCallback, val callContext: Context) : AppCompatDialogFragment() {

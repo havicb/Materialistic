@@ -1,4 +1,4 @@
-package com.example.hackernews
+package com.example.hackernews.ui.main.comment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.hackernews.comments.CommentsAdapter
-import com.example.hackernews.data.CallApi
+import com.example.hackernews.ui.main.NewsActivity
+import com.example.hackernews.data.api.CallApi
 import com.example.hackernews.databinding.FragmentCommentBinding
 
 class CommentFragment : Fragment() {

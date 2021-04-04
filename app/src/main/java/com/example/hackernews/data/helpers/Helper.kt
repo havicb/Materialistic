@@ -1,4 +1,4 @@
-package com.example.hackernews.helpers
+package com.example.hackernews.data.helpers
 
 import android.content.Context
 import android.icu.text.RelativeDateTimeFormatter

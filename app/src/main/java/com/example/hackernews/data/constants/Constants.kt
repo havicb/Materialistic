@@ -1,4 +1,4 @@
-package com.example.hackernews.constants
+package com.example.hackernews.data.constants
 
 object Constants {
     const val SELECTED_NEWS = "selected_news"
