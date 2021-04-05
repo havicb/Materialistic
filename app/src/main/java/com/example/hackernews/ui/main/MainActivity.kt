@@ -19,9 +19,9 @@ import com.example.hackernews.R
 import com.example.hackernews.auth.AuthState
 import com.example.hackernews.data.database.AuthUser
 import com.example.hackernews.auth.LoginDialog
-import com.example.hackernews.callbacks.LoadDataCallback
-import com.example.hackernews.callbacks.LoginCallback
-import com.example.hackernews.callbacks.OnSwipe
+import com.example.hackernews.data.callbacks.LoadDataCallback
+import com.example.hackernews.data.callbacks.LoginCallback
+import com.example.hackernews.data.callbacks.OnSwipe
 import com.example.hackernews.data.constants.Constants
 import com.example.hackernews.data.api.CallApi
 import com.example.hackernews.data.database.UserPostDAO
@@ -29,7 +29,7 @@ import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.data.model.NewsM
 import com.example.hackernews.ui.main.news.NewsAdapter
 import com.example.hackernews.ui.main.news.NewsDataType
-import com.example.hackernews.swipes.Swipes
+import com.example.hackernews.ui.main.swipes.Swipes
 import com.google.android.material.navigation.NavigationView
 import java.io.Serializable
 

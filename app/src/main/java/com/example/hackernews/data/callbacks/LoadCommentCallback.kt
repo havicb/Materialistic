@@ -1,4 +1,4 @@
-package com.example.hackernews.callbacks
+package com.example.hackernews.data.callbacks
 
 import com.example.hackernews.data.model.Comment
 

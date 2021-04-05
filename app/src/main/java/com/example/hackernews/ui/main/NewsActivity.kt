@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.hackernews.ui.main.article.ArticleFragment
-import com.example.hackernews.callbacks.LoadCommentCallback
+import com.example.hackernews.data.callbacks.LoadCommentCallback
 import com.example.hackernews.data.constants.Constants
 import com.example.hackernews.data.api.CallApi
 import com.example.hackernews.databinding.ActivityNewsBinding
@@ -26,10 +26,6 @@ class NewsActivity : AppCompatActivity() {
     private val apiCall: CallApi by lazy {
         CallApi(this@NewsActivity)
     }
-
-    private lateinit var adapter: NewsTabsAdapter
-    private lateinit var tabLayout: TabLayout
-    private lateinit var viewPager: ViewPager2
 
     private val articleFragment: ArticleFragment by lazy {
         ArticleFragment.newInstance(selectedNews.url)
@@ -60,19 +56,13 @@ class NewsActivity : AppCompatActivity() {
 
 
     private fun initViewPagerAndTabs() {
-        tabLayout = binding.tabLayout
-        viewPager = binding.viewPager2
+        binding.viewPager2.adapter = NewsTabsAdapter(supportFragmentManager, lifecycle, selectedNews)
+        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Comments"))
+        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Article"))
 
-        adapter = NewsTabsAdapter(supportFragmentManager, lifecycle, selectedNews)
-
-        viewPager.adapter = adapter
-
-        tabLayout.addTab(tabLayout.newTab().setText("Comments"))
-        tabLayout.addTab(tabLayout.newTab().setText("Article"))
-
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                viewPager.currentItem = tab!!.position
+                binding.viewPager2.currentItem = tab!!.position
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -84,9 +74,9 @@ class NewsActivity : AppCompatActivity() {
             }
         })
 
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        binding.viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                tabLayout.selectTab(tabLayout.getTabAt(position))
+                binding.tabLayout.selectTab(binding.tabLayout.getTabAt(position))
             }
         })
     }

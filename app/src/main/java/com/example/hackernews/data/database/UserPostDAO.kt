@@ -1,7 +1,7 @@
 package com.example.hackernews.data.database
 
 import android.util.Log
-import com.example.hackernews.callbacks.LoadDataCallback
+import com.example.hackernews.data.callbacks.LoadDataCallback
 import com.example.hackernews.data.api.CallApi
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

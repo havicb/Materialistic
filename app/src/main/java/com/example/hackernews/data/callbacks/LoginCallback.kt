@@ -1,4 +1,4 @@
-package com.example.hackernews.callbacks
+package com.example.hackernews.data.callbacks
 
 interface LoginCallback {
     fun onLoggedIn(username: String?)

@@ -5,20 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.ui.main.NewsActivity
 import com.example.hackernews.data.api.CallApi
+import com.example.hackernews.data.model.Comment
 import com.example.hackernews.databinding.FragmentCommentBinding
 
 class CommentFragment : Fragment() {
 
     private lateinit var binding: FragmentCommentBinding
-
+    private lateinit var apiCall: CallApi
     val commentAdapter: CommentsAdapter by lazy {
         CommentsAdapter()
     }
-    private lateinit var apiCall: CallApi
+    private lateinit var viewModel: CommentViewModel
+    private lateinit var factory: CommentViewModelFactory
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,18 +34,22 @@ class CommentFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentCommentBinding.inflate(layoutInflater)
-        binding.newsComments.layoutManager = LinearLayoutManager(context)
-        loadParentComments(binding.newsComments)
-        binding.newsComments.adapter = commentAdapter
-        binding.newsComments.visibility = View.VISIBLE
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        factory = CommentViewModelFactory()
+        viewModel = ViewModelProvider(this, factory).get(CommentViewModel::class.java)
+        binding.newsComments.layoutManager = LinearLayoutManager(context)
+        commentAdapter.addComments(viewModel.comments.value as ArrayList<Comment>)
+        binding.newsComments.adapter = commentAdapter
     }
 
     companion object {
         @JvmStatic
         fun newInstance() =
-            CommentFragment().apply {
-            }
+            CommentFragment().apply {}
     }
 
     fun loadParentComments(view: RecyclerView?) {

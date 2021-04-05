@@ -10,8 +10,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.example.hackernews.R
-import com.example.hackernews.callbacks.Callback
-import com.example.hackernews.callbacks.LoginCallback
+import com.example.hackernews.data.callbacks.Callback
+import com.example.hackernews.data.callbacks.LoginCallback
 import com.example.hackernews.data.database.AuthUser
 import com.example.hackernews.data.helpers.Helper
 import java.lang.Exception
