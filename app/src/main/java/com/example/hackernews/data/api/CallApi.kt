@@ -2,13 +2,13 @@ package com.example.hackernews.data.api
 
 import android.content.Context
 import android.util.Log
-import com.example.hackernews.data.callbacks.LoadCommentCallback
-import com.example.hackernews.data.callbacks.LoadDataCallback
-import com.example.hackernews.data.constants.Api
-import com.example.hackernews.data.helpers.Helper
-import com.example.hackernews.data.model.Comment
-import com.example.hackernews.data.model.NewsM
-import com.example.hackernews.ui.main.news.NewsDataType
+import com.example.hackernews.common.callbacks.LoadCommentCallback
+import com.example.hackernews.common.callbacks.LoadDataCallback
+import com.example.hackernews.common.constants.Api
+import com.example.hackernews.common.helpers.Helper
+import com.example.hackernews.model.Comment
+import com.example.hackernews.model.NewsM
+import com.example.hackernews.common.enums.NewsDataType
 import com.example.hackernews.data.service.NewsService
 import kotlinx.coroutines.*
 import retrofit2.Call

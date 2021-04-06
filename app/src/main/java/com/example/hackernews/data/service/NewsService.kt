@@ -1,7 +1,7 @@
 package com.example.hackernews.data.service
 
-import com.example.hackernews.data.model.Comment
-import com.example.hackernews.data.model.NewsM
+import com.example.hackernews.model.Comment
+import com.example.hackernews.model.NewsM
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET

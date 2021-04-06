@@ -1,7 +1,7 @@
 package com.example.hackernews.data.database
 
-import com.example.hackernews.data.callbacks.Callback
-import com.example.hackernews.data.callbacks.LoginCallback
+import com.example.hackernews.common.callbacks.Callback
+import com.example.hackernews.common.callbacks.LoginCallback
 import com.google.firebase.auth.*
 import java.lang.Exception
 
