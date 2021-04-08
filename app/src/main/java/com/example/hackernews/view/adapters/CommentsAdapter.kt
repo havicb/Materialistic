@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.R
-import com.example.hackernews.model.Comment
+import com.example.hackernews.model.network.Comment
 
 class CommentsAdapter(
     var allComments: ArrayList<Comment> = ArrayList()

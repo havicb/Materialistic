@@ -10,8 +10,8 @@ import com.example.hackernews.common.constants.Constants
 import com.example.hackernews.data.api.CallApi
 import com.example.hackernews.databinding.ActivityNewsBinding
 import com.example.hackernews.common.helpers.Helper
-import com.example.hackernews.model.Comment
-import com.example.hackernews.model.NewsM
+import com.example.hackernews.model.network.Comment
+import com.example.hackernews.model.network.NewsM
 import com.example.hackernews.view.adapters.NewsTabsAdapter
 import com.example.hackernews.view.fragments.CommentFragment
 import com.google.android.material.tabs.TabLayout

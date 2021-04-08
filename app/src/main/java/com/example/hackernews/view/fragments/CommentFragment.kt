@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.view.activities.NewsActivity
 import com.example.hackernews.data.api.CallApi
-import com.example.hackernews.model.Comment
+import com.example.hackernews.model.network.Comment
 import com.example.hackernews.databinding.FragmentCommentBinding
 import com.example.hackernews.view.adapters.CommentsAdapter
 import com.example.hackernews.viewmodel.comment.CommentViewModel

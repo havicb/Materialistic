@@ -6,7 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.hackernews.view.fragments.ArticleFragment
 import com.example.hackernews.view.fragments.CommentFragment
-import com.example.hackernews.model.NewsM
+import com.example.hackernews.model.network.NewsM
 
 class NewsTabsAdapter(
     fragmentManager: FragmentManager,

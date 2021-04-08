@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.R
 import com.example.hackernews.common.helpers.Helper
-import com.example.hackernews.model.NewsM
+import com.example.hackernews.model.network.NewsM
 
 class NewsAdapter(
     var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listener: (NewsM) -> Unit,

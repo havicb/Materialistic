@@ -3,13 +3,13 @@ package com.example.hackernews.view.activities
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -17,19 +17,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.R
 import com.example.hackernews.common.enums.AuthState
-import com.example.hackernews.data.database.AuthUser
 import com.example.hackernews.view.dialog.LoginDialog
 import com.example.hackernews.common.callbacks.LoadDataCallback
 import com.example.hackernews.common.callbacks.LoginCallback
 import com.example.hackernews.common.callbacks.OnSwipe
 import com.example.hackernews.common.constants.Constants
 import com.example.hackernews.data.api.CallApi
-import com.example.hackernews.data.database.UserPostDAO
 import com.example.hackernews.databinding.ActivityMainBinding
-import com.example.hackernews.model.NewsM
+import com.example.hackernews.model.network.NewsM
 import com.example.hackernews.view.adapters.NewsAdapter
 import com.example.hackernews.common.enums.NewsDataType
+import com.example.hackernews.model.database.MaterialisticDatabase
+import com.example.hackernews.model.repository.MaterialisticRepository
 import com.example.hackernews.view.swipes.Swipes
+import com.example.hackernews.viewmodel.user.UserViewModel
+import com.example.hackernews.viewmodel.user.UserViewModelFactory
 import com.google.android.material.navigation.NavigationView
 import java.io.Serializable
 
@@ -39,11 +41,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var binding: ActivityMainBinding
     private lateinit var newsAdapter: NewsAdapter
     private lateinit var recyclerView: RecyclerView
-    private lateinit var actionBarToggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
     private lateinit var loginCallback: LoginCallback
-    private val userPostDAO = UserPostDAO()
     private val apiCall = CallApi(this)
+    private val database by lazy {
+        MaterialisticDatabase.getInstance(this)
+    }
+
+    private val repository by lazy {
+        MaterialisticRepository(database.userDao())
+    }
+
+    private val userViewModel : UserViewModel by viewModels {
+        UserViewModelFactory(repository)
+    }
 
     @SuppressLint("RtlHardcoded", "RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +62,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpScreen()
+        /* if i call here something like this
+         userViewModel.loggedUser.observe() { user ->
+          // todo do some logic with retrieved user
+         }
+         it gives me null pointer exception
+         I tried to google, but i could not find answer, and i have not seen calling room within activity
+         Probably this method onCreate() is called before room instance have initialized so it gives me exception
+         Maybe I should call this from fragment, but that fragment needs to be in navigationViewHeader, so idk if it is possible
+         */
     }
 
     private fun setUpScreen() {
@@ -75,18 +95,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun onLeft(currentElement: Int) {
-        val tokenUser = AuthUser.getToken()
+    override fun swipeOnLeft(currentElement: Int) {
+            // todo get user token
         val newsId = newsAdapter.getNews(currentElement)!!.id
+        /*
         if (tokenUser == null) {
             Toast.makeText(this, "You need to be logged in!", Toast.LENGTH_LONG).show()
         } else {
             Toast.makeText(this, "Saving story..", Toast.LENGTH_LONG).show()
             userPostDAO.savePost(tokenUser, newsId)
-        }
+        }*/
     }
 
-    override fun onRight(currentElement: Int) {
+    override fun swipeOnRight(currentElement: Int) {
         Toast.makeText(this, "Title swiped", Toast.LENGTH_LONG).show()
     }
 
@@ -102,7 +123,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         loginCallback = object : LoginCallback {
             override fun onLoggedIn(username: String?) {
                 updateUI(username, AuthState.LOGGED_IN)
-                Log.d("TOKEN", AuthUser.getToken()!!)
+
             }
 
             override fun onLoggedFailed() {
@@ -121,7 +142,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             logOutBtn.visibility = View.VISIBLE
             binding.drawerLayout.closeDrawer(Gravity.START)
             logOutBtn.setOnClickListener {
-                AuthUser.logOut()
+                // todo logout
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 logOutBtn.visibility = View.GONE
                 logOutText.text = "Login"
@@ -146,7 +167,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun startLoginDialog() {
-        val loginDialog = LoginDialog(loginCallback, this@MainActivity)
+        val loginDialog = LoginDialog(userViewModel, loginCallback, this@MainActivity)
         loginDialog.show(supportFragmentManager, "Login dialog")
     }
 
@@ -182,7 +203,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return super.onOptionsItemSelected(item)
     }
 
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.side_top_stories -> {
@@ -206,7 +226,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 newsAdapter.clear()
                 apiCall.stopLoadingNews()
-                AuthUser.getToken()?.let { userPostDAO.loadPosts(it, this, this.apiCall) }
+                // todo load saved user post
             }
             R.id.side_settings -> {
                 Toast.makeText(this, "Clicked on settings", Toast.LENGTH_LONG).show()

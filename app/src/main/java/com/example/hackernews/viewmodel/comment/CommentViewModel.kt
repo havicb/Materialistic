@@ -3,7 +3,7 @@ package com.example.hackernews.viewmodel.comment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.hackernews.model.Comment
+import com.example.hackernews.model.network.Comment
 
 class CommentViewModel() : ViewModel() {
 

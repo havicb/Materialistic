@@ -1,4 +1,4 @@
-package com.example.hackernews.model
+package com.example.hackernews.model.network
 
 import java.io.Serializable
 
@@ -14,3 +14,5 @@ data class NewsM(
         val type: String,
         var url: String
 ) : Serializable
+
+

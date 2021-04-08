@@ -21,9 +21,9 @@ class Swipes(val context: Context, val onSwipe: OnSwipe) :
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         if (swipeLeft) {
-            onSwipe.onLeft(viewHolder.adapterPosition)
+            onSwipe.swipeOnLeft(viewHolder.adapterPosition)
         } else {
-            onSwipe.onRight(viewHolder.adapterPosition)
+            onSwipe.swipeOnRight(viewHolder.adapterPosition)
         }
     }
 

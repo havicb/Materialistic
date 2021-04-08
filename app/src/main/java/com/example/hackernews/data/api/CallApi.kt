@@ -6,8 +6,8 @@ import com.example.hackernews.common.callbacks.LoadCommentCallback
 import com.example.hackernews.common.callbacks.LoadDataCallback
 import com.example.hackernews.common.constants.Api
 import com.example.hackernews.common.helpers.Helper
-import com.example.hackernews.model.Comment
-import com.example.hackernews.model.NewsM
+import com.example.hackernews.model.network.Comment
+import com.example.hackernews.model.network.NewsM
 import com.example.hackernews.common.enums.NewsDataType
 import com.example.hackernews.data.service.NewsService
 import kotlinx.coroutines.*

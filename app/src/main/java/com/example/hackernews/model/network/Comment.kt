@@ -1,4 +1,4 @@
-package com.example.hackernews.model
+package com.example.hackernews.model.network
 
 import java.io.Serializable
 
@@ -11,3 +11,4 @@ data class Comment(
         val time: Long,
         val type: String
 ) : Serializable
+

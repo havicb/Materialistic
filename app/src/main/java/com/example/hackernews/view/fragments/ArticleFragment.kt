@@ -26,6 +26,8 @@ class ArticleFragment : Fragment() {
         }
     }
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,6 +41,7 @@ class ArticleFragment : Fragment() {
         viewModel = ViewModelProvider(this, factory).get(ArticleFragmentViewModel::class.java)
         binding.articleWebView.webViewClient = viewModel.client.value!!
         binding.articleWebView.loadUrl(viewModel.url.value!!)
+
     }
 
     companion object {
