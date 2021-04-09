@@ -13,10 +13,12 @@ interface UserDAO {
     @Insert
     suspend fun insert(user: User)
 
+    @Query("UPDATE User set is_logged = 1 where user_username = :username AND user_password = :password")
+    suspend fun logIn(username: String, password: String)
+
     @Query("SELECT * from USER order by id")
     fun getAllUser() : Flow<List<User>>
 
-    @Query("SELECT * from USER where id = :user_id")
-    fun getUserByID(user_id: Int) : LiveData<User>
-
+    @Query("SELECT * from user where user_username =:username and user_password = :password")
+    fun getLoggedUser(username: String, password: String) : LiveData<User?>
 }
