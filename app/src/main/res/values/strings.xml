@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">HackerNews</string>
     <string name="last_updated_1_min_ago">Last updated 1 min ago</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
