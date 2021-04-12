@@ -19,11 +19,13 @@
 
     <Button
         android:id="@+id/log_out_btn"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:visibility="gone"
-        android:background="@drawable/ic_baseline_logout_24"/>
+        android:layout_height="30dp"
+        android:layout_width="30dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:visibility="visible"
+        android:background="@drawable/ic_baseline_power_settings_new_24"/>
 
 </LinearLayout>

@@ -12,6 +12,9 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -62,6 +65,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpScreen()
+
         /* if i call here something like this
          userViewModel.loggedUser.observe() { user ->
           // todo do some logic with retrieved user
@@ -71,6 +75,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
          Probably this method onCreate() is called before room instance have initialized so it gives me exception
          Maybe I should call this from fragment, but that fragment needs to be in navigationViewHeader, so idk if it is possible
          */
+    }
+
+    override fun onStart() {
+        super.onStart()
+        userViewModel.userList.observe(this) { users ->
+            users.let {
+                Toast.makeText(this, "Broj u bazi ${users.size}", Toast.LENGTH_SHORT).show()
+                it.forEach {
+                    Toast.makeText(this, "${it.username} ${it.isLogged}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun setUpScreen() {
@@ -123,7 +139,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         loginCallback = object : LoginCallback {
             override fun onLoggedIn(username: String?) {
                 updateUI(username, AuthState.LOGGED_IN)
-
             }
 
             override fun onLoggedFailed() {
@@ -134,20 +149,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun updateUI(username: String?, authState: AuthState) {
         if (authState == AuthState.LOGGED_IN) {
-            val logOutText = binding.navigationView.getHeaderView(0)
-                .findViewById<TextView>(R.id.nav_header_login_textView)
-            val logOutBtn =
-                binding.navigationView.getHeaderView(0).findViewById<Button>(R.id.log_out_btn)
+            Toast.makeText(this, "Welcome $username", Toast.LENGTH_SHORT).show()
+            val logOutText = binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.nav_header_login_textView)
+            val logOutBtn = binding.navigationView.getHeaderView(0).findViewById<Button>(R.id.log_out_btn)
             logOutText.text = username
             logOutBtn.visibility = View.VISIBLE
             binding.drawerLayout.closeDrawer(Gravity.START)
             logOutBtn.setOnClickListener {
-                // todo logout
-                binding.drawerLayout.closeDrawer(Gravity.START)
                 logOutBtn.visibility = View.GONE
                 logOutText.text = "Login"
             }
         } else if (authState == AuthState.LOGIN_FAILED) {
+            Toast.makeText(this@MainActivity, "Failed to log", Toast.LENGTH_SHORT).show()
             binding.drawerLayout.closeDrawer(Gravity.START)
         }
     }
@@ -169,6 +182,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun startLoginDialog() {
         val loginDialog = LoginDialog(userViewModel, loginCallback, this@MainActivity)
         loginDialog.show(supportFragmentManager, "Login dialog")
+
     }
 
     private fun initDrawerLayout() {

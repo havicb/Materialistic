@@ -15,6 +15,9 @@ data class User(
     @ColumnInfo(name="user_token")
     val token: String,
 
+    @ColumnInfo(name = "is_logged", defaultValue = 0.toString())
+    val isLogged: Int,
+
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 )

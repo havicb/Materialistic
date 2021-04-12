@@ -9,10 +9,17 @@ import com.example.hackernews.model.repository.MaterialisticRepository
 import kotlinx.coroutines.launch
 
 class UserViewModel(private val repository: MaterialisticRepository) : ViewModel() {
+
     val userList: LiveData<List<User>> = repository.allUsers.asLiveData()
-    val loggedUser : LiveData<User> = repository.loggedUser
+    var user: LiveData<User?>? = null
 
     fun insert(user: User) = viewModelScope.launch {
         repository.insertUser(user)
     }
+
+    fun logUser(username: String, password: String) = viewModelScope.launch {
+        repository.loginUser(username, password)
+        user = repository.loggedUser
+    }
+
 }
