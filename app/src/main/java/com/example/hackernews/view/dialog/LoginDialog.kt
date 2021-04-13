@@ -19,6 +19,9 @@ import com.example.hackernews.view.activities.MainActivity
 import com.example.hackernews.viewmodel.user.UserViewModel
 import java.util.*
 
+/**
+ * Create LoginViewModel and handle login logic there.
+ */
 class LoginDialog(
     private val userViewModel: UserViewModel,
     val listener: LoginCallback,

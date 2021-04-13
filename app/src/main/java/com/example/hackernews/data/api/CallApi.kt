@@ -28,23 +28,6 @@ class CallApi(val context: Context) : Serializable {
     }
     private var job: Job? = null
 
-    fun getStories(newsDataType: NewsDataType, loadData: LoadDataCallback) {
-        val allNews = ArrayList<NewsM>()
-        job = CoroutineScope(Dispatchers.IO).launch {
-            val storiesIds = retrofit.getStoriesIds(newsDataType.rawValue).body() as ArrayList<Int>
-            (storiesIds.indices).forEach {
-                val news = loadNews(storiesIds[it])
-                allNews.add(news!!)
-                withContext(Dispatchers.Main) {
-                    if (storiesIds.isNotEmpty() && allNews.isNotEmpty()) {
-                        loadData.onSuccess(news)
-                    } else
-                        loadData.onFailed(throw Exception("Failed to load data"))
-                }
-            }
-        }
-    }
-
     fun loadComments(commentsId: List<Int>, loadCommentCallback: LoadCommentCallback) {
         commentsId.indices.forEach {
             loadComment(commentsId[it], loadCommentCallback)
@@ -83,12 +66,6 @@ class CallApi(val context: Context) : Serializable {
                 TODO("Not yet implemented")
             }
         })
-    }
-
-    suspend fun loadNews(newsId: Int): NewsM? {
-        return retrofit.getSingleStory(newsId).body().also { newsM ->
-            newsM?.time = Helper.toHours(newsM?.time.toString())
-        }
     }
 }
 
