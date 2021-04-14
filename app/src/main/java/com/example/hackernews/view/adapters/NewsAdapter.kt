@@ -1,82 +1,60 @@
 package com.example.hackernews.view.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.hackernews.R
 import com.example.hackernews.common.helpers.Helper
+import com.example.hackernews.databinding.NewsRowBinding
 import com.example.hackernews.model.network.NewsM
 
 class NewsAdapter(
-    var allNews: ArrayList<NewsM> = ArrayList<NewsM>(), val listener: (NewsM) -> Unit,
-    var savedNews: ArrayList<NewsM> = ArrayList<NewsM>()
+    private val allNews: ArrayList<NewsM> = arrayListOf(),
+    private val listener: (NewsM) -> Unit
 ) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
-    inner class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var tvID: TextView = view.findViewById(R.id.news_id)
-        val tvTitle: TextView = view.findViewById(R.id.news_title)
-        val tvNewsScore: TextView = view.findViewById(R.id.news_score)
-        val tvNewsUrl: TextView = view.findViewById(R.id.news_url)
-        val tvNewsTimePublished: TextView = view.findViewById(R.id.time_published)
-        val tvNewsPublisher: TextView = view.findViewById(R.id.news_publisher)
-        val tvCommentsNum: TextView = view.findViewById(R.id.tv_num_comments)
+    init {
+        /**
+         * setHasStableIds is an optimization hint that you can give to the recycler.
+         * You're telling it "when I provide a ViewHolder, its id is unique and will not change."
+         * So when you call notifyDataSetChanged with new list, recycler view will look at item's ids
+         * and it won't redraw items found with the same ids. This works together with getItemId method.
+         */
+        setHasStableIds(true)
+    }
 
-        init {
-            view.setOnClickListener {
-                listener.invoke(allNews[adapterPosition])
-            }
+    class NewsViewHolder(
+        private val binding: NewsRowBinding,
+        private val listener: (NewsM) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(news: NewsM) {
+            binding.newsId.text = news.idToShow.toString()
+            binding.newsTitle.text = news.title
+            binding.newsScore.text = news.score.toString()
+            binding.newsUrl.text = Helper.getMainUrl(news.url)
+            binding.timePublished.text = Helper.humanReadableDate(news.time)
+            binding.newsPublisher.text = news.by
+            binding.tvNumComments.text = news.kids?.size.toString()
+            listener(news)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.news_row, parent, false);
-        return NewsViewHolder(view)
+        val binding = NewsRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return NewsViewHolder(binding, listener)
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.tvID.text = allNews[position].idToShow.toString()
-        holder.tvTitle.text = allNews[position].title
-        holder.tvNewsScore.text = allNews[position].score.toString()
-        holder.tvNewsUrl.text = Helper.getMainUrl(allNews[position].url)
-        holder.tvNewsTimePublished.text = Helper.humanReadableDate(allNews[position].time)
-        holder.tvNewsPublisher.text = allNews[position].by
-        holder.tvCommentsNum.text = Helper.countList(allNews[position].kids).toString()
+        holder.bind(allNews[position])
     }
 
-    override fun getItemCount(): Int {
-        return allNews.size
-    }
+    override fun getItemCount(): Int = allNews.size
 
-    fun addNews(myList: ArrayList<NewsM>) {
-        clear()
-        allNews = myList
-        notifyDataSetChanged()
-    }
+    override fun getItemId(position: Int): Long = allNews[position].id.toLong()
 
-    fun getNews(currentPosition: Int): NewsM? {
-        return allNews[currentPosition]
-    }
-
-    fun addNews(news: NewsM) {
-        news.idToShow = allNews.size + 1
-        allNews.add(news)
-        notifyDataSetChanged()
-    }
-
-    fun saveNews(news: NewsM) {
-        savedNews.add(news)
-        notifyDataSetChanged()
-    }
-
-    fun deleteNews(news: NewsM) {
-        savedNews.remove(news)
-        notifyDataSetChanged()
-    }
-
-    fun clear() {
+    fun addNews(data: List<NewsM>) {
         allNews.clear()
+        allNews.addAll(data)
         notifyDataSetChanged()
     }
 }
