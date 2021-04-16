@@ -1,9 +1,8 @@
 package com.example.hackernews.viewmodel
 
 import androidx.lifecycle.*
-import com.example.hackernews.factories.RepositoryFactory
 import com.example.hackernews.common.enums.NewsDataType
-import com.example.hackernews.model.network.NewsM
+import com.example.hackernews.model.network.News
 import com.example.hackernews.model.repository.ApiError
 import com.example.hackernews.model.repository.NewsRepository
 
@@ -32,8 +31,9 @@ import com.example.hackernews.model.repository.NewsRepository
  * it will only expose data via observable properties. We'll use live data for for this purpose.
  */
 class MainViewModel(private val newsRepository: NewsRepository) : ViewModel() {
-    private val _topStories = arrayListOf<NewsM>()
-    val allNews = MutableLiveData<List<NewsM>>()
+    private val _topStories = arrayListOf<News>()
+    val clickedNews = MutableLiveData<News>()
+    val allNews = MutableLiveData<List<News>>()
 
     init {
         fetchNews()
@@ -55,20 +55,10 @@ class MainViewModel(private val newsRepository: NewsRepository) : ViewModel() {
 
     }
 
-    fun onNewsSelected(news: NewsM) {
-
+    fun onNewsSelected(news: News) {
+        clickedNews.value = news
     }
 
     fun topStoriesSelected() {
-
-    }
-}
-
-class MainViewModelFactory : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(RepositoryFactory.newsRepository) as T
-        }
-        throw IllegalArgumentException("Unknown view model class")
     }
 }

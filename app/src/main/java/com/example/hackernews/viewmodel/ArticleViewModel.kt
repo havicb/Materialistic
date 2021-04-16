@@ -1,11 +1,11 @@
-package com.example.hackernews.viewmodel.article
+package com.example.hackernews.viewmodel
 
 import android.webkit.WebViewClient
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class ArticleFragmentViewModel(initialUrl: String) : ViewModel() {
+class ArticleViewModel(initialUrl: String) : ViewModel() {
 
     private var newsUrl = MutableLiveData<String>()
     private var webViewClient = MutableLiveData<WebViewClient>()

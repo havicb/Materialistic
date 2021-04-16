@@ -2,7 +2,7 @@ package com.example.hackernews.model.repository
 
 import com.example.hackernews.common.enums.NewsDataType
 import com.example.hackernews.data.service.NewsService
-import com.example.hackernews.model.network.NewsM
+import com.example.hackernews.model.network.News
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,7 +20,7 @@ import retrofit2.Response
  *
  * Let us now create StoryRepository as an example.
  */
-typealias GetNewsCallback = (NewsM?, ApiError?) -> Unit
+typealias GetNewsCallback = (News?, ApiError?) -> Unit
 
 class NewsRepository(
     private val newsApi: NewsService
@@ -33,10 +33,12 @@ class NewsRepository(
      * Typealias is like nickname of a type.
      */
     fun getNews(newsDataType: NewsDataType, callback: GetNewsCallback) {
-        newsApi.getStoriesIds(newsDataType.rawValue).enqueue(object: Callback<List<Int>> {
+        newsApi.getStoriesIds(newsDataType.rawValue).enqueue(object : Callback<List<Int>> {
             override fun onResponse(call: Call<List<Int>>, response: Response<List<Int>>) {
-                if (response.isSuccessful) getStories(response.body()!!, callback)
-                else callback(null, ApiError(response.errorBody().toString()))
+                if (response.isSuccessful)
+                    getStories(response.body()!!, callback)
+                else
+                    callback(null, ApiError(response.errorBody().toString()))
             }
 
             override fun onFailure(call: Call<List<Int>>, t: Throwable) {
@@ -47,13 +49,15 @@ class NewsRepository(
 
     private fun getStories(storiedIds: List<Int>, callback: GetNewsCallback) {
         storiedIds.forEach { storyId ->
-            newsApi.getStory(storyId).enqueue(object: Callback<NewsM> {
-                override fun onResponse(call: Call<NewsM>, response: Response<NewsM>) {
-                    if (response.isSuccessful) callback(response.body(), null)
-                    else callback(null, ApiError(response.errorBody().toString()))
+            newsApi.getStory(storyId).enqueue(object : Callback<News> {
+                override fun onResponse(call: Call<News>, response: Response<News>) {
+                    if (response.isSuccessful)
+                        callback(response.body(), null)
+                    else
+                        callback(null, ApiError(response.errorBody().toString()))
                 }
 
-                override fun onFailure(call: Call<NewsM>, t: Throwable) {
+                override fun onFailure(call: Call<News>, t: Throwable) {
                     callback(null, ApiError(t.toString()))
                 }
             })

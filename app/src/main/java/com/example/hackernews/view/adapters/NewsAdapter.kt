@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.common.helpers.Helper
 import com.example.hackernews.databinding.NewsRowBinding
-import com.example.hackernews.model.network.NewsM
+import com.example.hackernews.model.network.News
 
 class NewsAdapter(
-    private val allNews: ArrayList<NewsM> = arrayListOf(),
-    private val listener: (NewsM) -> Unit
+    private val allNews: ArrayList<News> = arrayListOf(),
+    private val listener: (News) -> Unit
 ) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
     init {
@@ -23,11 +23,10 @@ class NewsAdapter(
     }
 
     class NewsViewHolder(
-        private val binding: NewsRowBinding,
-        private val listener: (NewsM) -> Unit
+        private val binding: NewsRowBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(news: NewsM) {
+        fun bind(news: News) {
             binding.newsId.text = news.idToShow.toString()
             binding.newsTitle.text = news.title
             binding.newsScore.text = news.score.toString()
@@ -35,24 +34,27 @@ class NewsAdapter(
             binding.timePublished.text = Helper.humanReadableDate(news.time)
             binding.newsPublisher.text = news.by
             binding.tvNumComments.text = news.kids?.size.toString()
-            listener(news)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         val binding = NewsRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return NewsViewHolder(binding, listener)
+        return NewsViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.bind(allNews[position])
+        val currentNews = allNews[position]
+        holder.bind(currentNews)
+        holder.itemView.setOnClickListener {
+            listener(currentNews)
+        }
     }
 
     override fun getItemCount(): Int = allNews.size
 
     override fun getItemId(position: Int): Long = allNews[position].id.toLong()
 
-    fun addNews(data: List<NewsM>) {
+    fun addNews(data: List<News>) {
         allNews.clear()
         allNews.addAll(data)
         notifyDataSetChanged()

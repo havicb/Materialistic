@@ -2,7 +2,7 @@ package com.example.hackernews.model.network
 
 import java.io.Serializable
 
-data class NewsM(
+data class News(
     val by: String,
     val descendants: Int,
     val id: Int,
