@@ -7,10 +7,10 @@ typealias CommentsCallBack = (Comment?, ApiError?) -> Unit
 
 class CommentsRepository(private val newsApi: NewsService) {
 
-    fun fetchComments(): ArrayList<Comment> {
+    fun fetchComments(): List<Comment> {
         val comments = ArrayList<Comment>()
         for (i in 0..5) {
-            comments.add(Comment("beli", i, null, 1321312, "Dummy comment", 123123, "comment"))
+            comments.add(Comment("belmin", i, null, 1321312, "Dummy comment", 123123, "comment"))
         }
         return comments
     }

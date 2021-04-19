@@ -1,38 +1,45 @@
 package com.example.hackernews.viewmodel
 
-import androidx.lifecycle.MutableLiveData
+import android.content.Context
+import androidx.annotation.WorkerThread
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.hackernews.model.entities.User
-import com.example.hackernews.model.repository.Insertable
 import com.example.hackernews.model.repository.UserRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class LoginViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+typealias ErrorCallBack = (Result) -> Unit
 
-    private val _allErrors = arrayListOf<String>()
-    val allErrors = MutableLiveData<List<String>>()
+sealed class Result {
+    class Success(val user: User) : Result()
+    class Failed(val errors: List<String>) : Result()
+}
 
-    fun registerUser(user: User) = viewModelScope.launch {
-        userRepository.insertRun(user, object : Insertable {
-            override fun invoke(user: User): Boolean {
-                return isUserAddable(user)
-            }
-        })
+class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
+
+    fun registerUser(user: User, errorCallBack: ErrorCallBack, context: Context) {
+        addUser(user, errorCallBack, context)
     }
 
-    private fun isUserAddable(user: User): Boolean {
-        if (user.username.isEmpty())
-            _allErrors.add("Username cannot be empty!")
-        if (user.password.isEmpty())
-            _allErrors.add("Password cannot be empty!")
-        if (user.username.length < 3)
-            _allErrors.add("Username must be at least 3 characters long!")
-        allErrors.value = _allErrors
+    fun insertUser(user: User) {
+        userRepository.insert(user)
+    }
 
-        return _allErrors.size == 0
+    @WorkerThread
+    private fun addUser(user: User, errorCallBack: ErrorCallBack, context: Context) {
+        val tempErrors = arrayListOf<String>()
+        if (user.username.isEmpty())
+            tempErrors.add("Username must be entered")
+        if (user.password.isEmpty())
+            tempErrors.add("Password must be entered")
+        if (user.username.length < 3)
+            tempErrors.add("Username should be at least 3 character long")
+        ContextCompat.getMainExecutor(context).execute {
+            if (tempErrors.size > 0)
+                errorCallBack(Result.Failed(tempErrors))
+            else {
+                errorCallBack(Result.Success(user))
+            }
+        }
+
     }
 }

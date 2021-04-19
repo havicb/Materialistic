@@ -7,7 +7,7 @@ import com.example.hackernews.model.repository.CommentsRepository
 
 
 class CommentsViewModel(private val commentsRepository: CommentsRepository) : ViewModel() {
-    private var _comments = arrayListOf<Comment>()
+    private var _comments = listOf<Comment>()
     val comments = MutableLiveData<List<Comment>>()
 
     init {

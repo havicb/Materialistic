@@ -1,5 +1,6 @@
 package com.example.hackernews.view.dialog
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
@@ -7,18 +8,20 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.viewModels
 import com.example.hackernews.databinding.LoginLayoutBinding
+import com.example.hackernews.factories.LoginViewModelFactory
 import com.example.hackernews.model.entities.User
 import com.example.hackernews.viewmodel.LoginViewModel
-import dagger.hilt.android.AndroidEntryPoint
+import com.example.hackernews.viewmodel.Result
 import java.util.*
+import java.util.concurrent.Executors
 
-typealias RegisterCallback = (User) -> Unit
-
-@AndroidEntryPoint
-class LoginDialog(val onRegister: RegisterCallback) : AppCompatDialogFragment() {
+class LoginDialog(private val activity: Activity) :
+    AppCompatDialogFragment() {
 
     private lateinit var binding: LoginLayoutBinding
-    private val loginViewModel: LoginViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels {
+        LoginViewModelFactory(requireContext())
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity)
@@ -37,16 +40,27 @@ class LoginDialog(val onRegister: RegisterCallback) : AppCompatDialogFragment() 
 
     private fun registerUser(username: String, password: String) {
         val user = User(username, password, UUID.randomUUID().toString(), 1)
-        loginViewModel.registerUser(user)
-        loginViewModel.allErrors.observe(this, { errors ->
-            errors.forEach { error ->
-                Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+        val executors = Executors.newSingleThreadExecutor()
+        executors.execute {
+            loginViewModel.registerUser(user, listener, requireContext())
+        }
+    }
+
+    private val listener: (Result) -> Unit = { result ->
+        when (result) {
+            is Result.Success -> {
+                Toast.makeText(context, "Welcome ${result.user.username}", Toast.LENGTH_SHORT)
+                    .show()
+                Executors.newSingleThreadExecutor().execute {
+                    loginViewModel.insertUser(result.user)
+                }
             }
-            if (errors.isEmpty()) {
-                Toast.makeText(context, "Welcome $username", Toast.LENGTH_LONG).show()
-                onRegister(user)
+            is Result.Failed -> {
+                result.errors.forEach { error ->
+                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                }
             }
-        })
+        }
     }
 
     private fun initViews(builder: AlertDialog.Builder) {

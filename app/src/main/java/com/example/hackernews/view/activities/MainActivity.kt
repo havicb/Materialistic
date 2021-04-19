@@ -23,10 +23,8 @@ import com.example.hackernews.view.dialog.LoginDialog
 import com.example.hackernews.view.swipes.Swipes
 import com.example.hackernews.viewmodel.MainViewModel
 import com.google.android.material.navigation.NavigationView
-import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 
-@AndroidEntryPoint
 class MainActivity :
     AppCompatActivity(),
     NavigationView.OnNavigationItemSelectedListener,
@@ -81,10 +79,7 @@ class MainActivity :
         }
 
         binding.navigationView.getHeaderView(0).setOnClickListener {
-            LoginDialog() { user ->
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                updateUI(user)
-            }.show(supportFragmentManager, "Login dialog")
+            LoginDialog(this@MainActivity).show(supportFragmentManager, "Login dialog")
         }
         binding.navigationView.setNavigationItemSelectedListener(this)
     }

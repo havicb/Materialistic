@@ -5,11 +5,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.hackernews.model.repository.CommentsRepository
 import com.example.hackernews.viewmodel.CommentsViewModel
 
-class CommentViewModelFactory(private val commentsRepository: CommentsRepository) :
-    ViewModelProvider.Factory {
+class CommentViewModelFactory() : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CommentsViewModel::class.java)) {
-            return CommentsViewModel(commentsRepository) as T
+            return CommentsViewModel(RepositoryFactory.commentsRepository) as T
         }
         throw IllegalArgumentException("Unknown view model class")
     }

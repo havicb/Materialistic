@@ -34,8 +34,12 @@ class ArticleFragment(private val url: String) : Fragment() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun loadUrl() {
-        binding.articleWebView.webViewClient = viewModel.client.value!!
-        binding.articleWebView.loadUrl(viewModel.url.value!!)
+        viewModel.client.observe(viewLifecycleOwner, {webViewClient ->
+            binding.articleWebView.webViewClient = webViewClient
+        })
+        viewModel.url.observe(viewLifecycleOwner, {url ->
+            binding.articleWebView.loadUrl(url)
+        })
         binding.articleWebView.settings.javaScriptEnabled = true
     }
 

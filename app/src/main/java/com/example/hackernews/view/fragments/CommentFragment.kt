@@ -21,7 +21,7 @@ class CommentFragment() : Fragment() {
         CommentsAdapter()
     }
     private val viewModel: CommentsViewModel by viewModels {
-        CommentViewModelFactory(RepositoryFactory.commentsRepository)
+        CommentViewModelFactory()
     }
 
     override fun onCreateView(
