@@ -9,15 +9,11 @@ import com.example.hackernews.model.repository.UserRepository
 class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     private val _isRegisterSuccessfull = MutableLiveData(false)
-    private val _registerErrors = MutableLiveData<List<String>>()
-    // List is immutable, string is also, but I am not sure in combination with mutable live data it gives a immutable variable?
+    val registerErrors = MutableLiveData<List<String>>()
 
     // doing immutability stuff
     val isRegisterSuccesful: LiveData<Boolean>
         get() = _isRegisterSuccessfull
-
-    val registerErrors: LiveData<List<String>>
-        get() = _registerErrors
 
     fun registerUser(user: User) {
         val errors = checkErrors(user)
@@ -25,7 +21,7 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
             userRepository.insert(user)
             _isRegisterSuccessfull.value = true
         } else {
-            _registerErrors.value = errors
+            registerErrors.value = errors
         }
     }
 
