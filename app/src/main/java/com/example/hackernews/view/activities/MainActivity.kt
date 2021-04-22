@@ -54,13 +54,14 @@ class MainActivity :
     }
 
     private fun bindViewModel() {
-        viewModel.allNews.observe(this, Observer { news ->
+        viewModel.allNews.observe(this, { news ->
             newsAdapter.addNews(news)
         })
-        viewModel.clickedNews.observe(this, Observer { selectedNews ->
+        viewModel.selectedNews.observe(this, { selectedNews ->
             val intent = Intent(this, NewsActivity::class.java)
             intent.putExtra(Constants.SELECTED_NEWS, selectedNews)
             startActivity(intent)
+            // is it good practice to extract this in seperate class? For example: ScreenNavigator class which would contain only methods for screen navigation
         })
     }
 

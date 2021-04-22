@@ -30,17 +30,12 @@ class LoginDialog(private val activity: Activity) :
         builder.setPositiveButton("Register") { _, _ ->
             val username = binding.editUsername.text.toString()
             val password = binding.editPassword.text.toString()
-            registerUser(username, password)
+            loginViewModel.registerUser(User(username, password, UUID.randomUUID().toString(), 1))
         }
         builder.setNegativeButton("Login") { _, _ ->
             Toast.makeText(context, "Clicked on login", Toast.LENGTH_LONG).show()
         }
         return builder.create()
-    }
-
-    private fun registerUser(username: String, password: String) {
-        val user = User(username, password, UUID.randomUUID().toString(), 1)
-        loginViewModel.registerUser(user)
     }
 
     // this method is called when you close the dialog, so I think it is best place to put these observable data

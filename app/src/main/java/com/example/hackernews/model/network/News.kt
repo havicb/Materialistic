@@ -14,5 +14,3 @@ data class News(
     val type: String,
     var url: String
 ) : Serializable
-
-

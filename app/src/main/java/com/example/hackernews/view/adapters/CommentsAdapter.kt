@@ -7,7 +7,7 @@ import com.example.hackernews.databinding.CommentRowBinding
 import com.example.hackernews.model.network.Comment
 
 class CommentsAdapter(
-    var allComments: ArrayList<Comment> = ArrayList()
+    private val comments: ArrayList<Comment> = arrayListOf()
 ) : RecyclerView.Adapter<CommentsAdapter.CommentsViewHolder>() {
 
     init {
@@ -29,18 +29,18 @@ class CommentsAdapter(
     }
 
     override fun onBindViewHolder(holder: CommentsViewHolder, position: Int) {
-        holder.bind(allComments[position])
+        holder.bind(comments[position])
     }
 
-    override fun getItemId(position: Int): Long = allComments[position].id.toLong()
+    override fun getItemId(position: Int): Long = comments[position].id.toLong()
 
     override fun getItemCount(): Int {
-        return allComments.size
+        return comments.size
     }
 
-    fun addComments(comments: ArrayList<Comment>) {
-        allComments.clear()
-        allComments.addAll(comments)
+    fun addComments(comments: List<Comment>) {
+        this.comments.clear()
+        this.comments.addAll(comments)
         notifyDataSetChanged()
     }
 }

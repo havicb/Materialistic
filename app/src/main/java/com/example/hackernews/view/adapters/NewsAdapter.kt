@@ -7,9 +7,11 @@ import com.example.hackernews.common.helpers.Helper
 import com.example.hackernews.databinding.NewsRowBinding
 import com.example.hackernews.model.network.News
 
+typealias SelectedNewsListener = (News) -> Unit
+
 class NewsAdapter(
     private val allNews: ArrayList<News> = arrayListOf(),
-    private val listener: (News) -> Unit
+    private val listener: SelectedNewsListener
 ) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
     init {
@@ -26,7 +28,7 @@ class NewsAdapter(
         private val binding: NewsRowBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(news: News) {
+        fun bind(news: News, listener: SelectedNewsListener) {
             binding.newsId.text = news.idToShow.toString()
             binding.newsTitle.text = news.title
             binding.newsScore.text = news.score.toString()
@@ -34,6 +36,9 @@ class NewsAdapter(
             binding.timePublished.text = Helper.humanReadableDate(news.time)
             binding.newsPublisher.text = news.by
             binding.tvNumComments.text = news.kids?.size.toString()
+            binding.root.setOnClickListener {
+                listener(news)
+            }
         }
     }
 
@@ -44,10 +49,7 @@ class NewsAdapter(
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         val currentNews = allNews[position]
-        holder.bind(currentNews)
-        holder.itemView.setOnClickListener {
-            listener(currentNews)
-        }
+        holder.bind(currentNews, listener)
     }
 
     override fun getItemCount(): Int = allNews.size

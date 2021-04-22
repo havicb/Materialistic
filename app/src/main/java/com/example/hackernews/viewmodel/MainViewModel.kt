@@ -32,8 +32,11 @@ import com.example.hackernews.model.repository.NewsRepository
  */
 class MainViewModel(private val newsRepository: NewsRepository) : ViewModel() {
     private val _topStories = arrayListOf<News>()
-    val clickedNews = MutableLiveData<News>()
+    private val _selectedNews = MutableLiveData<News>()
     val allNews = MutableLiveData<List<News>>()
+
+    val selectedNews: LiveData<News>
+        get() = _selectedNews
 
     init {
         fetchNews()
@@ -56,7 +59,7 @@ class MainViewModel(private val newsRepository: NewsRepository) : ViewModel() {
     }
 
     fun onNewsSelected(news: News) {
-        clickedNews.value = news
+        _selectedNews.value = news
     }
 
     fun topStoriesSelected() {
