@@ -37,8 +37,7 @@ class Swipes(val context: Context, val onSwipe: OnSwipe) :
         isCurrentlyActive: Boolean
     ) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-        val itemView = viewHolder.itemView
-        val backgroundCornerOffSet = 200
+        viewHolder.itemView
         if (dX > 0) // SWIPING TO THE RIGHT
             swipeLeft = false
         else if (dX < 0)

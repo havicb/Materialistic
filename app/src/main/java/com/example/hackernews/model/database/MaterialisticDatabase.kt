@@ -6,16 +6,16 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.hackernews.model.entities.User
 
-@Database(entities = [User::class], version = 2)
+@Database(entities = [User::class], version = 2, exportSchema = false)
 abstract class MaterialisticDatabase : RoomDatabase() {
 
-    abstract fun userDao() : UserDAO
+    abstract fun userDao(): UserDAO
 
     companion object {
         @Volatile
-        private var INSTANCE : MaterialisticDatabase? = null
+        private var INSTANCE: MaterialisticDatabase? = null
 
-        fun getInstance(context: Context) : MaterialisticDatabase {
+        fun getInstance(context: Context): MaterialisticDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,

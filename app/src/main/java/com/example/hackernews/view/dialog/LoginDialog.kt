@@ -1,80 +1,63 @@
 package com.example.hackernews.view.dialog
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.observe
-import androidx.lifecycle.whenResumed
-import com.example.hackernews.common.callbacks.LoginCallback
-import com.example.hackernews.common.helpers.Helper
+import androidx.fragment.app.viewModels
 import com.example.hackernews.databinding.LoginLayoutBinding
+import com.example.hackernews.factories.LoginViewModelFactory
 import com.example.hackernews.model.entities.User
-import com.example.hackernews.view.activities.MainActivity
-import com.example.hackernews.viewmodel.user.UserViewModel
+import com.example.hackernews.viewmodel.LoginViewModel
 import java.util.*
 
-class LoginDialog(
-    private val userViewModel: UserViewModel,
-    val listener: LoginCallback,
-    val callContext: Context
-) : AppCompatDialogFragment() {
+// now this class is looking pretty nice and organized :P
+class LoginDialog(private val activity: Activity) :
+    AppCompatDialogFragment() {
 
     private lateinit var binding: LoginLayoutBinding
+    private val loginViewModel: LoginViewModel by viewModels {
+        LoginViewModelFactory()
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity)
         binding = LoginLayoutBinding.inflate(layoutInflater)
         initViews(builder)
-        binding.tvUsernameRequiredMessage.visibility = View.GONE
-        binding.tvPasswordRequiredMessage.visibility = View.GONE
-        builder.setPositiveButton("Register") { dialog, which ->
-            val username = Helper.trimEditText(binding.editUsername)
-            val password = Helper.trimEditText(binding.editPassword)
-            registerUser(username, password)
+        builder.setPositiveButton("Register") { _, _ ->
+            val username = binding.editUsername.text.toString()
+            val password = binding.editPassword.text.toString()
+            loginViewModel.registerUser(User(username, password, UUID.randomUUID().toString(), 1))
         }
-        builder.setNegativeButton("Login") { dialog, which ->
-            val username = Helper.trimEditText(binding.editUsername)
-            val password = Helper.trimEditText(binding.editPassword)
-            val loggedUser = loginUser(username, password)
-            if(loggedUser != null) {
-                loggedUser.observe(this) {
-                    listener.onLoggedIn(username)
-                }
-            }
-            else {
-                listener.onLoggedFailed()
-                Log.e("DIALOG FAILED", "$loggedUser")
-            }
+        builder.setNegativeButton("Login") { _, _ ->
+            Toast.makeText(context, "Clicked on login", Toast.LENGTH_LONG).show()
         }
         return builder.create()
     }
 
-    private fun loginUser(username: String, password: String): LiveData<User?>? {
-        userViewModel.logUser(username, password)
-        return userViewModel.user
+    // this method is called when you close the dialog, so I think it is best place to put these observable data
+    // benefit on calling these observers here is when i add observer for login, i just need to update bindObservers() method(add another observer)
+    // if I have put methodCall() in onRegister() function, i would need to add second call to that function when I implement logic for loginUser
+    // onDismiss() is also called when you clicked on login button,
+    // but since register observables would not be affected clicking on login, it is pretty safe to call it there, isn't it?
+    override fun onDismiss(dialog: DialogInterface) {
+        bindObservers(binding.editUsername.text.toString())
+        super.onDismiss(dialog)
     }
 
-    private fun registerUser(username: String, password: String) {
-        val user: User = User(username, password, UUID.randomUUID().toString(), 0)
-        userViewModel.insert(user)
-        Toast.makeText(context, "Successfully registered $username", Toast.LENGTH_LONG).show()
-    }
-
-    private fun validateForm(): Boolean {
-        if (binding.editUsername.text.toString().isEmpty()) {
-            binding.tvUsernameRequiredMessage.visibility = View.VISIBLE
-            return false
-        } else if (binding.editPassword.text.toString().isEmpty()) {
-            binding.tvPasswordRequiredMessage.visibility = View.VISIBLE
-            return false
-        }
-        return true
+    private fun bindObservers(username: String) {
+        loginViewModel.registerErrors.observe(this, { errors ->
+            errors.forEach { singleError ->
+                Toast.makeText(context, singleError, Toast.LENGTH_SHORT).show()
+            }
+        })
+        loginViewModel.isRegisterSuccesful.observe(this, { isSuccessful ->
+            if (isSuccessful)
+                Toast.makeText(context, "Welcome $username", Toast.LENGTH_SHORT).show()
+        })
     }
 
     private fun initViews(builder: AlertDialog.Builder) {

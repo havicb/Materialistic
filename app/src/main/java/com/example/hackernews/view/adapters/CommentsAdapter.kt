@@ -1,57 +1,46 @@
 package com.example.hackernews.view.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.hackernews.R
+import com.example.hackernews.databinding.CommentRowBinding
 import com.example.hackernews.model.network.Comment
 
 class CommentsAdapter(
-    var allComments: ArrayList<Comment> = ArrayList()
+    private val comments: ArrayList<Comment> = arrayListOf()
 ) : RecyclerView.Adapter<CommentsAdapter.CommentsViewHolder>() {
 
-    inner class CommentsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var publisher: TextView
-        var publishedAt: TextView
-        var text: TextView
+    init {
+        setHasStableIds(true)
+    }
 
-        init {
-            text = view.findViewById(R.id.comment_text)
-            publishedAt = view.findViewById(R.id.comment_published_at)
-            publisher = view.findViewById(R.id.comment_publisher)
+    inner class CommentsViewHolder(private val binding: CommentRowBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(comment: Comment) {
+            binding.commentText.text = comment.text
+            binding.commentPublishedAt.text = comment.time.toString()
+            binding.commentPublisher.text = comment.by
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentsViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.comment_row, parent, false)
-        return CommentsViewHolder(view)
+        val binding = CommentRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return CommentsViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: CommentsViewHolder, position: Int) {
-        holder.publisher.text = allComments[position].by
-        holder.publishedAt.text = allComments[position].time.toString()
-        holder.text.text = allComments[position].text
+        holder.bind(comments[position])
     }
+
+    override fun getItemId(position: Int): Long = comments[position].id.toLong()
 
     override fun getItemCount(): Int {
-        return allComments.size
+        return comments.size
     }
 
-    fun addComments(comments: ArrayList<Comment>) {
-        clear()
-        allComments.addAll(comments)
-        notifyDataSetChanged()
-    }
-
-    private fun clear() {
-        allComments.clear()
-        notifyDataSetChanged()
-    }
-
-    fun addComment(comment: Comment) {
-        allComments.add(comment)
+    fun addComments(comments: List<Comment>) {
+        this.comments.clear()
+        this.comments.addAll(comments)
         notifyDataSetChanged()
     }
 }

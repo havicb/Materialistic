@@ -11,14 +11,10 @@ import java.time.Instant
 class Helper {
     companion object {
 
+        // because i am getting time from api in UNIX, i made this function to convert it into human readable format
+        // example 321321 unix -> 2 day ago,
+        // 123 -> 4 min ago etc.
         @RequiresApi(Build.VERSION_CODES.N)
-
-        fun countList(list: List<Int>?): Int {
-            if (list == null)
-                return 0
-            return list.size
-        }
-
         fun humanReadableDate(hours: Long): String {
             val format = RelativeDateTimeFormatter.getInstance()
             var relativeUnit = RelativeDateTimeFormatter.RelativeUnit.HOURS
@@ -34,6 +30,10 @@ class Helper {
             )
         }
 
+        /* when i call hacker news rest service, it returns me something like this -> "url" : "http://www.getdropbox.com/u/2/screencast.html"
+         in my recycler view i dont need whole url, just main part (www.getdropbox.com).
+         so i hope you now have more clean purpose-vision of this function
+         */
         fun getMainUrl(fullUrl: String?): String {
             if (fullUrl == null)
                 return "news.ycombinator.com"
@@ -47,33 +47,6 @@ class Helper {
 
         private fun findMainUrlEnd(fullUrl: String): Int {
             return fullUrl.indexOf('/')
-        }
-
-        fun toHours(unixTime: String): Long {
-            var unixNow: Long = 0
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                unixNow = Instant.now().epochSecond
-            }
-            val publishedAgo = unixNow - unixTime.toInt()
-            return (publishedAgo / 3600).toLong()
-        }
-
-        fun printErrorCodes(context: Context, responseCode: Int) {
-            when (responseCode) {
-                400 -> {
-                    Toast.makeText(context, "Bad request", Toast.LENGTH_SHORT).show()
-                }
-                401 -> {
-                    Toast.makeText(context, "Unauthorized", Toast.LENGTH_SHORT).show()
-                }
-                404 -> {
-                    Toast.makeText(context, "Not found", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        fun trimEditText(field: EditText): String {
-            return field.text.toString().trim() { it <= ' ' }
         }
 
     }

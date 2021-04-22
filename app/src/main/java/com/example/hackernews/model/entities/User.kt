@@ -6,13 +6,13 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class User(
-    @ColumnInfo(name="user_username")
+    @ColumnInfo(name = "user_username")
     val username: String,
 
-    @ColumnInfo(name="user_password")
+    @ColumnInfo(name = "user_password")
     val password: String,
 
-    @ColumnInfo(name="user_token")
+    @ColumnInfo(name = "user_token")
     val token: String,
 
     @ColumnInfo(name = "is_logged", defaultValue = 0.toString())
