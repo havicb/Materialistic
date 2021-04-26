@@ -9,8 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hackernews.databinding.FragmentCommentBinding
 import com.example.hackernews.factories.CommentViewModelFactory
-import com.example.hackernews.factories.RepositoryFactory
-import com.example.hackernews.model.network.Comment
+import com.example.hackernews.model.entities.Comment
 import com.example.hackernews.view.adapters.CommentsAdapter
 import com.example.hackernews.viewmodel.CommentsViewModel
 

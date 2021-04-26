@@ -7,7 +7,7 @@ import com.example.hackernews.viewmodel.MainViewModel
 class MainViewModelFactory() : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(RepositoryFactory.newsRepository) as T
+            return MainViewModel(RepositoryFactory.newsRepository, RepositoryFactory.userRepository) as T
         }
         throw IllegalArgumentException("Unknown view model class")
     }

@@ -2,7 +2,7 @@ package com.example.hackernews.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.hackernews.model.network.Comment
+import com.example.hackernews.model.entities.Comment
 import com.example.hackernews.model.repository.CommentsRepository
 
 

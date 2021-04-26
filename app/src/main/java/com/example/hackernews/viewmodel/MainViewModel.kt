@@ -1,10 +1,15 @@
 package com.example.hackernews.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.hackernews.common.enums.NewsDataType
-import com.example.hackernews.model.network.News
+import com.example.hackernews.factories.RepositoryFactory
+import com.example.hackernews.model.entities.News
+import com.example.hackernews.model.entities.UserSavedNews
 import com.example.hackernews.model.repository.ApiError
 import com.example.hackernews.model.repository.NewsRepository
+import com.example.hackernews.model.repository.UserRepository
+import kotlin.math.log
 
 /**
  * Every screen/feature or activity (if screens are represented by activities) have corresponding ViewModel
@@ -30,13 +35,21 @@ import com.example.hackernews.model.repository.NewsRepository
  * Having said that, ViewModel will be responsible for fetching stories and all the data required by the activity and
  * it will only expose data via observable properties. We'll use live data for for this purpose.
  */
-class MainViewModel(private val newsRepository: NewsRepository) : ViewModel() {
+
+typealias OnSavedStory = (Boolean) -> Unit
+
+class MainViewModel(private val newsRepository: NewsRepository,
+                    private val userRepository: UserRepository) : ViewModel() {
     private val _topStories = arrayListOf<News>()
     private val _selectedNews = MutableLiveData<News>()
-    val allNews = MutableLiveData<List<News>>()
+    private val _savedNews = MutableLiveData<UserSavedNews>() // user saved stories
 
+
+    val news = MutableLiveData<List<News>>()
     val selectedNews: LiveData<News>
         get() = _selectedNews
+    val savedNews: LiveData<UserSavedNews>
+        get() = _savedNews
 
     init {
         fetchNews()
@@ -48,10 +61,23 @@ class MainViewModel(private val newsRepository: NewsRepository) : ViewModel() {
                 handleError(error)
                 return@getNews
             }
-
             _topStories.add(news!!)
-            allNews.value = _topStories
+            this.news.value = _topStories
         }
+    }
+
+    fun loadSavedStories()  {
+        userRepository.loadSavedStories(RepositoryFactory.loggedUser!!.user_id)
+    }
+
+    fun saveStory(news: News, savedStory: OnSavedStory) {
+        val loggedUser = RepositoryFactory.loggedUser // I needed somewhere to store currentUser data
+        if(loggedUser == null) {
+            savedStory(false)
+            return
+        }
+        userRepository.saveStory(loggedUser.user_id, news.id.toInt())
+        savedStory(true)
     }
 
     private fun handleError(error: ApiError) {

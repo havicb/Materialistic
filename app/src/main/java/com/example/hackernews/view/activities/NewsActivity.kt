@@ -8,7 +8,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.hackernews.common.constants.Constants
 import com.example.hackernews.databinding.ActivityNewsBinding
 import com.example.hackernews.factories.NewsViewModelFactory
-import com.example.hackernews.model.network.News
+import com.example.hackernews.model.entities.News
 import com.example.hackernews.view.adapters.NewsTabsAdapter
 import com.example.hackernews.viewmodel.NewsViewModel
 import com.google.android.material.tabs.TabLayout

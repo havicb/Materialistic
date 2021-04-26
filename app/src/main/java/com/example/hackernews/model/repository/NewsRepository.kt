@@ -2,10 +2,12 @@ package com.example.hackernews.model.repository
 
 import com.example.hackernews.common.enums.NewsDataType
 import com.example.hackernews.data.service.NewsService
-import com.example.hackernews.model.network.News
+import com.example.hackernews.model.database.dao.NewsDao
+import com.example.hackernews.model.entities.News
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.concurrent.Executors
 
 /**
  * Points for using repository. But few things to keep in mind with repositories:
@@ -23,7 +25,8 @@ import retrofit2.Response
 typealias GetNewsCallback = (News?, ApiError?) -> Unit
 
 class NewsRepository(
-    private val newsApi: NewsService
+    private val newsApi: NewsService,
+    private val newsDao: NewsDao
 ) {
 
     /**
@@ -48,12 +51,16 @@ class NewsRepository(
     }
 
     private fun getStories(storiedIds: List<Int>, callback: GetNewsCallback) {
+        val executors = Executors.newSingleThreadExecutor()
         storiedIds.forEach { storyId ->
             newsApi.getStory(storyId).enqueue(object : Callback<News> {
                 override fun onResponse(call: Call<News>, response: Response<News>) {
-                    if (response.isSuccessful)
+                    if (response.isSuccessful) {
+                        executors.execute {
+                            newsDao.save(response.body()!!)
+                        }
                         callback(response.body(), null)
-                    else
+                    } else
                         callback(null, ApiError(response.errorBody().toString()))
                 }
 

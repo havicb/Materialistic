@@ -14,8 +14,13 @@ import com.example.hackernews.model.entities.User
 import com.example.hackernews.viewmodel.LoginViewModel
 import java.util.*
 
+typealias UpdateUICallBack = (User) -> Unit
+
 // now this class is looking pretty nice and organized :P
-class LoginDialog(private val activity: Activity) :
+class LoginDialog(
+    private val activity: Activity,
+    private val onSuccess: UpdateUICallBack
+) :
     AppCompatDialogFragment() {
 
     private lateinit var binding: LoginLayoutBinding
@@ -30,10 +35,20 @@ class LoginDialog(private val activity: Activity) :
         builder.setPositiveButton("Register") { _, _ ->
             val username = binding.editUsername.text.toString()
             val password = binding.editPassword.text.toString()
-            loginViewModel.registerUser(User(username, password, UUID.randomUUID().toString(), 1))
+            loginViewModel.registerUser(
+                User(
+                    0,
+                    username,
+                    password,
+                    UUID.randomUUID().toString(),
+                    1
+                )
+            )
         }
         builder.setNegativeButton("Login") { _, _ ->
-            Toast.makeText(context, "Clicked on login", Toast.LENGTH_LONG).show()
+            val username = binding.editUsername.text.toString()
+            val password = binding.editPassword.text.toString()
+            loginViewModel.loginUser(username, password)
         }
         return builder.create()
     }
@@ -44,20 +59,34 @@ class LoginDialog(private val activity: Activity) :
     // onDismiss() is also called when you clicked on login button,
     // but since register observables would not be affected clicking on login, it is pretty safe to call it there, isn't it?
     override fun onDismiss(dialog: DialogInterface) {
-        bindObservers(binding.editUsername.text.toString())
+        bindObservers()
         super.onDismiss(dialog)
     }
 
-    private fun bindObservers(username: String) {
-        loginViewModel.registerErrors.observe(this, { errors ->
-            errors.forEach { singleError ->
-                Toast.makeText(context, singleError, Toast.LENGTH_SHORT).show()
+    private fun bindObservers() {
+        loginViewModel.isUserRegistered.observe(this, { isUserRegistered ->
+            if (isUserRegistered) {
+                showToast("Congratulations, you have successfully registered!")
             }
         })
-        loginViewModel.isRegisterSuccesful.observe(this, { isSuccessful ->
-            if (isSuccessful)
-                Toast.makeText(context, "Welcome $username", Toast.LENGTH_SHORT).show()
+        loginViewModel.registerErrors.observe(this, { errors ->
+            errors.forEach { singleError ->
+                showToast(singleError)
+            }
         })
+        loginViewModel.hasUserLoggedSuccessfully.observe(this, { isLoginSuccessfull ->
+            if (!isLoginSuccessfull) {
+                showToast("Failed to log")
+                return@observe
+            }
+        })
+        loginViewModel.loggedUser.observe(this, { currentUser ->
+            onSuccess(currentUser!!) // passsing data to mainActivity callback
+        })
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun initViews(builder: AlertDialog.Builder) {

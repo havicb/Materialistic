@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.common.helpers.Helper
 import com.example.hackernews.databinding.NewsRowBinding
-import com.example.hackernews.model.network.News
+import com.example.hackernews.model.entities.News
 
 typealias SelectedNewsListener = (News) -> Unit
 
 class NewsAdapter(
-    private val allNews: ArrayList<News> = arrayListOf(),
+    val news: ArrayList<News> = arrayListOf(),
     private val listener: SelectedNewsListener
 ) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
@@ -35,7 +35,6 @@ class NewsAdapter(
             binding.newsUrl.text = Helper.getMainUrl(news.url)
             binding.timePublished.text = Helper.humanReadableDate(news.time)
             binding.newsPublisher.text = news.by
-            binding.tvNumComments.text = news.kids?.size.toString()
             binding.root.setOnClickListener {
                 listener(news)
             }
@@ -48,17 +47,17 @@ class NewsAdapter(
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        val currentNews = allNews[position]
+        val currentNews = news[position]
         holder.bind(currentNews, listener)
     }
 
-    override fun getItemCount(): Int = allNews.size
+    override fun getItemCount(): Int = news.size
 
-    override fun getItemId(position: Int): Long = allNews[position].id.toLong()
+    override fun getItemId(position: Int): Long = news[position].id.toLong()
 
     fun addNews(data: List<News>) {
-        allNews.clear()
-        allNews.addAll(data)
+        news.clear()
+        news.addAll(data)
         notifyDataSetChanged()
     }
 }

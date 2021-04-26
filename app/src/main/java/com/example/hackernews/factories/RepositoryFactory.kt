@@ -4,11 +4,14 @@ import com.example.hackernews.BaseApplication
 import com.example.hackernews.common.constants.Constants
 import com.example.hackernews.data.service.NewsService
 import com.example.hackernews.model.database.MaterialisticDatabase
+import com.example.hackernews.model.entities.User
 import com.example.hackernews.model.repository.CommentsRepository
 import com.example.hackernews.model.repository.NewsRepository
 import com.example.hackernews.model.repository.UserRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 object RepositoryFactory {
 
@@ -28,14 +31,20 @@ object RepositoryFactory {
     }
 
     val newsRepository: NewsRepository by lazy {
-        NewsRepository(newsService)
+        NewsRepository(newsService, database.newsDao())
     }
 
     val userRepository: UserRepository by lazy {
-        UserRepository(database.userDao())
+        UserRepository(database.userDao(), database.userNewsCrossRefDao())
     }
 
     val commentsRepository: CommentsRepository by lazy {
         CommentsRepository(newsService)
     }
+
+    val executor: ExecutorService by lazy {
+        Executors.newSingleThreadExecutor()
+    }
+
+    var loggedUser: User? = null
 }

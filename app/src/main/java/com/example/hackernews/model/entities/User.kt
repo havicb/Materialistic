@@ -6,6 +6,9 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class User(
+    @PrimaryKey(autoGenerate = true)
+    var user_id: Long = 0,
+
     @ColumnInfo(name = "user_username")
     val username: String,
 
@@ -16,8 +19,5 @@ data class User(
     val token: String,
 
     @ColumnInfo(name = "is_logged", defaultValue = 0.toString())
-    val isLogged: Int,
-
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+    var isLogged: Int,
 )
