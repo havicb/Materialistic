@@ -7,7 +7,7 @@ import com.example.hackernews.model.entities.News
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.concurrent.Executors
+import java.util.concurrent.ExecutorService
 
 /**
  * Points for using repository. But few things to keep in mind with repositories:
@@ -26,6 +26,7 @@ typealias GetNewsCallback = (News?, ApiError?) -> Unit
 
 class NewsRepository(
     private val newsApi: NewsService,
+    private val executors: ExecutorService,
     private val newsDao: NewsDao
 ) {
 
@@ -51,7 +52,6 @@ class NewsRepository(
     }
 
     private fun getStories(storiedIds: List<Int>, callback: GetNewsCallback) {
-        val executors = Executors.newSingleThreadExecutor()
         storiedIds.forEach { storyId ->
             newsApi.getStory(storyId).enqueue(object : Callback<News> {
                 override fun onResponse(call: Call<News>, response: Response<News>) {

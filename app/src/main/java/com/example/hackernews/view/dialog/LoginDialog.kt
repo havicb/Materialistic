@@ -35,15 +35,7 @@ class LoginDialog(
         builder.setPositiveButton("Register") { _, _ ->
             val username = binding.editUsername.text.toString()
             val password = binding.editPassword.text.toString()
-            loginViewModel.registerUser(
-                User(
-                    0,
-                    username,
-                    password,
-                    UUID.randomUUID().toString(),
-                    1
-                )
-            )
+            loginViewModel.registerUser(username, password)
         }
         builder.setNegativeButton("Login") { _, _ ->
             val username = binding.editUsername.text.toString()
@@ -64,24 +56,21 @@ class LoginDialog(
     }
 
     private fun bindObservers() {
-        loginViewModel.isUserRegistered.observe(this, { isUserRegistered ->
-            if (isUserRegistered) {
-                showToast("Congratulations, you have successfully registered!")
+        loginViewModel.loggedUser.observe(this, { currentUser ->
+            if (currentUser != null) {
+                onSuccess(currentUser) // passsing data to mainActivity callback
+                return@observe
             }
+            showToast("Failed to log!")
         })
         loginViewModel.registerErrors.observe(this, { errors ->
+            if(errors.isEmpty()) {
+                showToast("Congratulations, you have successfully registered!")
+                return@observe
+            }
             errors.forEach { singleError ->
                 showToast(singleError)
             }
-        })
-        loginViewModel.hasUserLoggedSuccessfully.observe(this, { isLoginSuccessfull ->
-            if (!isLoginSuccessfull) {
-                showToast("Failed to log")
-                return@observe
-            }
-        })
-        loginViewModel.loggedUser.observe(this, { currentUser ->
-            onSuccess(currentUser!!) // passsing data to mainActivity callback
         })
     }
 

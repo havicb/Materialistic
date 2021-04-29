@@ -10,9 +10,7 @@ data class UserSavedNews(
         parentColumn = "user_id",
         entity = News::class,
         entityColumn = "news_id",
-        associateBy = Junction(UserNewsCrossRef::class,
-        parentColumn = "user_id",
-        entityColumn = "news_id")
+        associateBy = Junction(UserNews::class)
     )
     val list: List<News>
 )

@@ -1,15 +1,14 @@
 package com.example.hackernews.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.hackernews.common.enums.NewsDataType
-import com.example.hackernews.factories.RepositoryFactory
+import com.example.hackernews.factories.LoginViewModelFactory
 import com.example.hackernews.model.entities.News
+import com.example.hackernews.model.entities.User
 import com.example.hackernews.model.entities.UserSavedNews
 import com.example.hackernews.model.repository.ApiError
 import com.example.hackernews.model.repository.NewsRepository
 import com.example.hackernews.model.repository.UserRepository
-import kotlin.math.log
 
 /**
  * Every screen/feature or activity (if screens are represented by activities) have corresponding ViewModel
@@ -36,15 +35,21 @@ import kotlin.math.log
  * it will only expose data via observable properties. We'll use live data for for this purpose.
  */
 
-typealias OnSavedStory = (Boolean) -> Unit
-
-class MainViewModel(private val newsRepository: NewsRepository,
-                    private val userRepository: UserRepository) : ViewModel() {
+class MainViewModel(
+    private val newsRepository: NewsRepository,
+    private val userRepository: UserRepository
+) : ViewModel() {
     private val _topStories = arrayListOf<News>()
     private val _selectedNews = MutableLiveData<News>()
     private val _savedNews = MutableLiveData<UserSavedNews>() // user saved stories
+    private val _hasNewsSaved = MutableLiveData<Boolean>()
+    private val loginViewModel: LoginViewModel by lazy {
+        LoginViewModelFactory().create(LoginViewModel::class.java)
+    }
 
-
+    // immutability stuff
+    val hasNewsSaved: LiveData<Boolean>
+        get() = _hasNewsSaved
     val news = MutableLiveData<List<News>>()
     val selectedNews: LiveData<News>
         get() = _selectedNews
@@ -66,18 +71,31 @@ class MainViewModel(private val newsRepository: NewsRepository,
         }
     }
 
-    fun loadSavedStories()  {
-        userRepository.loadSavedStories(RepositoryFactory.loggedUser!!.user_id)
+    fun loadSavedStories() {
+        userRepository.loadSavedStories() { userSavedNews ->
+            _savedNews.postValue(userSavedNews)
+        }
     }
 
-    fun saveStory(news: News, savedStory: OnSavedStory) {
-        val loggedUser = RepositoryFactory.loggedUser // I needed somewhere to store currentUser data
-        if(loggedUser == null) {
-            savedStory(false)
+    fun saveStory(currentElement: Int) {
+        if (userRepository.currentUser() != null) {
+            userRepository.saveStory(
+                userRepository.currentUser()!!.user_id,
+                _topStories[currentElement].id
+            )
+            _hasNewsSaved.value = true
             return
         }
-        userRepository.saveStory(loggedUser.user_id, news.id.toInt())
-        savedStory(true)
+        _hasNewsSaved.value = false
+    }
+
+    // providing these function to avoid Law of Demeter - don't talk to strangers!
+    fun loggedUser(): LiveData<User?> {
+        return loginViewModel.loggedUser
+    }
+
+    fun logoutUser() {
+        loginViewModel.logoutUser()
     }
 
     private fun handleError(error: ApiError) {

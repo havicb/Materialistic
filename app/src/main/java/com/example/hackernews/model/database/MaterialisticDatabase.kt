@@ -6,22 +6,22 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.hackernews.model.database.dao.NewsDao
 import com.example.hackernews.model.database.dao.UserDao
-import com.example.hackernews.model.database.dao.UserNewsCrossRefDao
+import com.example.hackernews.model.database.dao.UserNewsDao
 import com.example.hackernews.model.entities.Comment
 import com.example.hackernews.model.entities.News
 import com.example.hackernews.model.entities.User
-import com.example.hackernews.model.entities.UserNewsCrossRef
+import com.example.hackernews.model.entities.UserNews
 
 @Database(
-    entities = [User::class, Comment::class, News::class, UserNewsCrossRef::class],
-    version = 9,
+    entities = [User::class, Comment::class, News::class, UserNews::class],
+    version = 10,
     exportSchema = false
 )
 abstract class MaterialisticDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun newsDao(): NewsDao
-    abstract fun userNewsCrossRefDao(): UserNewsCrossRefDao
+    abstract fun userNewsDao(): UserNewsDao
 
     companion object {
         @Volatile

@@ -17,14 +17,11 @@ import com.example.hackernews.common.callbacks.OnSwipe
 import com.example.hackernews.common.constants.Constants
 import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.databinding.NavigationHeaderBinding
-import com.example.hackernews.factories.LoginViewModelFactory
 import com.example.hackernews.factories.MainViewModelFactory
-import com.example.hackernews.factories.RepositoryFactory
 import com.example.hackernews.model.entities.User
 import com.example.hackernews.view.adapters.NewsAdapter
 import com.example.hackernews.view.dialog.LoginDialog
 import com.example.hackernews.view.swipes.Swipes
-import com.example.hackernews.viewmodel.LoginViewModel
 import com.example.hackernews.viewmodel.MainViewModel
 import com.google.android.material.navigation.NavigationView
 import java.io.Serializable
@@ -45,9 +42,6 @@ class MainActivity :
     }
     private val newsAdapter: NewsAdapter by lazy {
         NewsAdapter(listener = viewModel::onNewsSelected)
-    }
-    private val loginViewModel: LoginViewModel by viewModels {
-        LoginViewModelFactory()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,17 +68,24 @@ class MainActivity :
             startActivity(intent)
             // is it good practice to extract this in separate class? For example: ScreenNavigator class which would contain only methods for screen navigation
         })
-        loginViewModel.loggedUser.observe(this, { currentUser ->
+        viewModel.loggedUser().observe(this, { currentUser ->
             if (currentUser != null) {
-                RepositoryFactory.loggedUser = currentUser
                 onSuccessUpdateUI(currentUser)
                 return@observe
             }
-            // since this currentUser can be null only when user is logged out, i can safely call this toast when live data value has been updated to null
-            Toast.makeText(this, "Successfully logged out!", Toast.LENGTH_SHORT).show()
         })
         viewModel.savedNews.observe(this, { userSavedNews ->
             Toast.makeText(this, "${userSavedNews.user}", Toast.LENGTH_SHORT).show()
+        })
+        viewModel.hasNewsSaved.observe(this, { hasSaved ->
+            if (hasSaved) {
+                Toast.makeText(this, "Successfully saved!", Toast.LENGTH_SHORT).show()
+                return@observe
+            }
+            Toast.makeText(this, "You need to be logged to do that!", Toast.LENGTH_SHORT).show()
+        })
+        viewModel.savedNews.observe(this, { userSavedNews ->
+            newsAdapter.addNews(userSavedNews.list)
         })
     }
 
@@ -129,24 +130,15 @@ class MainActivity :
             navigationHeaderBinding.navHeaderLoginTextView.text = "Login"
             navigationHeaderBinding.logOutBtn.visibility = View.GONE
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-            loginViewModel.logoutUser(user) // calling log out method
+            viewModel.logoutUser()
+            Toast.makeText(this, "Successfully logged out", Toast.LENGTH_LONG).show()
+            // because log out button is only showed when user is logged in, i do not need live data variable to check if user can be logged out
+            // so i can toast it here as well
         }
     }
 
-    // I know you said that viewModel should never be accessed through value, but I need somehow to use loggedUser ID to store it in table
-    // I need something to hold logged user data, shall I use separate User object in view model?
-    // This was my first implementation of this method, so I access loginViewModel.currentUser.value
-    // Since I have been warned for doing that, I have decided to put currentUser instance in repository factory so I can access directly from VM
-    // Now when i am calling loadSaveStory() for logged user i do not need to provide userId, because view model have always access to current logged user
-    // Probably, there is some better way to do this
     override fun swipeOnLeft(currentElement: Int) {
-        viewModel.saveStory(newsAdapter.news[currentElement]) { hasPostSaved ->
-            if (hasPostSaved) {
-                writeToast("Successfully saved post")
-                return@saveStory
-            }
-            writeToast("You have to be logged to do that!")
-        }
+        viewModel.saveStory(currentElement)
     }
 
     override fun swipeOnRight(currentElement: Int) {
@@ -194,7 +186,9 @@ class MainActivity :
             }
             R.id.side_saved_stories -> {
                 binding.drawerLayout.closeDrawer(GravityCompat.START)
-                viewModel.loadSavedStories()
+                viewModel.loadSavedStories() // this method works, but there is one problem. It works only when first task(loading api news) is finished//
+                // if user clicks on Saved Stories while apiNews is fetching it will mix user news from db and fetched news, i need somehow to stop executing first task
+                // and switch to second task. Hint would do me good. However I will research executorsService in next few days
             }
             R.id.side_settings -> {
                 writeToast("Clicked on settings")

@@ -1,72 +1,76 @@
 package com.example.hackernews.model.repository
 
-import android.util.Log
 import androidx.annotation.WorkerThread
-import com.example.hackernews.factories.RepositoryFactory
 import com.example.hackernews.model.database.dao.UserDao
-import com.example.hackernews.model.database.dao.UserNewsCrossRefDao
+import com.example.hackernews.model.database.dao.UserNewsDao
 import com.example.hackernews.model.entities.User
-import com.example.hackernews.model.entities.UserNewsCrossRef
+import com.example.hackernews.model.entities.UserNews
+import com.example.hackernews.model.entities.UserSavedNews
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 typealias OnFetchUser = (User?) -> Unit
-typealias OnUserFound = (Boolean) -> Unit
-// I should definitely take some course for naming these callback
 
 class UserRepository(
     private val userDao: UserDao,
-    private val userNewsCrossRefDao: UserNewsCrossRefDao
+    private val executor: ExecutorService,
+    private val userNewsDao: UserNewsDao
 ) {
 
-    private val executors = RepositoryFactory.executor
+    private var currentLoggedUser: User? = null
+
+    init {
+        fetchUser { fetchedUser ->
+            currentLoggedUser = fetchedUser // check if there is logged user at object creation
+        }
+    }
+
+    fun saveUserLoginState(user: User?) {
+        currentLoggedUser = user
+    }
+
+    fun currentUser(): User? {
+        return currentLoggedUser
+    }
 
     @WorkerThread
     fun insert(user: User) {
-        executors.execute {
+        executor.execute {
             userDao.save(user)
         }
     }
 
     @WorkerThread
     fun update(user: User) {
-        executors.execute {
+        executor.execute {
             userDao.update(user)
         }
     }
 
     fun fetchUser(onFetch: OnFetchUser) {
-        executors.execute {
+        executor.execute {
             onFetch(userDao.fetchLoggedUser())
         }
     }
 
     @WorkerThread
-    fun hasUserExists(username: String, password: String, onFindUser: OnUserFound) {
-        executors.execute {
-            onFindUser(
-                userDao.hasUserExists(
-                    username,
-                    password
-                ) == 1
-            ) // user has been found if query returns 1 so we pass data to callback
-        }
-    }
-
-    @WorkerThread
     fun retrieveUser(username: String, password: String, onLogin: OnFetchUser) {
-        executors.execute {
+        executor.execute {
             onLogin(userDao.retrieveUser(username, password)) // passing data back through callback
         }
     }
 
     @WorkerThread
-    fun saveStory(userId: Long, newsId: Int) {
-        executors.execute {
-            userNewsCrossRefDao.save(UserNewsCrossRef(userId, newsId.toLong()))
+    fun saveStory(userId: Long, newsId: Long) {
+        executor.execute {
+            userNewsDao.save(UserNews(userId, newsId))
         }
     }
 
     @WorkerThread
-    fun loadSavedStories(userId: Long) {
-        Log.d("USER-> ", userNewsCrossRefDao.loadSavedPosts().value.toString()) // this method brings me NPE, i will fix that in next commit
+    fun loadSavedStories(onFetchedPosts: (UserSavedNews?) -> Unit) {
+        Executors.newSingleThreadExecutor().execute {
+            onFetchedPosts(userNewsDao.loadSavedPosts(currentLoggedUser!!.user_id))
+        }
     }
 }

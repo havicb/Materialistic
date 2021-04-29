@@ -18,6 +18,6 @@ data class User(
     @ColumnInfo(name = "user_token")
     val token: String,
 
-    @ColumnInfo(name = "is_logged", defaultValue = 0.toString())
-    var isLogged: Int,
+    @ColumnInfo(name = "is_logged", defaultValue = false.toString())
+    var isLogged: Boolean,
 )

@@ -28,7 +28,7 @@
         android:layout_width="30dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="7dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:background="@drawable/ic_baseline_power_settings_new_24"/>
 
 </LinearLayout>
