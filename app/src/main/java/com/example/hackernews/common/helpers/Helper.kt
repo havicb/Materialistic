@@ -37,7 +37,8 @@ class Helper {
         fun getMainUrl(fullUrl: String?): String {
             if (fullUrl == null)
                 return "news.ycombinator.com"
-            val trimmedFirstPart = fullUrl.removeRange(0, 8)
+            var endHttpPartInUrl = if(fullUrl.length < 8) fullUrl.length else 8
+            val trimmedFirstPart = fullUrl.removeRange(0, endHttpPartInUrl)
             val mainUrlEndIndex = findMainUrlEnd(trimmedFirstPart)
             var finalUrl = ""
             if (mainUrlEndIndex != -1)

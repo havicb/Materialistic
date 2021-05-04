@@ -7,7 +7,6 @@ import com.example.hackernews.model.entities.User
 import com.example.hackernews.model.entities.UserNews
 import com.example.hackernews.model.entities.UserSavedNews
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 typealias OnFetchUser = (User?) -> Unit
 
@@ -18,12 +17,6 @@ class UserRepository(
 ) {
 
     private var currentLoggedUser: User? = null
-
-    init {
-        fetchUser { fetchedUser ->
-            currentLoggedUser = fetchedUser // check if there is logged user at object creation
-        }
-    }
 
     fun saveUserLoginState(user: User?) {
         currentLoggedUser = user
@@ -69,8 +62,8 @@ class UserRepository(
 
     @WorkerThread
     fun loadSavedStories(onFetchedPosts: (UserSavedNews?) -> Unit) {
-        Executors.newSingleThreadExecutor().execute {
-            onFetchedPosts(userNewsDao.loadSavedPosts(currentLoggedUser!!.user_id))
+        executor.execute {
+            onFetchedPosts(userNewsDao.loadSavedPosts())
         }
     }
 }

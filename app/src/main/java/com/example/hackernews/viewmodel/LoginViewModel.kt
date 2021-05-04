@@ -2,12 +2,11 @@ package com.example.hackernews.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.hackernews.model.entities.User
 import com.example.hackernews.model.repository.UserRepository
 import java.util.*
 
-class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
+class LoginViewModel(private val userRepository: UserRepository) : BaseViewModel() {
 
     private val _loggedUser = MutableLiveData<User?>()
 
@@ -18,7 +17,12 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
         get() = _loggedUser
 
     init {
-        fetchUser()
+        userRepository.fetchUser { fetchedUser ->
+            if (fetchedUser != null) {
+                _loggedUser.postValue(fetchedUser)
+                userRepository.saveUserLoginState(fetchedUser)
+            }
+        }
     }
 
     fun loginUser(username: String, password: String) {
@@ -31,11 +35,6 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
             userRepository.saveUserLoginState(user)
             userRepository.update(user) // update user column in database
         }
-    }
-
-    // only fetch data if user has been found
-    fun fetchUser() {
-        _loggedUser.value = userRepository.currentUser()
     }
 
     fun logoutUser() {

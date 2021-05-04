@@ -20,5 +20,6 @@ data class News(
     var title: String,
     var type: String,
     @ColumnInfo(defaultValue = "")
-    var url: String
+    var url: String,
+    var newsType: String
 ) : Serializable

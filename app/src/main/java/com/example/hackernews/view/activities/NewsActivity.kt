@@ -1,52 +1,43 @@
 package com.example.hackernews.view.activities
 
-import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
 import com.example.hackernews.common.constants.Constants
 import com.example.hackernews.databinding.ActivityNewsBinding
 import com.example.hackernews.factories.NewsViewModelFactory
 import com.example.hackernews.model.entities.News
 import com.example.hackernews.view.adapters.NewsTabsAdapter
+import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.viewmodel.NewsViewModel
 import com.google.android.material.tabs.TabLayout
 
-class NewsActivity : AppCompatActivity() {
+class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
 
-    private lateinit var binding: ActivityNewsBinding
-    private val viewModel: NewsViewModel by viewModels {
-        NewsViewModelFactory(intent.getSerializableExtra(Constants.SELECTED_NEWS) as News)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityNewsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        initFields()
+    override fun setUpScreen() {
         setUpToolbar()
-    }
-
-    private fun initFields() {
-        viewModel.selectedNews.observe(this, Observer { selectedNews ->
-            initViewPagerAndTabs(selectedNews)
-            initElements(selectedNews)
-        })
-    }
-
-    private fun initElements(selectedNews: News) {
-        binding.newsTitle.text = selectedNews.title
-        binding.newsUrl.text = selectedNews.url
     }
 
     private fun setUpToolbar() {
         setSupportActionBar(binding.newsToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+    }
+
+    override fun setListeners() {
         binding.newsToolbar.setNavigationOnClickListener {
             onBackPressed()
         }
+    }
+
+    override fun bindObservers() {
+        viewModel.selectedNews.observe(this) { selectedNews ->
+            initViewPagerAndTabs(selectedNews)
+            initElements(selectedNews)
+        }
+    }
+
+    private fun initElements(selectedNews: News) {
+        binding.newsTitle.text = selectedNews.title
+        binding.newsUrl.text = selectedNews.url
     }
 
     private fun initViewPagerAndTabs(selectedNews: News) {
@@ -72,4 +63,10 @@ class NewsActivity : AppCompatActivity() {
             }
         })
     }
+
+    override fun getViewBinding() = ActivityNewsBinding.inflate(layoutInflater)
+    override fun getViewModelClass() =
+        NewsViewModelFactory(intent.getSerializableExtra(Constants.SELECTED_NEWS) as News).create(
+            NewsViewModel::class.java
+        )
 }

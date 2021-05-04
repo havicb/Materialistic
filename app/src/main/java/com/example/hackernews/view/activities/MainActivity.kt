@@ -2,13 +2,10 @@ package com.example.hackernews.view.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +17,9 @@ import com.example.hackernews.databinding.NavigationHeaderBinding
 import com.example.hackernews.factories.MainViewModelFactory
 import com.example.hackernews.model.entities.User
 import com.example.hackernews.view.adapters.NewsAdapter
+import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.view.dialog.LoginDialog
+import com.example.hackernews.view.navigation.MainActivityNavigation
 import com.example.hackernews.view.swipes.Swipes
 import com.example.hackernews.viewmodel.MainViewModel
 import com.google.android.material.navigation.NavigationView
@@ -29,64 +28,19 @@ import java.util.*
 
 
 class MainActivity :
-    AppCompatActivity(),
+    BaseActivity<ActivityMainBinding, MainViewModel>(),
     NavigationView.OnNavigationItemSelectedListener,
     Serializable,
     OnSwipe {
 
-    private lateinit var binding: ActivityMainBinding
     private lateinit var navigationHeaderBinding: NavigationHeaderBinding
-
-    private val viewModel: MainViewModel by viewModels {
-        MainViewModelFactory()
-    }
     private val newsAdapter: NewsAdapter by lazy {
         NewsAdapter(listener = viewModel::onNewsSelected)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setUpScreen()
-        bindViewModel()
-    }
-
-    private fun setUpScreen() {
+    override fun setUpScreen() {
         setUpToolbar()
         setUpMainRecyclerView()
-        setListeners()
-    }
-
-    private fun bindViewModel() {
-        viewModel.news.observe(this, { news ->
-            newsAdapter.addNews(news)
-        })
-        viewModel.selectedNews.observe(this, { selectedNews ->
-            val intent = Intent(this, NewsActivity::class.java)
-            intent.putExtra(Constants.SELECTED_NEWS, selectedNews)
-            startActivity(intent)
-            // is it good practice to extract this in separate class? For example: ScreenNavigator class which would contain only methods for screen navigation
-        })
-        viewModel.loggedUser().observe(this, { currentUser ->
-            if (currentUser != null) {
-                onSuccessUpdateUI(currentUser)
-                return@observe
-            }
-        })
-        viewModel.savedNews.observe(this, { userSavedNews ->
-            Toast.makeText(this, "${userSavedNews.user}", Toast.LENGTH_SHORT).show()
-        })
-        viewModel.hasNewsSaved.observe(this, { hasSaved ->
-            if (hasSaved) {
-                Toast.makeText(this, "Successfully saved!", Toast.LENGTH_SHORT).show()
-                return@observe
-            }
-            Toast.makeText(this, "You need to be logged to do that!", Toast.LENGTH_SHORT).show()
-        })
-        viewModel.savedNews.observe(this, { userSavedNews ->
-            newsAdapter.addNews(userSavedNews.list)
-        })
     }
 
     private fun setUpToolbar() {
@@ -95,7 +49,7 @@ class MainActivity :
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
     }
 
-    private fun setListeners() {
+    override fun setListeners() {
         binding.appBarMain.searchView.setOnSearchClickListener { removeViewsFromToolbar() }
 
         binding.appBarMain.searchView.setOnCloseListener {
@@ -110,12 +64,36 @@ class MainActivity :
         )
         binding.navigationView.addHeaderView(navigationHeaderBinding.root)
         navigationHeaderBinding.navHeaderLoginTextView.setOnClickListener { currentView ->
-            LoginDialog(this@MainActivity, onSuccessUpdateUI).show(
+            LoginDialog(onSuccessUpdateUI).show(
                 supportFragmentManager,
                 "Login dialog"
             )
         }
         binding.navigationView.setNavigationItemSelectedListener(this)
+    }
+
+    override fun bindObservers() {
+        viewModel.news.observe(this, { news ->
+            newsAdapter.addNews(news)
+        })
+        viewModel.selectedNews.observe(this, { selectedNews ->
+            val intent = Intent(this, NewsActivity::class.java)
+            intent.putExtra(Constants.SELECTED_NEWS, selectedNews)
+            startActivity(intent)
+        })
+        viewModel.loggedUser().observe(this, { currentUser ->
+            if (currentUser != null) {
+                onSuccessUpdateUI(currentUser)
+                return@observe
+            }
+        })
+        viewModel.hasNewsSaved.observe(this, { hasSaved ->
+            if (hasSaved) {
+                Toast.makeText(this, "Successfully saved!", Toast.LENGTH_SHORT).show()
+                return@observe
+            }
+            Toast.makeText(this, "You need to be logged to do that!", Toast.LENGTH_SHORT).show()
+        })
     }
 
     // what should i use to reduce this boiler plate code?
@@ -132,8 +110,6 @@ class MainActivity :
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             viewModel.logoutUser()
             Toast.makeText(this, "Successfully logged out", Toast.LENGTH_LONG).show()
-            // because log out button is only showed when user is logged in, i do not need live data variable to check if user can be logged out
-            // so i can toast it here as well
         }
     }
 
@@ -143,10 +119,6 @@ class MainActivity :
 
     override fun swipeOnRight(currentElement: Int) {
 
-    }
-
-    private fun writeToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun removeViewsFromToolbar() {
@@ -170,33 +142,14 @@ class MainActivity :
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.side_top_stories -> {
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                viewModel.topStoriesSelected()
-            }
-            R.id.side_catch_up -> {
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-            }
-            R.id.side_new_stories -> {
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-            }
-            R.id.side_feedback -> {
-                writeToast("Clicked on feedback")
-            }
-            R.id.side_saved_stories -> {
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                viewModel.loadSavedStories() // this method works, but there is one problem. It works only when first task(loading api news) is finished//
-                // if user clicks on Saved Stories while apiNews is fetching it will mix user news from db and fetched news, i need somehow to stop executing first task
-                // and switch to second task. Hint would do me good. However I will research executorsService in next few days
-            }
-            R.id.side_settings -> {
-                writeToast("Clicked on settings")
-            }
-            R.id.side_submit_to_hn -> {
-                writeToast("Clicked on submit to HN")
-            }
-        }
-        return true
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
+        return MainActivityNavigation.onNavigationItemSelected(
+            viewModel,
+            supportFragmentManager,
+            item
+        )
     }
+
+    override fun getViewBinding() = ActivityMainBinding.inflate(layoutInflater)
+    override fun getViewModelClass() = MainViewModelFactory().create(MainViewModel::class.java)
 }

@@ -14,7 +14,7 @@ import com.example.hackernews.model.entities.UserNews
 
 @Database(
     entities = [User::class, Comment::class, News::class, UserNews::class],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 abstract class MaterialisticDatabase : RoomDatabase() {

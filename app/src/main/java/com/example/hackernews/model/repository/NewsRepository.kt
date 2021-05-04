@@ -1,5 +1,6 @@
 package com.example.hackernews.model.repository
 
+import android.util.Log
 import com.example.hackernews.common.enums.NewsDataType
 import com.example.hackernews.data.service.NewsService
 import com.example.hackernews.model.database.dao.NewsDao
@@ -40,7 +41,7 @@ class NewsRepository(
         newsApi.getStoriesIds(newsDataType.rawValue).enqueue(object : Callback<List<Int>> {
             override fun onResponse(call: Call<List<Int>>, response: Response<List<Int>>) {
                 if (response.isSuccessful)
-                    getStories(response.body()!!, callback)
+                    getStories(response.body()!!, callback, newsDataType)
                 else
                     callback(null, ApiError(response.errorBody().toString()))
             }
@@ -51,12 +52,13 @@ class NewsRepository(
         })
     }
 
-    private fun getStories(storiedIds: List<Int>, callback: GetNewsCallback) {
+    private fun getStories(storiedIds: List<Int>, callback: GetNewsCallback, newsDataType: NewsDataType) {
         storiedIds.forEach { storyId ->
             newsApi.getStory(storyId).enqueue(object : Callback<News> {
                 override fun onResponse(call: Call<News>, response: Response<News>) {
                     if (response.isSuccessful) {
                         executors.execute {
+                            response.body()!!.newsType = newsDataType.rawValue
                             newsDao.save(response.body()!!)
                         }
                         callback(response.body(), null)
@@ -68,6 +70,12 @@ class NewsRepository(
                     callback(null, ApiError(t.toString()))
                 }
             })
+        }
+    }
+
+    fun loadLocalStories(type: String, onLoad: (List<News>?) -> Unit) {
+        executors.execute {
+            onLoad(newsDao.loadStories(type))
         }
     }
 }

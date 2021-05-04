@@ -3,5 +3,9 @@
     <string name="last_updated_1_min_ago">Last updated 1 min ago</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="rate_the_app">Rate the app</string>
+    <string name="title">Title</string>
+    <string name="comment">Comment</string>
+    <string name="feedback_issue">Your feedback will be made public as a Materialistic Github Issue</string>
 
 </resources>
