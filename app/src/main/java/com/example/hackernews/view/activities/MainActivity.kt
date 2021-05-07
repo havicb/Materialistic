@@ -2,6 +2,7 @@ package com.example.hackernews.view.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -73,6 +74,13 @@ class MainActivity :
     }
 
     override fun bindObservers() {
+        viewModel.areNewsWaitingToBeLoaded.observe(this) { newsAreWaitingToBeLoaded ->
+            if(newsAreWaitingToBeLoaded) {
+                showProgressBar()
+                return@observe
+            }
+            hideProgressBar()
+        }
         viewModel.news.observe(this, { news ->
             newsAdapter.addNews(news)
         })
@@ -96,8 +104,6 @@ class MainActivity :
         })
     }
 
-    // what should i use to reduce this boiler plate code?
-    // maybe two way data binding?
     @SuppressLint("SetTextI18n")
     private val onSuccessUpdateUI: (User) -> Unit = { user ->
         Toast.makeText(this, "Welcome ${user.username}", Toast.LENGTH_SHORT).show()
@@ -111,6 +117,14 @@ class MainActivity :
             viewModel.logoutUser()
             Toast.makeText(this, "Successfully logged out", Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun showProgressBar() {
+        binding.loadingNewsProgress.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBar() {
+        binding.loadingNewsProgress.visibility = View.GONE
     }
 
     override fun swipeOnLeft(currentElement: Int) {
@@ -143,11 +157,10 @@ class MainActivity :
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         binding.drawerLayout.closeDrawer(GravityCompat.START)
-        return MainActivityNavigation.onNavigationItemSelected(
-            viewModel,
-            supportFragmentManager,
-            item
-        )
+        val itemSelected = MainActivityNavigation.onNavigationItemSelected(viewModel, supportFragmentManager, item) {
+            viewModel.enableProgressBar() // so if user clicks on any tab which requires to fetch news from API, I need to show PB
+        }
+        return itemSelected
     }
 
     override fun getViewBinding() = ActivityMainBinding.inflate(layoutInflater)

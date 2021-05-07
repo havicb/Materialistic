@@ -1,5 +1,6 @@
 package com.example.hackernews.view.activities
 
+import android.widget.Toast
 import androidx.viewpager2.widget.ViewPager2
 import com.example.hackernews.common.constants.Constants
 import com.example.hackernews.databinding.ActivityNewsBinding
@@ -42,8 +43,8 @@ class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
 
     private fun initViewPagerAndTabs(selectedNews: News) {
         binding.viewPager2.adapter =
-            NewsTabsAdapter(supportFragmentManager, lifecycle, selectedNews.url)
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Comments"))
+            NewsTabsAdapter(supportFragmentManager, lifecycle, selectedNews)
+        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("${selectedNews.kids?.size} comments"))
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Article"))
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {

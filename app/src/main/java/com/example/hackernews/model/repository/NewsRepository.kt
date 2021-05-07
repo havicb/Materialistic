@@ -1,14 +1,14 @@
 package com.example.hackernews.model.repository
 
-import android.util.Log
+import com.example.hackernews.common.enums.Dispatchers
 import com.example.hackernews.common.enums.NewsDataType
+import com.example.hackernews.common.helpers.Dispatcher
 import com.example.hackernews.data.service.NewsService
 import com.example.hackernews.model.database.dao.NewsDao
 import com.example.hackernews.model.entities.News
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.concurrent.ExecutorService
 
 /**
  * Points for using repository. But few things to keep in mind with repositories:
@@ -23,12 +23,12 @@ import java.util.concurrent.ExecutorService
  *
  * Let us now create StoryRepository as an example.
  */
-typealias GetNewsCallback = (News?, ApiError?, NewsDataType?) -> Unit
+typealias GetNewsCallback = (News?, ApiError?) -> Unit
 
 class NewsRepository(
     private val newsApi: NewsService,
-    private val executors: ExecutorService,
-    private val newsDao: NewsDao
+    private val newsDao: NewsDao,
+    private val dispatcher: Dispatcher
 ) {
 
     /**
@@ -41,13 +41,13 @@ class NewsRepository(
         newsApi.getStoriesIds(newsDataType.rawValue).enqueue(object : Callback<List<Int>> {
             override fun onResponse(call: Call<List<Int>>, response: Response<List<Int>>) {
                 if (response.isSuccessful)
-                    getStories(response.body()!!, callback, newsDataType)
+                    getStories(response.body()!!, callback)
                 else
-                    callback(null, ApiError(response.errorBody().toString()), null)
+                    callback(null, ApiError(response.errorBody().toString()))
             }
 
             override fun onFailure(call: Call<List<Int>>, t: Throwable) {
-                callback(null, ApiError(t.toString()), null)
+                callback(null, ApiError(t.toString()))
             }
         })
     }
@@ -55,33 +55,29 @@ class NewsRepository(
     private fun getStories(
         storiedIds: List<Int>,
         callback: GetNewsCallback,
-        newsDataType: NewsDataType
     ) {
         storiedIds.forEach { storyId ->
             newsApi.getStory(storyId).enqueue(object : Callback<News> {
                 override fun onResponse(call: Call<News>, response: Response<News>) {
                     if (response.isSuccessful) {
-                        Log.d("CALLING", "FETCHING NEWS FOR -> $newsDataType")
-                        /*
-                        executors.execute {
-                            response.body()!!.newsType = newsDataType.rawValue
-                            newsDao.save(response.body()!!)
-                        }*/
-                        callback(response.body(), null, newsDataType)
+                        callback(response.body(), null)
                     } else
-                        callback(null, ApiError(response.errorBody().toString()), null)
+                        callback(null, ApiError(response.errorBody().toString()))
                 }
 
                 override fun onFailure(call: Call<News>, t: Throwable) {
-                    callback(null, ApiError(t.toString()), null)
+                    callback(null, ApiError(t.toString()))
                 }
             })
         }
     }
 
     fun loadLocalStories(type: String, onLoad: (List<News>?) -> Unit) {
-        executors.execute {
-            onLoad(newsDao.loadStories(type))
+        dispatcher.launch(Dispatchers.IO) {
+            val localStories = newsDao.loadStories(type)
+            dispatcher.launch(Dispatchers.MAIN) {
+                onLoad(localStories)
+            }
         }
     }
 }

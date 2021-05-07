@@ -1,5 +1,6 @@
 package com.example.hackernews.view.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -29,12 +30,13 @@ class NewsAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(news: News, listener: SelectedNewsListener, position: Int) {
-            binding.newsId.text = (position+1).toString()
+            binding.newsId.text = (position + 1).toString()
             binding.newsTitle.text = news.title
             binding.newsScore.text = news.score.toString()
             binding.newsUrl.text = Helper.getMainUrl(news.url)
             binding.timePublished.text = Helper.formatDate(news.time)
             binding.newsPublisher.text = news.by
+            binding.tvNumComments.text = news.kids?.size.toString()
             binding.root.setOnClickListener {
                 listener(news)
             }

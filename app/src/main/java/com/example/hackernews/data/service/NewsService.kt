@@ -1,5 +1,6 @@
 package com.example.hackernews.data.service
 
+import com.example.hackernews.model.entities.Comment
 import com.example.hackernews.model.entities.News
 import retrofit2.Call
 import retrofit2.http.GET
@@ -12,4 +13,7 @@ interface NewsService {
 
     @GET("/v0/item/{id}.json")
     fun getStory(@Path("id") id: Int): Call<News>
+
+    @GET("/v0/item/{id}.json")
+    fun getComment(@Path("id") id: Int) : Call<Comment>
 }

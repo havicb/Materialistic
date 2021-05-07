@@ -1,15 +1,29 @@
 package com.example.hackernews.model.repository
 
+import android.text.Html
+import android.util.Log
 import com.example.hackernews.data.service.NewsService
 import com.example.hackernews.model.entities.Comment
+import com.example.hackernews.model.entities.News
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CommentsRepository(private val newsApi: NewsService) {
 
-    fun fetchComments(): List<Comment> {
-        val comments = ArrayList<Comment>()
-        for (i in 0..5) {
-            comments.add(Comment(i, "belmin", 123321, "Dummy comment", 1321312, "comment"))
+    fun fetchComments(selectedNews: News, onFetch: (Comment?) -> Unit) {
+        selectedNews.kids?.forEach { commentId ->
+            newsApi.getComment(commentId).enqueue(object : Callback<Comment> {
+                override fun onResponse(call: Call<Comment>, response: Response<Comment>) {
+                    val comment = response.body()
+                    comment!!.text = Html.fromHtml(response.body()!!.text).toString()
+                    onFetch(comment)
+                }
+
+                override fun onFailure(call: Call<Comment>, t: Throwable) {
+                    Log.d("CALLING", "FAILED TO FETCH")
+                }
+            })
         }
-        return comments
     }
 }

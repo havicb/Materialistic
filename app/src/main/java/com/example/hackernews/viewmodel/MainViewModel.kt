@@ -1,6 +1,5 @@
 package com.example.hackernews.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.hackernews.common.enums.NewsDataType
 import com.example.hackernews.factories.LoginViewModelFactory
@@ -48,12 +47,15 @@ class MainViewModel(
     private val _bestStories = arrayListOf<News>()
 
     private val _hasNewsSaved = MutableLiveData<Boolean>()
+    private val _areNewsWaitingToBeLoaded = MutableLiveData(true)
     private val _selectedNews = MutableLiveData<News>()
     private val loginViewModel: LoginViewModel by lazy {
         LoginViewModelFactory().create(LoginViewModel::class.java)
     }
 
     // immutability stuff
+    val areNewsWaitingToBeLoaded: LiveData<Boolean>
+        get() = _areNewsWaitingToBeLoaded
     val hasNewsSaved: LiveData<Boolean>
         get() = _hasNewsSaved
     val news = MutableLiveData<List<News>>()
@@ -64,22 +66,45 @@ class MainViewModel(
         fetchNews()
     }
 
-    // So every time you going to fetch data from remote service, clear already added news, and then handle it..
-    // I really do not know how to implement this other way..
     private fun fetchNews(type: NewsDataType = NewsDataType.TOP_STORIES) {
-        Log.d("CALLING", "FETCHING FROM REMOTE SOURCE -> ${type.rawValue}")
-        newsRepository.getNews(type) { singleNews, error, callNewsDataType ->
+        clearNews(type) // avoiding duplicate data
+        newsRepository.getNews(type) { singleNews, error ->
             if (error != null) {
                 handleError(error)
                 return@getNews
+            } else if (singleNews == null) {
+                return@getNews
+            } else if (selectedNewsType == type) {
+                disableProgressBar()
             }
-            Log.d("NEWS DATA TYPE CALL", callNewsDataType!!.rawValue)
-            when(type) {
-                NewsDataType.TOP_STORIES ->  _topStories.add(singleNews!!)
-                NewsDataType.BEST_STORIES -> _bestStories.add(singleNews!!)
-                NewsDataType.NEW_STORIES -> _newStories.add(singleNews!!)
+            handleNews(type, singleNews)
+        }
+    }
+
+    private fun handleNews(type: NewsDataType, singleNews: News) {
+        when (type) {
+            NewsDataType.TOP_STORIES -> {
+                _topStories.add(singleNews)
             }
-            updateNews()
+            NewsDataType.BEST_STORIES -> {
+                _bestStories.add(singleNews)
+            }
+            NewsDataType.NEW_STORIES -> {
+                _newStories.add(singleNews)
+            }
+            else -> {
+                return
+            }
+        }
+        updateNews()
+    }
+
+    private fun clearNews(type: NewsDataType) {
+        when (type) {
+            NewsDataType.TOP_STORIES -> _topStories.clear()
+            NewsDataType.NEW_STORIES -> _newStories.clear()
+            NewsDataType.BEST_STORIES -> _bestStories.clear()
+            NewsDataType.SAVED_STORIES -> _savedStories.clear()
         }
     }
 
@@ -92,72 +117,45 @@ class MainViewModel(
         }
     }
 
-    private fun handleNews(type: NewsDataType, news: News) {
-        when (type) {
-            NewsDataType.TOP_STORIES -> {
-                _topStories.add(news)
-                return
-            }
-            NewsDataType.NEW_STORIES -> {
-                _newStories.add(news)
-                return
-            }
-            NewsDataType.BEST_STORIES -> {
-                _bestStories.add(news)
-                return
-            }
-            else -> {
-                return
-            }
-        }
-    }
-
     fun savedStoriesSelected() {
         selectedNewsType = NewsDataType.SAVED_STORIES
         userRepository.loadSavedStories { userSavedNews ->
-            _savedStories.addAll(userSavedNews!!.list)
-            if (selectedNewsType == NewsDataType.SAVED_STORIES)
-                this.news.postValue(userSavedNews.list)
+            if (userSavedNews == null)
+                return@loadSavedStories
+            _savedStories.addAll(userSavedNews.list)
         }
+        disableProgressBar()
+        news.value = _savedStories
     }
 
     fun topStoriesSelected() {
         selectedNewsType = NewsDataType.TOP_STORIES
-        /*
-        newsRepository.loadLocalStories(selectedNewsType.rawValue) { topStories ->
-            Log.d("CALLING", "TOP STORIES FROM DB -> ${topStories!!.size}")
-            _topStories.addAll(topStories!!)
-            this.topNews.postValue(_topStories)
-        }*/
-        fetchNews(selectedNewsType)
+        if (_topStories.isEmpty()) {
+            fetchNews(selectedNewsType)
+            return
+        }
+        disableProgressBar()
+        news.value = _topStories
     }
 
     fun catchUpSelected() {
         selectedNewsType = NewsDataType.BEST_STORIES
-        /*0
-        newsRepository.loadLocalStories(selectedNewsType.rawValue) { localBestStories ->
-            if (!localBestStories.isNullOrEmpty()) {
-                Log.d("CALLING", "BEST STORIES FROM DB -> ${localBestStories.size}")
-                _bestStories.addAll(_bestStories)
-                this.news.postValue(_bestStories)
-                return@loadLocalStories
-            }*/
+        if (_bestStories.isEmpty()) {
             fetchNews(selectedNewsType)
+            return
+        }
+        disableProgressBar()
+        news.value = _bestStories
     }
 
     fun newStoriesSelected() {
         selectedNewsType = NewsDataType.NEW_STORIES
-/*
-        newsRepository.loadLocalStories(selectedNewsType.rawValue) { localNewStories ->
-            if (localNewStories != null) {
-                Log.d("CALLING", "NEW STORIES FROM DB -> ${localNewStories.size}")
-                _newStories.addAll(localNewStories)
-                this.news.postValue(_newStories)
-                return@loadLocalStories
-            }
+        if (_newStories.isEmpty()) {
+            fetchNews(selectedNewsType)
+            return
         }
-*/
-        fetchNews(selectedNewsType) // if query return null it means that data is never saved into local database, so go find data on the internet hahaa
+        disableProgressBar()
+        news.value = _newStories
     }
 
     fun saveStory(currentElement: Int) {
@@ -170,6 +168,16 @@ class MainViewModel(
             return
         }
         _hasNewsSaved.value = false
+    }
+
+    // so if user navigate from top stories to best stories and repository was not returned result yet, I need to show progress bar
+    // on another tab which indicate that current tab news are fetching from somewhere and they are not loaded yet
+    fun disableProgressBar() {
+        _areNewsWaitingToBeLoaded.value = false
+    }
+
+    fun enableProgressBar() {
+        _areNewsWaitingToBeLoaded.value = true
     }
 
     fun loggedUser(): LiveData<User?> {

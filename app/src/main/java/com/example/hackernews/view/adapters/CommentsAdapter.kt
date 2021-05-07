@@ -38,9 +38,9 @@ class CommentsAdapter(
         return comments.size
     }
 
-    fun addComments(comments: List<Comment>) {
-        this.comments.clear()
-        this.comments.addAll(comments)
+    fun addComments(data: List<Comment>) {
+        comments.clear()
+        comments.addAll(data)
         notifyDataSetChanged()
     }
 }

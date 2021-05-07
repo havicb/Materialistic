@@ -2,6 +2,7 @@ package com.example.hackernews.model.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
@@ -22,4 +23,7 @@ data class News(
     @ColumnInfo(defaultValue = "")
     var url: String,
     var newsType: String
-) : Serializable
+) : Serializable {
+    @Ignore
+    var kids: List<Int>? = null
+}
