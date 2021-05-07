@@ -16,12 +16,6 @@ class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
         setUpToolbar()
     }
 
-    private fun setUpToolbar() {
-        setSupportActionBar(binding.newsToolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-    }
-
     override fun setListeners() {
         binding.newsToolbar.setNavigationOnClickListener {
             onBackPressed()
@@ -38,6 +32,12 @@ class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
     private fun initElements(selectedNews: News) {
         binding.newsTitle.text = selectedNews.title
         binding.newsUrl.text = selectedNews.url
+    }
+
+    private fun setUpToolbar() {
+        setSupportActionBar(binding.newsToolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
     private fun initViewPagerAndTabs(selectedNews: News) {

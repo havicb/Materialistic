@@ -24,8 +24,14 @@ abstract class BaseActivity<VBinding : ViewBinding, ViewModel : BaseViewModel> :
 
     protected abstract fun getViewBinding(): VBinding
     protected abstract fun getViewModelClass(): ViewModel
-    // i want child classes to have same convention so i declare these two functions below
-    protected abstract fun setUpScreen()
-    protected abstract fun bindObservers()
-    protected abstract fun setListeners()
+
+    protected open fun setUpScreen() {
+
+    }
+    protected open fun bindObservers() {
+
+    }
+    protected open fun setListeners() {
+
+    }
 }

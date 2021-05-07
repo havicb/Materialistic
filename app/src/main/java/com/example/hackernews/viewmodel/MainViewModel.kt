@@ -43,7 +43,7 @@ class MainViewModel(
     private var selectedNewsType: NewsDataType = NewsDataType.TOP_STORIES
 
     private val _topStories = arrayListOf<News>()
-    private val _savedNews = arrayListOf<News>()
+    private val _savedStories = arrayListOf<News>()
     private val _newStories = arrayListOf<News>()
     private val _bestStories = arrayListOf<News>()
 
@@ -64,32 +64,49 @@ class MainViewModel(
         fetchNews()
     }
 
+    // So every time you going to fetch data from remote service, clear already added news, and then handle it..
+    // I really do not know how to implement this other way..
     private fun fetchNews(type: NewsDataType = NewsDataType.TOP_STORIES) {
-        Log.d("FETCHING()", type.rawValue)
-        newsRepository.getNews(type) { singleNews, error ->
+        Log.d("CALLING", "FETCHING FROM REMOTE SOURCE -> ${type.rawValue}")
+        newsRepository.getNews(type) { singleNews, error, callNewsDataType ->
             if (error != null) {
                 handleError(error)
                 return@getNews
             }
-            attachNewsToLiveData(selectedNewsType, singleNews!!)
+            Log.d("NEWS DATA TYPE CALL", callNewsDataType!!.rawValue)
+            when(type) {
+                NewsDataType.TOP_STORIES ->  _topStories.add(singleNews!!)
+                NewsDataType.BEST_STORIES -> _bestStories.add(singleNews!!)
+                NewsDataType.NEW_STORIES -> _newStories.add(singleNews!!)
+            }
+            updateNews()
         }
     }
 
-    fun attachNewsToLiveData(type: NewsDataType, news: News) {
+    private fun updateNews() {
+        news.value = when (selectedNewsType) {
+            NewsDataType.TOP_STORIES -> _topStories
+            NewsDataType.NEW_STORIES -> _newStories
+            NewsDataType.BEST_STORIES -> _bestStories
+            NewsDataType.SAVED_STORIES -> _savedStories
+        }
+    }
+
+    private fun handleNews(type: NewsDataType, news: News) {
         when (type) {
             NewsDataType.TOP_STORIES -> {
                 _topStories.add(news)
-                this.news.value = _topStories
                 return
             }
             NewsDataType.NEW_STORIES -> {
                 _newStories.add(news)
-                this.news.value = _newStories
                 return
             }
             NewsDataType.BEST_STORIES -> {
                 _bestStories.add(news)
-                this.news.value = _bestStories
+                return
+            }
+            else -> {
                 return
             }
         }
@@ -98,7 +115,7 @@ class MainViewModel(
     fun savedStoriesSelected() {
         selectedNewsType = NewsDataType.SAVED_STORIES
         userRepository.loadSavedStories { userSavedNews ->
-            _savedNews.addAll(userSavedNews!!.list)
+            _savedStories.addAll(userSavedNews!!.list)
             if (selectedNewsType == NewsDataType.SAVED_STORIES)
                 this.news.postValue(userSavedNews.list)
         }
@@ -106,34 +123,41 @@ class MainViewModel(
 
     fun topStoriesSelected() {
         selectedNewsType = NewsDataType.TOP_STORIES
+        /*
         newsRepository.loadLocalStories(selectedNewsType.rawValue) { topStories ->
+            Log.d("CALLING", "TOP STORIES FROM DB -> ${topStories!!.size}")
             _topStories.addAll(topStories!!)
-            this.news.postValue(_topStories)
-        }
+            this.topNews.postValue(_topStories)
+        }*/
+        fetchNews(selectedNewsType)
     }
 
     fun catchUpSelected() {
         selectedNewsType = NewsDataType.BEST_STORIES
+        /*0
         newsRepository.loadLocalStories(selectedNewsType.rawValue) { localBestStories ->
-            if (localBestStories != null) {
+            if (!localBestStories.isNullOrEmpty()) {
+                Log.d("CALLING", "BEST STORIES FROM DB -> ${localBestStories.size}")
                 _bestStories.addAll(_bestStories)
                 this.news.postValue(_bestStories)
                 return@loadLocalStories
-            }
-            fetchNews(NewsDataType.BEST_STORIES)
-        }
+            }*/
+            fetchNews(selectedNewsType)
     }
 
     fun newStoriesSelected() {
         selectedNewsType = NewsDataType.NEW_STORIES
+/*
         newsRepository.loadLocalStories(selectedNewsType.rawValue) { localNewStories ->
             if (localNewStories != null) {
-                _newStories.addAll(localNewStories!!)
+                Log.d("CALLING", "NEW STORIES FROM DB -> ${localNewStories.size}")
+                _newStories.addAll(localNewStories)
                 this.news.postValue(_newStories)
                 return@loadLocalStories
             }
-            fetchNews(NewsDataType.NEW_STORIES) // if query return null it means that data is never saved into local database, so go find data on the internet hahaa
         }
+*/
+        fetchNews(selectedNewsType) // if query return null it means that data is never saved into local database, so go find data on the internet hahaa
     }
 
     fun saveStory(currentElement: Int) {

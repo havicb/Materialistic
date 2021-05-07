@@ -28,12 +28,12 @@ class NewsAdapter(
         private val binding: NewsRowBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(news: News, listener: SelectedNewsListener) {
-            binding.newsId.text = news.idToShow.toString()
+        fun bind(news: News, listener: SelectedNewsListener, position: Int) {
+            binding.newsId.text = (position+1).toString()
             binding.newsTitle.text = news.title
             binding.newsScore.text = news.score.toString()
             binding.newsUrl.text = Helper.getMainUrl(news.url)
-            binding.timePublished.text = Helper.humanReadableDate(news.time)
+            binding.timePublished.text = Helper.formatDate(news.time)
             binding.newsPublisher.text = news.by
             binding.root.setOnClickListener {
                 listener(news)
@@ -48,7 +48,7 @@ class NewsAdapter(
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         val currentNews = news[position]
-        holder.bind(currentNews, listener)
+        holder.bind(currentNews, listener, position)
     }
 
     override fun getItemCount(): Int = news.size

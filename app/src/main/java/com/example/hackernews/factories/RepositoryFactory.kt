@@ -7,6 +7,8 @@ import com.example.hackernews.model.database.MaterialisticDatabase
 import com.example.hackernews.model.repository.CommentsRepository
 import com.example.hackernews.model.repository.NewsRepository
 import com.example.hackernews.model.repository.UserRepository
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.ExecutorService
@@ -14,10 +16,18 @@ import java.util.concurrent.Executors
 
 object RepositoryFactory {
 
+    private val HttpLoggingInterceptor: HttpLoggingInterceptor = HttpLoggingInterceptor()
+
+    private val client = OkHttpClient.Builder()
+    .addInterceptor(HttpLoggingInterceptor)
+    .build();
+
     private val retrofit: Retrofit by lazy {
+        HttpLoggingInterceptor.setLevel(okhttp3.logging.HttpLoggingInterceptor.Level.BODY);
         Retrofit.Builder()
             .baseUrl(Constants.API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
             .build()
     }
 

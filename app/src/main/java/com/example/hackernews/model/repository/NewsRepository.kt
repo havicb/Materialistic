@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutorService
  *
  * Let us now create StoryRepository as an example.
  */
-typealias GetNewsCallback = (News?, ApiError?) -> Unit
+typealias GetNewsCallback = (News?, ApiError?, NewsDataType?) -> Unit
 
 class NewsRepository(
     private val newsApi: NewsService,
@@ -43,31 +43,37 @@ class NewsRepository(
                 if (response.isSuccessful)
                     getStories(response.body()!!, callback, newsDataType)
                 else
-                    callback(null, ApiError(response.errorBody().toString()))
+                    callback(null, ApiError(response.errorBody().toString()), null)
             }
 
             override fun onFailure(call: Call<List<Int>>, t: Throwable) {
-                callback(null, ApiError(t.toString()))
+                callback(null, ApiError(t.toString()), null)
             }
         })
     }
 
-    private fun getStories(storiedIds: List<Int>, callback: GetNewsCallback, newsDataType: NewsDataType) {
+    private fun getStories(
+        storiedIds: List<Int>,
+        callback: GetNewsCallback,
+        newsDataType: NewsDataType
+    ) {
         storiedIds.forEach { storyId ->
             newsApi.getStory(storyId).enqueue(object : Callback<News> {
                 override fun onResponse(call: Call<News>, response: Response<News>) {
                     if (response.isSuccessful) {
+                        Log.d("CALLING", "FETCHING NEWS FOR -> $newsDataType")
+                        /*
                         executors.execute {
                             response.body()!!.newsType = newsDataType.rawValue
                             newsDao.save(response.body()!!)
-                        }
-                        callback(response.body(), null)
+                        }*/
+                        callback(response.body(), null, newsDataType)
                     } else
-                        callback(null, ApiError(response.errorBody().toString()))
+                        callback(null, ApiError(response.errorBody().toString()), null)
                 }
 
                 override fun onFailure(call: Call<News>, t: Throwable) {
-                    callback(null, ApiError(t.toString()))
+                    callback(null, ApiError(t.toString()), null)
                 }
             })
         }
