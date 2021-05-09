@@ -9,9 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.hackernews.databinding.FragmentArticleBinding
 import com.example.hackernews.factories.ArticleViewModelFactory
+import com.example.hackernews.view.common.BaseFragment
 import com.example.hackernews.viewmodel.ArticleViewModel
 
-class ArticleFragment(private val url: String) : Fragment() {
+class ArticleFragment(private val url: String) : BaseFragment() {
 
     private lateinit var binding: FragmentArticleBinding
     private val viewModel: ArticleViewModel by viewModels {

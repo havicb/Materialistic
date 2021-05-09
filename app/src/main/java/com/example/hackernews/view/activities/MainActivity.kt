@@ -164,5 +164,5 @@ class MainActivity :
     }
 
     override fun getViewBinding() = ActivityMainBinding.inflate(layoutInflater)
-    override fun getViewModelClass() = MainViewModelFactory().create(MainViewModel::class.java)
+    override fun getViewModelClass() = MainViewModelFactory(activityComponent.newsRepository(), activityComponent.userRepository()).create(MainViewModel::class.java)
 }

@@ -11,16 +11,18 @@ import com.example.hackernews.databinding.FragmentCommentBinding
 import com.example.hackernews.factories.CommentViewModelFactory
 import com.example.hackernews.model.entities.News
 import com.example.hackernews.view.adapters.CommentsAdapter
+import com.example.hackernews.view.common.BaseFragment
 import com.example.hackernews.viewmodel.CommentsViewModel
 
-class CommentFragment(private val selectedNews: News) : Fragment() {
+class CommentFragment(private val selectedNews: News) : BaseFragment() {
 
     private lateinit var binding: FragmentCommentBinding
     private val commentAdapter: CommentsAdapter by lazy {
         CommentsAdapter()
     }
+
     private val viewModel: CommentsViewModel by viewModels {
-        CommentViewModelFactory(selectedNews)
+        CommentViewModelFactory(activityComponent.commentsRepository(), selectedNews)
     }
 
     override fun onCreateView(
