@@ -5,8 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import com.example.hackernews.common.helpers.Dispatcher
 import com.example.hackernews.data.service.NewsService
-import com.example.hackernews.di.app.AppComponent
-import com.example.hackernews.di.app.AppScope
+import com.example.hackernews.model.database.MaterialisticDatabase
 import com.example.hackernews.model.repository.CommentsRepository
 import com.example.hackernews.model.repository.NewsRepository
 import com.example.hackernews.model.repository.UserRepository
@@ -18,15 +17,11 @@ import java.util.concurrent.Executors
 @Module
 class ActivityModule(
     private val activity: Activity,
-    private val appComponent: AppComponent
 ) {
 
-    @ActivityScope
     @Provides
     fun activity() = activity
 
-    @Provides
-    fun newsService() = appComponent.provideNewsService()
 
     @ActivityScope
     @Provides
@@ -42,24 +37,31 @@ class ActivityModule(
         Dispatcher(executorService, mainThreadHandler)
 
     @Provides
-    fun newsRepository(dispatcher: Dispatcher, newsService: NewsService): NewsRepository {
+    fun newsRepository(
+        materialisticDatabase: MaterialisticDatabase,
+        dispatcher: Dispatcher,
+        newsService: NewsService
+    ): NewsRepository {
         return NewsRepository(
             newsService,
-            appComponent.provideDatabase().newsDao(),
+            materialisticDatabase.newsDao(),
             dispatcher
         )
     }
 
     @Provides
-    fun userRepository(dispatcher: Dispatcher): UserRepository {
+    fun userRepository(
+        materialisticDatabase: MaterialisticDatabase,
+        dispatcher: Dispatcher
+    ): UserRepository {
         return UserRepository(
-            appComponent.provideDatabase().userDao(),
-            appComponent.provideDatabase().userNewsDao(),
+            materialisticDatabase.userDao(),
+            materialisticDatabase.userNewsDao(),
             dispatcher
         )
     }
 
     @Provides
-    fun commentsRepository() = CommentsRepository(appComponent.provideNewsService())
+    fun commentsRepository(newsService: NewsService) = CommentsRepository(newsService)
 
 }

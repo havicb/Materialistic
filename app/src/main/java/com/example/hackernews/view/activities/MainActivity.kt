@@ -2,7 +2,6 @@ package com.example.hackernews.view.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -75,7 +74,7 @@ class MainActivity :
 
     override fun bindObservers() {
         viewModel.areNewsWaitingToBeLoaded.observe(this) { newsAreWaitingToBeLoaded ->
-            if(newsAreWaitingToBeLoaded) {
+            if (newsAreWaitingToBeLoaded) {
                 showProgressBar()
                 return@observe
             }
@@ -157,12 +156,19 @@ class MainActivity :
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         binding.drawerLayout.closeDrawer(GravityCompat.START)
-        val itemSelected = MainActivityNavigation.onNavigationItemSelected(viewModel, supportFragmentManager, item) {
+        val itemSelected = MainActivityNavigation.onNavigationItemSelected(
+            viewModel,
+            supportFragmentManager,
+            item
+        ) {
             viewModel.enableProgressBar() // so if user clicks on any tab which requires to fetch news from API, I need to show PB
         }
         return itemSelected
     }
 
     override fun getViewBinding() = ActivityMainBinding.inflate(layoutInflater)
-    override fun getViewModelClass() = MainViewModelFactory(activityComponent.newsRepository(), activityComponent.userRepository()).create(MainViewModel::class.java)
+    override fun getViewModelClass() = MainViewModelFactory(
+        activityComponent.newsRepository(),
+        activityComponent.userRepository()
+    ).create(MainViewModel::class.java)
 }

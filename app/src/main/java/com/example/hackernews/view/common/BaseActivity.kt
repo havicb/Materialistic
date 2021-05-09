@@ -12,11 +12,12 @@ import com.example.hackernews.viewmodel.BaseViewModel
 abstract class BaseActivity<VBinding : ViewBinding, ViewModel : BaseViewModel> :
     AppCompatActivity() {
 
-    val appCompositionRoot get() = (application as BaseApplication).appComponent
+    private val appCompositionRoot get() = (application as BaseApplication).appComponent
 
     val activityComponent by lazy {
         DaggerActivityComponent.builder()
-            .activityModule(ActivityModule(this, appCompositionRoot))
+            .appComponent(appCompositionRoot)
+            .activityModule(ActivityModule(this))
             .build()
     }
 
