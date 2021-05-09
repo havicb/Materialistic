@@ -25,7 +25,7 @@ class CommentFragment(private val selectedNews: News) : BaseFragment() {
     }
 
     private val viewModel: CommentsViewModel by viewModels {
-        CommentViewModelFactory((activity as NewsActivity).activityComponent.commentsRepository(), selectedNews)
+        CommentViewModelFactory((activity as NewsActivity).commentsRepository, selectedNews)
     }
 
     override fun onCreateView(

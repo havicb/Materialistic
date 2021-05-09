@@ -50,6 +50,6 @@ class LoginDialog(
     }
 
     override fun setupDialog(dialog: Dialog, style: Int) = dialog.setTitle("Login to hacker news")
-    override fun getViewModelClass() = LoginViewModelFactory((activity as MainActivity).activityComponent.userRepository()).create(LoginViewModel::class.java)
+    override fun getViewModelClass() = LoginViewModelFactory((activity as MainActivity).userRepository).create(LoginViewModel::class.java)
     override fun getViewBinding() = LoginLayoutBinding.inflate(layoutInflater)
 }
