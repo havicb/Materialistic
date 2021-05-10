@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
 import com.example.hackernews.BaseApplication
 import com.example.hackernews.di.activity.ActivityModule
-import com.example.hackernews.di.activity.DaggerActivityComponent
 import com.example.hackernews.viewmodel.BaseViewModel
 
 // creating base activity class for all activities and moving common behaviour into this activity
@@ -15,10 +14,7 @@ abstract class BaseActivity<VBinding : ViewBinding, ViewModel : BaseViewModel> :
     private val appCompositionRoot get() = (application as BaseApplication).appComponent
 
     val activityComponent by lazy {
-        DaggerActivityComponent.builder()
-            .appComponent(appCompositionRoot)
-            .activityModule(ActivityModule(this))
-            .build()
+        appCompositionRoot.newActivityComponent(ActivityModule(this))
     }
 
     protected lateinit var binding: VBinding
@@ -40,9 +36,11 @@ abstract class BaseActivity<VBinding : ViewBinding, ViewModel : BaseViewModel> :
     protected open fun setUpScreen() {
 
     }
+
     protected open fun bindObservers() {
 
     }
+
     protected open fun setListeners() {
 
     }

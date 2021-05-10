@@ -4,12 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hackernews.databinding.FragmentCommentBinding
-import com.example.hackernews.di.activity.ActivityModule
-import com.example.hackernews.di.activity.DaggerActivityComponent
 import com.example.hackernews.factories.CommentViewModelFactory
 import com.example.hackernews.model.entities.News
 import com.example.hackernews.view.activities.NewsActivity

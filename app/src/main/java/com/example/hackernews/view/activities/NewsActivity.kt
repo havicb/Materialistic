@@ -15,8 +15,7 @@ import javax.inject.Inject
 
 class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
 
-    @Inject
-    lateinit var commentsRepository: CommentsRepository
+    @Inject lateinit var commentsRepository: CommentsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         activityComponent.inject(this)

@@ -18,39 +18,7 @@ import java.util.concurrent.Executors
 
 @Module
 class AppModule(private val application: Application) {
-
     @AppScope
     @Provides
     fun provideApp() = application
-
-    @AppScope
-    @Provides
-    fun httpLoggingInterceptor() = HttpLoggingInterceptor()
-
-    @AppScope
-    @Provides
-    fun client(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY;
-        return OkHttpClient.Builder()
-            .addInterceptor(httpLoggingInterceptor)
-            .build();
-    }
-
-    @AppScope
-    @Provides
-    fun retrofit(client: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(Constants.API_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .build()
-    }
-
-    @AppScope
-    @Provides
-    fun newsService(retrofit: Retrofit) = retrofit.create(NewsService::class.java)
-
-    @AppScope
-    @Provides
-    fun database() = MaterialisticDatabase.getInstance(application)
 }
