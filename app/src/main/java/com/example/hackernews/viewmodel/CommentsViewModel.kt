@@ -1,21 +1,32 @@
 package com.example.hackernews.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.hackernews.model.network.Comment
+import com.example.hackernews.model.entities.Comment
+import com.example.hackernews.model.entities.News
 import com.example.hackernews.model.repository.CommentsRepository
 
+class CommentsViewModel(
+    private val commentsRepository: CommentsRepository,
+    private val selectedNews: News
+) : BaseViewModel() {
 
-class CommentsViewModel(private val commentsRepository: CommentsRepository) : ViewModel() {
-    private var _comments = listOf<Comment>()
+    private var _comments = arrayListOf<Comment>()
+    private var _commentAreWaitingToBeLoaded = MutableLiveData(true)
+
     val comments = MutableLiveData<List<Comment>>()
+    val commentsAreWaitingToBeLoaded: LiveData<Boolean>
+        get() = _commentAreWaitingToBeLoaded
 
     init {
-        fetchComments()
+        fetchComments(selectedNews)
     }
 
-    private fun fetchComments() {
-        _comments = commentsRepository.fetchComments()
-        comments.value = _comments
+    fun fetchComments(news: News) {
+        commentsRepository.fetchComments(news) { fetchedComment ->
+            _commentAreWaitingToBeLoaded.value = false
+            _comments.add(fetchedComment!!)
+            comments.value = _comments
+        }
     }
 }

@@ -1,38 +1,42 @@
 package com.example.hackernews.view.activities
 
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
 import com.example.hackernews.common.constants.Constants
 import com.example.hackernews.databinding.ActivityNewsBinding
 import com.example.hackernews.factories.NewsViewModelFactory
-import com.example.hackernews.model.network.News
+import com.example.hackernews.model.entities.News
+import com.example.hackernews.model.repository.CommentsRepository
 import com.example.hackernews.view.adapters.NewsTabsAdapter
+import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.viewmodel.NewsViewModel
 import com.google.android.material.tabs.TabLayout
+import javax.inject.Inject
 
-class NewsActivity : AppCompatActivity() {
+class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
 
-    private lateinit var binding: ActivityNewsBinding
-    private val viewModel: NewsViewModel by viewModels {
-        NewsViewModelFactory(intent.getSerializableExtra(Constants.SELECTED_NEWS) as News)
-    }
+    @Inject lateinit var commentsRepository: CommentsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        activityComponent.inject(this)
         super.onCreate(savedInstanceState)
-        binding = ActivityNewsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        initFields()
+    }
+
+    override fun setUpScreen() {
         setUpToolbar()
     }
 
-    private fun initFields() {
-        viewModel.selectedNews.observe(this, Observer { selectedNews ->
+    override fun setListeners() {
+        binding.newsToolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
+    }
+
+    override fun bindObservers() {
+        viewModel.selectedNews.observe(this) { selectedNews ->
             initViewPagerAndTabs(selectedNews)
             initElements(selectedNews)
-        })
+        }
     }
 
     private fun initElements(selectedNews: News) {
@@ -44,15 +48,14 @@ class NewsActivity : AppCompatActivity() {
         setSupportActionBar(binding.newsToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        binding.newsToolbar.setNavigationOnClickListener {
-            onBackPressed()
-        }
     }
 
     private fun initViewPagerAndTabs(selectedNews: News) {
         binding.viewPager2.adapter =
-            NewsTabsAdapter(supportFragmentManager, lifecycle, selectedNews.url)
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Comments"))
+            NewsTabsAdapter(supportFragmentManager, lifecycle, selectedNews)
+        binding.tabLayout.addTab(
+            binding.tabLayout.newTab().setText("${selectedNews.kids?.size} comments")
+        )
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Article"))
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -72,4 +75,10 @@ class NewsActivity : AppCompatActivity() {
             }
         })
     }
+
+    override fun getViewBinding() = ActivityNewsBinding.inflate(layoutInflater)
+    override fun getViewModelClass() =
+        NewsViewModelFactory(intent.getSerializableExtra(Constants.SELECTED_NEWS) as News).create(
+            NewsViewModel::class.java
+        )
 }

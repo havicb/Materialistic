@@ -1,12 +1,9 @@
 package com.example.hackernews.common.helpers
 
-import android.content.Context
-import android.icu.text.RelativeDateTimeFormatter
 import android.os.Build
-import android.widget.EditText
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import java.time.Instant
+import java.text.SimpleDateFormat
+import java.util.*
 
 class Helper {
     companion object {
@@ -15,19 +12,9 @@ class Helper {
         // example 321321 unix -> 2 day ago,
         // 123 -> 4 min ago etc.
         @RequiresApi(Build.VERSION_CODES.N)
-        fun humanReadableDate(hours: Long): String {
-            val format = RelativeDateTimeFormatter.getInstance()
-            var relativeUnit = RelativeDateTimeFormatter.RelativeUnit.HOURS
-            var tempHours = hours
-            if (hours > 24) {
-                relativeUnit = RelativeDateTimeFormatter.RelativeUnit.DAYS
-                tempHours /= 24
-            }
-            return format.format(
-                tempHours.toDouble(),
-                RelativeDateTimeFormatter.Direction.LAST,
-                relativeUnit
-            )
+        fun formatDate(unix: Long): String {
+            val date = Date(unix * 1000L)
+            return SimpleDateFormat("MM-dd HH:mm:ss").format(date)
         }
 
         /* when i call hacker news rest service, it returns me something like this -> "url" : "http://www.getdropbox.com/u/2/screencast.html"
@@ -37,7 +24,8 @@ class Helper {
         fun getMainUrl(fullUrl: String?): String {
             if (fullUrl == null)
                 return "news.ycombinator.com"
-            val trimmedFirstPart = fullUrl.removeRange(0, 8)
+            var endHttpPartInUrl = if(fullUrl.length < 8) fullUrl.length else 8
+            val trimmedFirstPart = fullUrl.removeRange(0, endHttpPartInUrl)
             val mainUrlEndIndex = findMainUrlEnd(trimmedFirstPart)
             var finalUrl = ""
             if (mainUrlEndIndex != -1)

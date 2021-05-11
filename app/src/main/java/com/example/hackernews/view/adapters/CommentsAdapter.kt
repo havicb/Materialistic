@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.databinding.CommentRowBinding
-import com.example.hackernews.model.network.Comment
+import com.example.hackernews.model.entities.Comment
 
 class CommentsAdapter(
     private val comments: ArrayList<Comment> = arrayListOf()
@@ -38,9 +38,9 @@ class CommentsAdapter(
         return comments.size
     }
 
-    fun addComments(comments: List<Comment>) {
-        this.comments.clear()
-        this.comments.addAll(comments)
+    fun addComments(data: List<Comment>) {
+        comments.clear()
+        comments.addAll(data)
         notifyDataSetChanged()
     }
 }

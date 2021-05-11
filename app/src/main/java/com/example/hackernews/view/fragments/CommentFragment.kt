@@ -4,24 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hackernews.databinding.FragmentCommentBinding
 import com.example.hackernews.factories.CommentViewModelFactory
-import com.example.hackernews.factories.RepositoryFactory
-import com.example.hackernews.model.network.Comment
+import com.example.hackernews.model.entities.News
+import com.example.hackernews.view.activities.NewsActivity
 import com.example.hackernews.view.adapters.CommentsAdapter
+import com.example.hackernews.view.common.BaseFragment
 import com.example.hackernews.viewmodel.CommentsViewModel
 
-class CommentFragment() : Fragment() {
+class CommentFragment(private val selectedNews: News) : BaseFragment() {
 
     private lateinit var binding: FragmentCommentBinding
     private val commentAdapter: CommentsAdapter by lazy {
         CommentsAdapter()
     }
+
     private val viewModel: CommentsViewModel by viewModels {
-        CommentViewModelFactory()
+        CommentViewModelFactory((activity as NewsActivity).commentsRepository, selectedNews)
     }
 
     override fun onCreateView(
@@ -36,9 +37,15 @@ class CommentFragment() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindRecycler()
-        viewModel.comments.observe(viewLifecycleOwner, {
-            commentAdapter.addComments(it as ArrayList<Comment>)
-        })
+        viewModel.comments.observe(viewLifecycleOwner) { comments ->
+            commentAdapter.addComments(comments)
+        }
+        viewModel.commentsAreWaitingToBeLoaded.observe(viewLifecycleOwner) { areWaiting ->
+            if (!areWaiting) {
+                binding.loadingCommentProgress.visibility = View.GONE
+                return@observe
+            }
+        }
     }
 
     private fun bindRecycler() {
@@ -48,6 +55,6 @@ class CommentFragment() : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = CommentFragment()
+        fun newInstance(news: News) = CommentFragment(news)
     }
 }

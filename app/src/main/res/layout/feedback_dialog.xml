@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/rate_the_app_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:text="@string/rate_the_app"/>
+
+    <TextView
+        android:id="@+id/or_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="or"
+        android:layout_below="@+id/rate_the_app_id"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/leave_feedback_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Leave feedback"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/or_id"
+        android:layout_margin="16dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tl_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/title"
+        android:layout_below="@id/leave_feedback_id">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/ti_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tl_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tl_title"
+        android:hint="@string/comment"
+        android:layout_margin="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/ti_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="15sp"
+        android:layout_below="@id/tl_comment"
+        android:text="@string/feedback_issue"
+        android:layout_marginBottom="16dp"
+        />
+
+
+</RelativeLayout>

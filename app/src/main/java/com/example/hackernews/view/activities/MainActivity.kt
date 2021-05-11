@@ -1,14 +1,13 @@
 package com.example.hackernews.view.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hackernews.R
@@ -18,51 +17,41 @@ import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.databinding.NavigationHeaderBinding
 import com.example.hackernews.factories.MainViewModelFactory
 import com.example.hackernews.model.entities.User
+import com.example.hackernews.model.repository.NewsRepository
+import com.example.hackernews.model.repository.UserRepository
 import com.example.hackernews.view.adapters.NewsAdapter
+import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.view.dialog.LoginDialog
+import com.example.hackernews.view.navigation.MainActivityNavigation
 import com.example.hackernews.view.swipes.Swipes
 import com.example.hackernews.viewmodel.MainViewModel
 import com.google.android.material.navigation.NavigationView
 import java.io.Serializable
+import java.util.*
+import javax.inject.Inject
+
 
 class MainActivity :
-    AppCompatActivity(),
+    BaseActivity<ActivityMainBinding, MainViewModel>(),
     NavigationView.OnNavigationItemSelectedListener,
     Serializable,
     OnSwipe {
 
-    private lateinit var binding: ActivityMainBinding
-    private val viewModel: MainViewModel by viewModels {
-        MainViewModelFactory()
-    }
+    @Inject lateinit var newsRepository: NewsRepository
+    @Inject lateinit var userRepository: UserRepository
+    private lateinit var navigationHeaderBinding: NavigationHeaderBinding
     private val newsAdapter: NewsAdapter by lazy {
         NewsAdapter(listener = viewModel::onNewsSelected)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        activityComponent.inject(this)
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setUpScreen()
-        bindViewModel()
     }
 
-    private fun setUpScreen() {
+    override fun setUpScreen() {
         setUpToolbar()
         setUpMainRecyclerView()
-        setListeners()
-    }
-
-    private fun bindViewModel() {
-        viewModel.allNews.observe(this, { news ->
-            newsAdapter.addNews(news)
-        })
-        viewModel.selectedNews.observe(this, { selectedNews ->
-            val intent = Intent(this, NewsActivity::class.java)
-            intent.putExtra(Constants.SELECTED_NEWS, selectedNews)
-            startActivity(intent)
-            // is it good practice to extract this in seperate class? For example: ScreenNavigator class which would contain only methods for screen navigation
-        })
     }
 
     private fun setUpToolbar() {
@@ -71,38 +60,89 @@ class MainActivity :
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
     }
 
-    private fun setListeners() {
+    override fun setListeners() {
         binding.appBarMain.searchView.setOnSearchClickListener { removeViewsFromToolbar() }
 
         binding.appBarMain.searchView.setOnCloseListener {
             addViewsToToolbar()
             false
         }
-
-        binding.navigationView.getHeaderView(0).setOnClickListener {
-            LoginDialog(this@MainActivity).show(supportFragmentManager, "Login dialog")
+        // accessing navigation header layout through binding
+        navigationHeaderBinding = NavigationHeaderBinding.inflate(
+            LayoutInflater.from(this),
+            binding.navigationView,
+            false
+        )
+        binding.navigationView.addHeaderView(navigationHeaderBinding.root)
+        navigationHeaderBinding.navHeaderLoginTextView.setOnClickListener { currentView ->
+            LoginDialog(onSuccessUpdateUI).show(
+                supportFragmentManager,
+                "Login dialog"
+            )
         }
         binding.navigationView.setNavigationItemSelectedListener(this)
     }
 
-    private fun updateUI(user: User) {
-        val headerBinding = NavigationHeaderBinding.inflate(layoutInflater)
-        headerBinding.navHeaderLoginTextView.text = user.username
-        headerBinding.logOutBtn.visibility = View.VISIBLE
+    override fun bindObservers() {
+        viewModel.areNewsWaitingToBeLoaded.observe(this) { newsAreWaitingToBeLoaded ->
+            if (newsAreWaitingToBeLoaded) {
+                showProgressBar()
+                return@observe
+            }
+            hideProgressBar()
+        }
+        viewModel.news.observe(this, { news ->
+            newsAdapter.addNews(news)
+        })
+        viewModel.selectedNews.observe(this, { selectedNews ->
+            val intent = Intent(this, NewsActivity::class.java)
+            intent.putExtra(Constants.SELECTED_NEWS, selectedNews)
+            startActivity(intent)
+        })
+        viewModel.loggedUser().observe(this, { currentUser ->
+            if (currentUser != null) {
+                onSuccessUpdateUI(currentUser)
+                return@observe
+            }
+        })
+        viewModel.hasNewsSaved.observe(this, { hasSaved ->
+            if (hasSaved) {
+                Toast.makeText(this, "Successfully saved!", Toast.LENGTH_SHORT).show()
+                return@observe
+            }
+            Toast.makeText(this, "You need to be logged to do that!", Toast.LENGTH_SHORT).show()
+        })
+    }
+
+    @SuppressLint("SetTextI18n")
+    private val onSuccessUpdateUI: (User) -> Unit = { user ->
+        Toast.makeText(this, "Welcome ${user.username}", Toast.LENGTH_SHORT).show()
         binding.drawerLayout.closeDrawer(GravityCompat.START)
-        headerBinding.logOutBtn.setOnClickListener {
-            headerBinding.logOutBtn.visibility = View.GONE
-            headerBinding.navHeaderLoginTextView.text = "Login"
-            // todo logout user
+        navigationHeaderBinding.navHeaderLoginTextView.text = user.username.capitalize(Locale.ROOT)
+        navigationHeaderBinding.logOutBtn.visibility = View.VISIBLE
+        navigationHeaderBinding.logOutBtn.setOnClickListener {
+            navigationHeaderBinding.navHeaderLoginTextView.text = "Login"
+            navigationHeaderBinding.logOutBtn.visibility = View.GONE
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            viewModel.logoutUser()
+            Toast.makeText(this, "Successfully logged out", Toast.LENGTH_LONG).show()
         }
     }
 
+    private fun showProgressBar() {
+        binding.loadingNewsProgress.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBar() {
+        binding.loadingNewsProgress.visibility = View.GONE
+    }
+
     override fun swipeOnLeft(currentElement: Int) {
-        //todo logic for saving post
+        viewModel.saveStory(currentElement)
     }
 
     override fun swipeOnRight(currentElement: Int) {
-        // todo
+
     }
 
     private fun removeViewsFromToolbar() {
@@ -126,30 +166,20 @@ class MainActivity :
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.side_top_stories -> {
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                viewModel.topStoriesSelected()
-            }
-            R.id.side_catch_up -> {
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-            }
-            R.id.side_new_stories -> {
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-            }
-            R.id.side_feedback -> {
-                Toast.makeText(this, "Clicked on feedback", Toast.LENGTH_LONG).show()
-            }
-            R.id.side_saved_stories -> {
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-            }
-            R.id.side_settings -> {
-                Toast.makeText(this, "Clicked on settings", Toast.LENGTH_LONG).show()
-            }
-            R.id.side_submit_to_hn -> {
-                Toast.makeText(this, "Clicked on submit to HN", Toast.LENGTH_LONG).show()
-            }
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
+        val itemSelected = MainActivityNavigation.onNavigationItemSelected(
+            viewModel,
+            supportFragmentManager,
+            item
+        ) {
+            viewModel.enableProgressBar() // so if user clicks on any tab which requires to fetch news from API, I need to show PB
         }
-        return true
+        return itemSelected
     }
+
+    override fun getViewBinding() = ActivityMainBinding.inflate(layoutInflater)
+    override fun getViewModelClass() = MainViewModelFactory(
+        newsRepository,
+        userRepository
+    ).create(MainViewModel::class.java)
 }

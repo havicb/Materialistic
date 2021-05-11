@@ -1,10 +1,11 @@
 package com.example.hackernews.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.hackernews.model.network.News
+import com.example.hackernews.factories.CommentViewModelFactory
+import com.example.hackernews.model.entities.Comment
+import com.example.hackernews.model.entities.News
 
-class NewsViewModel(private val _selectedNews: News) : ViewModel() {
+class NewsViewModel(_selectedNews: News) : BaseViewModel() {
 
     val selectedNews = MutableLiveData<News>()
 

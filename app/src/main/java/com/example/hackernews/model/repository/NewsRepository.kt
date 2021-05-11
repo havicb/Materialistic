@@ -1,8 +1,11 @@
 package com.example.hackernews.model.repository
 
+import com.example.hackernews.common.enums.Dispatchers
 import com.example.hackernews.common.enums.NewsDataType
+import com.example.hackernews.common.helpers.Dispatcher
 import com.example.hackernews.data.service.NewsService
-import com.example.hackernews.model.network.News
+import com.example.hackernews.model.database.dao.NewsDao
+import com.example.hackernews.model.entities.News
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,7 +26,9 @@ import retrofit2.Response
 typealias GetNewsCallback = (News?, ApiError?) -> Unit
 
 class NewsRepository(
-    private val newsApi: NewsService
+    private val newsApi: NewsService,
+    private val newsDao: NewsDao,
+    private val dispatcher: Dispatcher
 ) {
 
     /**
@@ -47,13 +52,16 @@ class NewsRepository(
         })
     }
 
-    private fun getStories(storiedIds: List<Int>, callback: GetNewsCallback) {
+    private fun getStories(
+        storiedIds: List<Int>,
+        callback: GetNewsCallback,
+    ) {
         storiedIds.forEach { storyId ->
             newsApi.getStory(storyId).enqueue(object : Callback<News> {
                 override fun onResponse(call: Call<News>, response: Response<News>) {
-                    if (response.isSuccessful)
+                    if (response.isSuccessful) {
                         callback(response.body(), null)
-                    else
+                    } else
                         callback(null, ApiError(response.errorBody().toString()))
                 }
 
@@ -61,6 +69,15 @@ class NewsRepository(
                     callback(null, ApiError(t.toString()))
                 }
             })
+        }
+    }
+
+    fun loadLocalStories(type: String, onLoad: (List<News>?) -> Unit) {
+        dispatcher.launch(Dispatchers.IO) {
+            val localStories = newsDao.loadStories(type)
+            dispatcher.launch(Dispatchers.MAIN) {
+                onLoad(localStories)
+            }
         }
     }
 }

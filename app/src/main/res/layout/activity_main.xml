@@ -20,12 +20,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/news_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:scrollbars="vertical" />
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:gravity="center"
+        android:visibility="visible"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/loading_news_progress"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"/>
 
     </LinearLayout>
 
@@ -37,9 +55,6 @@
         android:layout_marginVertical="0dp"
         android:background="@color/news_id_color"
         android:divider="@color/black"
-        app:headerLayout="@layout/navigation_header"
-        app:itemHorizontalPadding="15dp"
-        app:itemIconPadding="40dp"
         app:menu="@menu/sidebar_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
