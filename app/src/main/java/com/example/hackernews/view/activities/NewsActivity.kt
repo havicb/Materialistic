@@ -1,5 +1,6 @@
 package com.example.hackernews.view.activities
 
+import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast

@@ -20,6 +20,7 @@ class CommentsRepository(private val newsApi: NewsService) {
                         comment.text = Html.fromHtml(comment.text).toString()
                         onFetch(comment)
                     }
+                }
                 override fun onFailure(call: Call<Comment>, t: Throwable) {
                     Log.d("CALLING", "FAILED TO FETCH")
                 }

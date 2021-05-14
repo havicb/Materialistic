@@ -2,6 +2,7 @@ package com.example.hackernews.view.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
@@ -154,6 +155,7 @@ class MainActivity :
             item
         ) { dataType ->
             binding.appBarMain.tvStoriesType.text = dataType.rawValue.capitalize(Locale.ROOT)
+        }
     }
 
     // Toolbar methods
