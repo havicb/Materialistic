@@ -16,11 +16,10 @@ class CommentsRepository(private val newsApi: NewsService) {
             newsApi.getComment(commentId).enqueue(object : Callback<Comment> {
                 override fun onResponse(call: Call<Comment>, response: Response<Comment>) {
                     val comment = response.body()
-                    if(comment!= null)
+                    if(comment!!.text != null) {
                         comment.text = Html.fromHtml(comment.text).toString()
-                    onFetch(comment)
-                }
-
+                        onFetch(comment)
+                    }
                 override fun onFailure(call: Call<Comment>, t: Throwable) {
                     Log.d("CALLING", "FAILED TO FETCH")
                 }
