@@ -1,6 +1,7 @@
 package com.example.hackernews.view.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hackernews.common.helpers.Helper
@@ -11,7 +12,8 @@ typealias SelectedNewsListener = (News) -> Unit
 
 class NewsAdapter(
     val news: ArrayList<News> = arrayListOf(),
-    private val listener: SelectedNewsListener
+    private val listener: SelectedNewsListener,
+    private val itemMenuListener: (News, View) -> Unit
 ) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
     private val newsCopy = arrayListOf<News>()
@@ -25,7 +27,12 @@ class NewsAdapter(
         private val binding: NewsRowBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(news: News, listener: SelectedNewsListener, position: Int) {
+        fun bind(
+            news: News,
+            listener: SelectedNewsListener,
+            itemMenuListener: (News, View) -> Unit,
+            position: Int
+        ) {
             binding.newsId.text = (position + 1).toString()
             binding.newsTitle.text = news.title
             binding.newsScore.text = news.score.toString().plus("p")
@@ -35,6 +42,9 @@ class NewsAdapter(
             binding.tvNumComments.text = (news.kids?.size ?: "0").toString()
             binding.root.setOnClickListener {
                 listener(news)
+            }
+            binding.imageViewOptions.setOnClickListener { itemClicked ->
+                itemMenuListener(news, itemClicked)
             }
         }
     }
@@ -46,7 +56,7 @@ class NewsAdapter(
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         val currentNews = news[position]
-        holder.bind(currentNews, listener, position)
+        holder.bind(currentNews, listener, itemMenuListener, position)
     }
 
     override fun getItemCount(): Int = news.size

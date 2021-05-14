@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.GravityCompat
@@ -15,6 +16,7 @@ import com.example.hackernews.common.constants.Constants
 import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.databinding.NavigationHeaderBinding
 import com.example.hackernews.factories.MainViewModelFactory
+import com.example.hackernews.model.entities.News
 import com.example.hackernews.model.entities.User
 import com.example.hackernews.model.repository.NewsRepository
 import com.example.hackernews.model.repository.UserRepository
@@ -40,7 +42,7 @@ class MainActivity :
     @Inject lateinit var userRepository: UserRepository
     private lateinit var navigationHeaderBinding: NavigationHeaderBinding
     private val newsAdapter: NewsAdapter by lazy {
-        NewsAdapter(listener = viewModel::onNewsSelected)
+        NewsAdapter(listener = viewModel::onNewsSelected, itemMenuListener = showItemMenu)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,6 +123,30 @@ class MainActivity :
             viewModel.logoutUser()
             Toast.makeText(this, "Successfully logged out", Toast.LENGTH_LONG).show()
         }
+    }
+
+    val showItemMenu : (News, View) -> Unit = { selectedNews, view ->
+        val popup = PopupMenu(this@MainActivity, view)
+        popup.inflate(R.menu.item_menu)
+        popup.setOnMenuItemClickListener { item ->
+            when(item.itemId) {
+                R.id.item_refresh_id -> {
+                    Toast.makeText(this, "Refreshing", Toast.LENGTH_SHORT).show()
+                }
+                R.id.item_share_id -> {
+                    Toast.makeText(this, "Sharing", Toast.LENGTH_SHORT).show()
+
+                }
+                R.id.item_view_user_id -> {
+                    Toast.makeText(this, "View user", Toast.LENGTH_SHORT).show()
+                }
+                R.id.add_comment_id -> {
+                    Toast.makeText(this, "Add comment", Toast.LENGTH_SHORT).show()
+                }
+            }
+            true
+        }
+        popup.show()
     }
 
     private fun showProgressBar() {
