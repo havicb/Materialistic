@@ -2,7 +2,6 @@ package com.example.hackernews.view.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView

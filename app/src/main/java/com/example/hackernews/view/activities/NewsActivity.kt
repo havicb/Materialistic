@@ -45,7 +45,9 @@ class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
     private fun initViewPagerAndTabs(selectedNews: News) {
         binding.viewPager2.adapter =
             NewsTabsAdapter(supportFragmentManager, lifecycle, selectedNews)
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("${selectedNews.kids?.size} comments"))
+        binding.tabLayout.addTab(
+            binding.tabLayout.newTab().setText("${selectedNews.kids?.size} comments")
+        )
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Article"))
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -79,7 +81,7 @@ class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.share_icon_id -> {
                 Toast.makeText(this, "Share clicked", Toast.LENGTH_SHORT).show()
             }
