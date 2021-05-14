@@ -50,7 +50,7 @@ class MainViewModel(
     private val _areNewsWaitingToBeLoaded = MutableLiveData(true)
     private val _selectedNews = MutableLiveData<News>()
     private val loginViewModel: LoginViewModel by lazy {
-        LoginViewModelFactory().create(LoginViewModel::class.java)
+        LoginViewModelFactory(userRepository).create(LoginViewModel::class.java)
     }
 
     // immutability stuff

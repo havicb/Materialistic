@@ -5,6 +5,7 @@ import android.widget.Toast
 import com.example.hackernews.databinding.LoginLayoutBinding
 import com.example.hackernews.factories.LoginViewModelFactory
 import com.example.hackernews.model.entities.User
+import com.example.hackernews.view.activities.MainActivity
 import com.example.hackernews.view.common.BaseDialog
 import com.example.hackernews.viewmodel.LoginViewModel
 import java.util.*
@@ -49,6 +50,6 @@ class LoginDialog(
     }
 
     override fun setupDialog(dialog: Dialog, style: Int) = dialog.setTitle("Login to hacker news")
-    override fun getViewModelClass() = LoginViewModelFactory().create(LoginViewModel::class.java)
+    override fun getViewModelClass() = LoginViewModelFactory((activity as MainActivity).userRepository).create(LoginViewModel::class.java)
     override fun getViewBinding() = LoginLayoutBinding.inflate(layoutInflater)
 }

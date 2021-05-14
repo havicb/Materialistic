@@ -10,12 +10,21 @@ import com.example.hackernews.common.helpers.Helper
 import com.example.hackernews.databinding.ActivityNewsBinding
 import com.example.hackernews.factories.NewsViewModelFactory
 import com.example.hackernews.model.entities.News
+import com.example.hackernews.model.repository.CommentsRepository
 import com.example.hackernews.view.adapters.NewsTabsAdapter
 import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.viewmodel.NewsViewModel
 import com.google.android.material.tabs.TabLayout
+import javax.inject.Inject
 
 class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
+
+    @Inject lateinit var commentsRepository: CommentsRepository
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        activityComponent.inject(this)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun setUpScreen() {
         setUpToolbar()

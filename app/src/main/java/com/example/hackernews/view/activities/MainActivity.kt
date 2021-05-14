@@ -15,6 +15,8 @@ import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.databinding.NavigationHeaderBinding
 import com.example.hackernews.factories.MainViewModelFactory
 import com.example.hackernews.model.entities.User
+import com.example.hackernews.model.repository.NewsRepository
+import com.example.hackernews.model.repository.UserRepository
 import com.example.hackernews.view.adapters.NewsAdapter
 import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.view.dialog.LoginDialog
@@ -24,6 +26,7 @@ import com.example.hackernews.viewmodel.MainViewModel
 import com.google.android.material.navigation.NavigationView
 import java.io.Serializable
 import java.util.*
+import javax.inject.Inject
 
 
 class MainActivity :
@@ -32,9 +35,16 @@ class MainActivity :
     Serializable,
     OnSwipe {
 
+    @Inject lateinit var newsRepository: NewsRepository
+    @Inject lateinit var userRepository: UserRepository
     private lateinit var navigationHeaderBinding: NavigationHeaderBinding
     private val newsAdapter: NewsAdapter by lazy {
         NewsAdapter(listener = viewModel::onNewsSelected)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        activityComponent.inject(this)
+        super.onCreate(savedInstanceState)
     }
 
     override fun setUpScreen() {
@@ -144,8 +154,6 @@ class MainActivity :
             item
         ) { dataType ->
             binding.appBarMain.tvStoriesType.text = dataType.rawValue.capitalize(Locale.ROOT)
-            viewModel.enableProgressBar() // so if user clicks on any tab which requires to fetch news from API, I need to show PB
-        }
     }
 
     // Toolbar methods
@@ -179,5 +187,8 @@ class MainActivity :
 
     // Binding methods for base activity
     override fun getViewBinding() = ActivityMainBinding.inflate(layoutInflater)
-    override fun getViewModelClass() = MainViewModelFactory().create(MainViewModel::class.java)
+    override fun getViewModelClass() = MainViewModelFactory(
+        newsRepository,
+        userRepository
+    ).create(MainViewModel::class.java)
 }
