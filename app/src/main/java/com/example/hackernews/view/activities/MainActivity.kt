@@ -3,10 +3,9 @@ package com.example.hackernews.view.activities
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,16 +46,11 @@ class MainActivity :
     private fun setUpToolbar() {
         setSupportActionBar(binding.appBarMain.mainToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
     }
 
     override fun setListeners() {
-        binding.appBarMain.searchView.setOnSearchClickListener { removeViewsFromToolbar() }
-
-        binding.appBarMain.searchView.setOnCloseListener {
-            addViewsToToolbar()
-            false
-        }
         // accessing navigation header layout through binding
         navigationHeaderBinding = NavigationHeaderBinding.inflate(
             LayoutInflater.from(this),
@@ -75,7 +69,7 @@ class MainActivity :
 
     override fun bindObservers() {
         viewModel.areNewsWaitingToBeLoaded.observe(this) { newsAreWaitingToBeLoaded ->
-            if(newsAreWaitingToBeLoaded) {
+            if (newsAreWaitingToBeLoaded) {
                 showProgressBar()
                 return@observe
             }
@@ -135,14 +129,6 @@ class MainActivity :
 
     }
 
-    private fun removeViewsFromToolbar() {
-        binding.appBarMain.tvToolbarLastUpdate.visibility = View.GONE
-    }
-
-    private fun addViewsToToolbar() {
-        binding.appBarMain.tvToolbarLastUpdate.visibility = View.VISIBLE
-    }
-
     private fun setUpMainRecyclerView() {
         binding.newsRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.newsRecyclerView.adapter = newsAdapter
@@ -150,19 +136,49 @@ class MainActivity :
         itemTouchHelper.attachToRecyclerView(binding.newsRecyclerView)
     }
 
+    // Navigation drawer methods
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
+        return MainActivityNavigation.onNavigationItemSelected(
+            viewModel,
+            supportFragmentManager,
+            item
+        ) { dataType ->
+            binding.appBarMain.tvStoriesType.text = dataType.rawValue.capitalize(Locale.ROOT)
+            viewModel.enableProgressBar() // so if user clicks on any tab which requires to fetch news from API, I need to show PB
+        }
+    }
+
+    // Toolbar methods
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        val searchItem = menu!!.findItem(R.id.search_icon).actionView as SearchView
+        searchItem.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                newsAdapter.filter(query!!)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newsAdapter.filter(newText!!)
+                return true
+            }
+        })
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        binding.drawerLayout.openDrawer(GravityCompat.START)
+        when (item.itemId) {
+            R.id.search_icon -> {
+            }
+            R.id.list_display_options_id -> {
+                Toast.makeText(this, "List display options!", Toast.LENGTH_SHORT).show()
+            }
+        }
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        binding.drawerLayout.closeDrawer(GravityCompat.START)
-        val itemSelected = MainActivityNavigation.onNavigationItemSelected(viewModel, supportFragmentManager, item) {
-            viewModel.enableProgressBar() // so if user clicks on any tab which requires to fetch news from API, I need to show PB
-        }
-        return itemSelected
-    }
-
+    // Binding methods for base activity
     override fun getViewBinding() = ActivityMainBinding.inflate(layoutInflater)
     override fun getViewModelClass() = MainViewModelFactory().create(MainViewModel::class.java)
 }

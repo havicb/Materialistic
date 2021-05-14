@@ -1,6 +1,5 @@
 package com.example.hackernews.view.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -15,14 +14,11 @@ class NewsAdapter(
     private val listener: SelectedNewsListener
 ) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
+    private val newsCopy = arrayListOf<News>()
+
     init {
-        /**
-         * setHasStableIds is an optimization hint that you can give to the recycler.
-         * You're telling it "when I provide a ViewHolder, its id is unique and will not change."
-         * So when you call notifyDataSetChanged with new list, recycler view will look at item's ids
-         * and it won't redraw items found with the same ids. This works together with getItemId method.
-         */
         setHasStableIds(true)
+        newsCopy.addAll(news)
     }
 
     class NewsViewHolder(
@@ -32,11 +28,11 @@ class NewsAdapter(
         fun bind(news: News, listener: SelectedNewsListener, position: Int) {
             binding.newsId.text = (position + 1).toString()
             binding.newsTitle.text = news.title
-            binding.newsScore.text = news.score.toString()
+            binding.newsScore.text = news.score.toString().plus("p")
             binding.newsUrl.text = Helper.getMainUrl(news.url)
             binding.timePublished.text = Helper.formatDate(news.time)
             binding.newsPublisher.text = news.by
-            binding.tvNumComments.text = news.kids?.size.toString()
+            binding.tvNumComments.text = (news.kids?.size ?: "0").toString()
             binding.root.setOnClickListener {
                 listener(news)
             }
@@ -60,6 +56,21 @@ class NewsAdapter(
     fun addNews(data: List<News>) {
         news.clear()
         news.addAll(data)
+        newsCopy.clear()
+        newsCopy.addAll(data)
+        notifyDataSetChanged()
+    }
+
+    fun filter(text: String) {
+        news.clear()
+        if (text.isEmpty()) {
+            news.addAll(newsCopy)
+        } else {
+            newsCopy.forEach { currentNews ->
+                if (currentNews.title.contains(text))
+                    news.add(currentNews)
+            }
+        }
         notifyDataSetChanged()
     }
 }

@@ -14,7 +14,8 @@
         android:usesCleartextTraffic="false"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".view.activities.NewsActivity"></activity>
-        <activity android:name=".view.activities.MainActivity">
+        <activity android:name=".view.activities.MainActivity"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

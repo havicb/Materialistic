@@ -1,8 +1,12 @@
 package com.example.hackernews.view.activities
 
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.viewpager2.widget.ViewPager2
+import com.example.hackernews.R
 import com.example.hackernews.common.constants.Constants
+import com.example.hackernews.common.helpers.Helper
 import com.example.hackernews.databinding.ActivityNewsBinding
 import com.example.hackernews.factories.NewsViewModelFactory
 import com.example.hackernews.model.entities.News
@@ -32,15 +36,12 @@ class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
 
     private fun initElements(selectedNews: News) {
         binding.newsTitle.text = selectedNews.title
-        binding.newsUrl.text = selectedNews.url
+        binding.newsUrl.text = Helper.getMainUrl(selectedNews.url)
+        binding.newsTimePublished.text = Helper.formatDate(selectedNews.time)
+        binding.newsUserPublished.text = selectedNews.by
     }
 
-    private fun setUpToolbar() {
-        setSupportActionBar(binding.newsToolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-    }
-
+    //View pager
     private fun initViewPagerAndTabs(selectedNews: News) {
         binding.viewPager2.adapter =
             NewsTabsAdapter(supportFragmentManager, lifecycle, selectedNews)
@@ -63,6 +64,33 @@ class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
                 binding.tabLayout.selectTab(binding.tabLayout.getTabAt(position))
             }
         })
+    }
+
+    // Toolbar methods
+    private fun setUpToolbar() {
+        setSupportActionBar(binding.newsToolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.news_activity_toolbar_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.share_icon_id -> {
+                Toast.makeText(this, "Share clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.readability_icon_id -> {
+                Toast.makeText(this, "Readability clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.external_browser_id -> {
+                Toast.makeText(this, "External clicked", Toast.LENGTH_SHORT).show()
+            }
+        }
+        return true
     }
 
     override fun getViewBinding() = ActivityNewsBinding.inflate(layoutInflater)
