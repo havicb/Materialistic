@@ -19,7 +19,7 @@
             android:gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="22sp"/>
+            android:textSize="20sp"/>
 
         <TextView
             android:id="@+id/news_score"
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:text="15p" />
+            android:text="13p" />
 
     </RelativeLayout>
 

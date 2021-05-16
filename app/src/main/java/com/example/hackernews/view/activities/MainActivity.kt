@@ -20,7 +20,9 @@ import com.example.hackernews.model.entities.News
 import com.example.hackernews.model.entities.User
 import com.example.hackernews.model.repository.NewsRepository
 import com.example.hackernews.model.repository.UserRepository
-import com.example.hackernews.view.adapters.NewsAdapter
+import com.example.hackernews.view.adapters.news.NewsAdapter
+import com.example.hackernews.view.adapters.news.NewsOnScrollListener
+import com.example.hackernews.view.adapters.news.NewsOnSearchListener
 import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.view.dialog.LoginDialog
 import com.example.hackernews.view.navigation.MainActivityNavigation
@@ -31,15 +33,19 @@ import java.io.Serializable
 import java.util.*
 import javax.inject.Inject
 
-
 class MainActivity :
     BaseActivity<ActivityMainBinding, MainViewModel>(),
     NavigationView.OnNavigationItemSelectedListener,
     Serializable,
     OnSwipe {
 
-    @Inject lateinit var newsRepository: NewsRepository
-    @Inject lateinit var userRepository: UserRepository
+    @Inject
+    lateinit var newsRepository: NewsRepository
+
+    var isLoading: Boolean = true
+
+    @Inject
+    lateinit var userRepository: UserRepository
     private lateinit var navigationHeaderBinding: NavigationHeaderBinding
     private val newsAdapter: NewsAdapter by lazy {
         NewsAdapter(listener = viewModel::onNewsSelected, itemMenuListener = showItemMenu)
@@ -125,11 +131,11 @@ class MainActivity :
         }
     }
 
-    val showItemMenu : (News, View) -> Unit = { selectedNews, view ->
+    private val showItemMenu: (News, View) -> Unit = { selectedNews, view ->
         val popup = PopupMenu(this@MainActivity, view)
         popup.inflate(R.menu.item_menu)
         popup.setOnMenuItemClickListener { item ->
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.item_refresh_id -> {
                     Toast.makeText(this, "Refreshing", Toast.LENGTH_SHORT).show()
                 }
@@ -170,6 +176,9 @@ class MainActivity :
         binding.newsRecyclerView.adapter = newsAdapter
         val itemTouchHelper = ItemTouchHelper(Swipes(this, this))
         itemTouchHelper.attachToRecyclerView(binding.newsRecyclerView)
+        binding.newsRecyclerView.addOnScrollListener(NewsOnScrollListener() {
+            viewModel.loadMore()
+        })
     }
 
     // Navigation drawer methods
@@ -188,24 +197,14 @@ class MainActivity :
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
         val searchItem = menu!!.findItem(R.id.search_icon).actionView as SearchView
-        searchItem.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                newsAdapter.filter(query!!)
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newsAdapter.filter(newText!!)
-                return true
-            }
+        searchItem.setOnQueryTextListener(NewsOnSearchListener() { userSearch ->
+            newsAdapter.filter(userSearch)
         })
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search_icon -> {
-            }
             R.id.list_display_options_id -> {
                 Toast.makeText(this, "List display options!", Toast.LENGTH_SHORT).show()
             }

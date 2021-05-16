@@ -12,7 +12,7 @@ import com.example.hackernews.databinding.ActivityNewsBinding
 import com.example.hackernews.factories.NewsViewModelFactory
 import com.example.hackernews.model.entities.News
 import com.example.hackernews.model.repository.CommentsRepository
-import com.example.hackernews.view.adapters.NewsTabsAdapter
+import com.example.hackernews.view.adapters.news.NewsTabsAdapter
 import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.viewmodel.NewsViewModel
 import com.google.android.material.tabs.TabLayout

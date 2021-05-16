@@ -1,4 +1,4 @@
-package com.example.hackernews.view.adapters
+package com.example.hackernews.view.adapters.news
 
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +21,40 @@ class NewsAdapter(
     init {
         setHasStableIds(true)
         newsCopy.addAll(news)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
+        val binding = NewsRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return NewsViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
+        holder.bind(news[position], listener, itemMenuListener, position)
+    }
+
+    override fun getItemCount(): Int = news.size
+
+    override fun getItemId(position: Int): Long = news[position].id
+
+    fun addNews(data: List<News>) {
+        news.clear()
+        news.addAll(data)
+        newsCopy.clear()
+        newsCopy.addAll(data)
+        notifyDataSetChanged()
+    }
+
+    fun filter(text: String) {
+        news.clear()
+        if (text.isEmpty()) {
+            news.addAll(newsCopy)
+        } else {
+            newsCopy.forEach { currentNews ->
+                if (currentNews.title.contains(text))
+                    news.add(currentNews)
+            }
+        }
+        notifyDataSetChanged()
     }
 
     class NewsViewHolder(
@@ -47,40 +81,5 @@ class NewsAdapter(
                 itemMenuListener(news, itemClicked)
             }
         }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
-        val binding = NewsRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return NewsViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        val currentNews = news[position]
-        holder.bind(currentNews, listener, itemMenuListener, position)
-    }
-
-    override fun getItemCount(): Int = news.size
-
-    override fun getItemId(position: Int): Long = news[position].id.toLong()
-
-    fun addNews(data: List<News>) {
-        news.clear()
-        news.addAll(data)
-        newsCopy.clear()
-        newsCopy.addAll(data)
-        notifyDataSetChanged()
-    }
-
-    fun filter(text: String) {
-        news.clear()
-        if (text.isEmpty()) {
-            news.addAll(newsCopy)
-        } else {
-            newsCopy.forEach { currentNews ->
-                if (currentNews.title.contains(text))
-                    news.add(currentNews)
-            }
-        }
-        notifyDataSetChanged()
     }
 }

@@ -1,4 +1,4 @@
-package com.example.hackernews.view.adapters
+package com.example.hackernews.view.adapters.news
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

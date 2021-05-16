@@ -1,5 +1,6 @@
 package com.example.hackernews.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.hackernews.common.enums.NewsDataType
 import com.example.hackernews.factories.LoginViewModelFactory
@@ -8,6 +9,7 @@ import com.example.hackernews.model.entities.User
 import com.example.hackernews.model.repository.ApiError
 import com.example.hackernews.model.repository.NewsRepository
 import com.example.hackernews.model.repository.UserRepository
+import java.util.*
 
 /**
  * Every screen/feature or activity (if screens are represented by activities) have corresponding ViewModel
@@ -41,10 +43,16 @@ class MainViewModel(
 
     private var selectedNewsType: NewsDataType = NewsDataType.TOP_STORIES
 
+    val storiesIds: Queue<Int> = LinkedList()
+
     private val _topStories = arrayListOf<News>()
     private val _savedStories = arrayListOf<News>()
     private val _newStories = arrayListOf<News>()
     private val _bestStories = arrayListOf<News>()
+
+    private var loadedPosts: Int = 0
+
+    val stories = MutableLiveData<Queue<Int>>()
 
     private val _hasNewsSaved = MutableLiveData<Boolean>()
     private val _areNewsWaitingToBeLoaded = MutableLiveData(true)
@@ -63,17 +71,40 @@ class MainViewModel(
         get() = _selectedNews
 
     init {
-        fetchNews()
+        fetchStories()
     }
 
-    private fun fetchNews(type: NewsDataType = NewsDataType.TOP_STORIES) {
+    private fun fetchStories(type: NewsDataType = NewsDataType.TOP_STORIES) {
         clearNews(type) // avoiding duplicate data
-        newsRepository.getNews(type) { singleNews, error ->
+        newsRepository.getStories(type) { ids ->
+            storiesIds.clear()
+            storiesIds.addAll(ids)
+            loadMore()
+        }
+    }
+
+    fun loadMore() {
+        loadPosts(loadedPosts, loadedPosts + 10)
+    }
+
+    private fun loadPosts(firstRange: Int, secondRange: Int) {
+        val idsToLoad = arrayListOf<Int>()
+        for (i in firstRange..secondRange) {
+            if (storiesIds.isEmpty())
+                return
+            idsToLoad.add(storiesIds.poll()!!)
+        }
+        loadedPosts = secondRange
+        fetchNews(idsToLoad, selectedNewsType)
+    }
+
+    private fun fetchNews(list: ArrayList<Int>, type: NewsDataType) {
+        newsRepository.getStories(list) { singleNews, error ->
             if (error != null) {
                 handleError(error)
-                return@getNews
+                return@getStories
             } else if (singleNews == null) {
-                return@getNews
+                return@getStories
             } else if (selectedNewsType == type) {
                 disableProgressBar()
             }
@@ -131,7 +162,7 @@ class MainViewModel(
     fun topStoriesSelected() {
         selectedNewsType = NewsDataType.TOP_STORIES
         if (_topStories.isEmpty()) {
-            fetchNews(selectedNewsType)
+            fetchStories(selectedNewsType)
             return
         }
         disableProgressBar()
@@ -141,7 +172,7 @@ class MainViewModel(
     fun catchUpSelected() {
         selectedNewsType = NewsDataType.BEST_STORIES
         if (_bestStories.isEmpty()) {
-            fetchNews(selectedNewsType)
+            fetchStories(selectedNewsType)
             return
         }
         disableProgressBar()
@@ -151,7 +182,7 @@ class MainViewModel(
     fun newStoriesSelected() {
         selectedNewsType = NewsDataType.NEW_STORIES
         if (_newStories.isEmpty()) {
-            fetchNews(selectedNewsType)
+            fetchStories(selectedNewsType)
             return
         }
         disableProgressBar()
@@ -196,3 +227,5 @@ class MainViewModel(
         _selectedNews.value = news
     }
 }
+
+
