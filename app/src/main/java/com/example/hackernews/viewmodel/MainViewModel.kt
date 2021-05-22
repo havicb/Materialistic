@@ -90,7 +90,7 @@ class MainViewModel(
     private fun loadPosts(firstRange: Int, secondRange: Int) {
         val idsToLoad = arrayListOf<Int>()
         for (i in firstRange..secondRange) {
-            if (storiesIds.isEmpty())
+            if (storiesIds.isEmpty() || i > idsToLoad.size-1)
                 return
             idsToLoad.add(storiesIds.poll()!!)
         }
