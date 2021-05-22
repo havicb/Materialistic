@@ -3,17 +3,19 @@ package com.example.hackernews.view.navigation
 import android.view.MenuItem
 import androidx.fragment.app.FragmentManager
 import com.example.hackernews.R
-import com.example.hackernews.common.enums.NewsDataType
+import com.example.hackernews.core.enums.NewsDataType
 import com.example.hackernews.view.dialog.FeedbackDialog
 import com.example.hackernews.viewmodel.MainViewModel
 
 class MainActivityNavigation {
     companion object {
 
-        fun onNavigationItemSelected(viewModel: MainViewModel,
-                                     supportFragmentManager: FragmentManager,
-                                     item: MenuItem,
-                                     onNewsTabSelected: (type: NewsDataType) -> Unit): Boolean {
+        fun onNavigationItemSelected(
+            viewModel: MainViewModel,
+            supportFragmentManager: FragmentManager,
+            item: MenuItem,
+            onNewsTabSelected: (type: NewsDataType) -> Unit
+        ): Boolean {
             when (item.itemId) {
                 R.id.side_top_stories -> {
                     onNewsTabSelected(NewsDataType.TOP_STORIES)
@@ -35,10 +37,10 @@ class MainActivityNavigation {
                     viewModel.savedStoriesSelected()
                 }
                 R.id.side_settings -> {
-                    //writeToast("Clicked on settings")
+                    // writeToast("Clicked on settings")
                 }
                 R.id.side_submit_to_hn -> {
-                    //writeToast("Clicked on submit to HN")
+                    // writeToast("Clicked on submit to HN")
                 }
             }
             return true

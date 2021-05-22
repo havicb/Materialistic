@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.hackernews.databinding.FragmentArticleBinding
 import com.example.hackernews.factories.ArticleViewModelFactory
@@ -35,12 +34,18 @@ class ArticleFragment(private val url: String) : BaseFragment() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun loadUrl() {
-        viewModel.client.observe(viewLifecycleOwner, {webViewClient ->
-            binding.articleWebView.webViewClient = webViewClient
-        })
-        viewModel.url.observe(viewLifecycleOwner, {url ->
-            binding.articleWebView.loadUrl(url)
-        })
+        viewModel.client.observe(
+            viewLifecycleOwner,
+            { webViewClient ->
+                binding.articleWebView.webViewClient = webViewClient
+            }
+        )
+        viewModel.url.observe(
+            viewLifecycleOwner,
+            { url ->
+                binding.articleWebView.loadUrl(url)
+            }
+        )
         binding.articleWebView.settings.javaScriptEnabled = true
     }
 

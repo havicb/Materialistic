@@ -3,12 +3,12 @@ package com.example.hackernews.di.activity
 import android.app.Activity
 import android.os.Handler
 import android.os.Looper
-import com.example.hackernews.common.helpers.Dispatcher
+import com.example.hackernews.core.helpers.Dispatcher
+import com.example.hackernews.data.comments.CommentsRepository
+import com.example.hackernews.data.news.NewsRepository
 import com.example.hackernews.data.service.NewsService
-import com.example.hackernews.model.database.MaterialisticDatabase
-import com.example.hackernews.model.repository.CommentsRepository
-import com.example.hackernews.model.repository.NewsRepository
-import com.example.hackernews.model.repository.UserRepository
+import com.example.hackernews.data.user.UserRepository
+import com.example.hackernews.database.MaterialisticDatabase
 import dagger.Module
 import dagger.Provides
 import java.util.concurrent.ExecutorService
@@ -21,7 +21,6 @@ class ActivityModule(
 
     @Provides
     fun activity() = activity
-
 
     @ActivityScope
     @Provides
@@ -63,5 +62,4 @@ class ActivityModule(
 
     @Provides
     fun commentsRepository(newsService: NewsService) = CommentsRepository(newsService)
-
 }

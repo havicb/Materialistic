@@ -1,16 +1,16 @@
-package com.example.hackernews.model.database
+package com.example.hackernews.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.hackernews.model.database.dao.NewsDao
-import com.example.hackernews.model.database.dao.UserDao
-import com.example.hackernews.model.database.dao.UserNewsDao
-import com.example.hackernews.model.entities.Comment
-import com.example.hackernews.model.entities.News
-import com.example.hackernews.model.entities.User
-import com.example.hackernews.model.entities.UserNews
+import com.example.hackernews.database.dao.NewsDao
+import com.example.hackernews.database.dao.UserDao
+import com.example.hackernews.database.dao.UserNewsDao
+import com.example.hackernews.database.entities.Comment
+import com.example.hackernews.database.entities.News
+import com.example.hackernews.database.entities.User
+import com.example.hackernews.database.entities.UserNews
 
 @Database(
     entities = [User::class, Comment::class, News::class, UserNews::class],

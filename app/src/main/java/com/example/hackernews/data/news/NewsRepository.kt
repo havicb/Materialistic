@@ -1,16 +1,15 @@
-package com.example.hackernews.model.repository
+package com.example.hackernews.data.news
 
 import android.util.Log
-import com.example.hackernews.common.enums.Dispatchers
-import com.example.hackernews.common.enums.NewsDataType
-import com.example.hackernews.common.helpers.Dispatcher
+import com.example.hackernews.core.enums.Dispatchers
+import com.example.hackernews.core.enums.NewsDataType
+import com.example.hackernews.core.helpers.Dispatcher
 import com.example.hackernews.data.service.NewsService
-import com.example.hackernews.model.database.dao.NewsDao
-import com.example.hackernews.model.entities.News
+import com.example.hackernews.database.dao.NewsDao
+import com.example.hackernews.database.entities.News
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 
 typealias GetNewsCallback = (News?, ApiError?) -> Unit
 

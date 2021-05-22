@@ -1,4 +1,4 @@
-package com.example.hackernews.common.helpers
+package com.example.hackernews.core.helpers
 
 import java.text.SimpleDateFormat
 import java.util.*
@@ -65,6 +65,5 @@ class Helper {
         private fun findMainUrlEnd(fullUrl: String): Int {
             return fullUrl.indexOf('/')
         }
-
     }
 }

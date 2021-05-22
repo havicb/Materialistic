@@ -2,8 +2,8 @@ package com.example.hackernews.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.hackernews.model.entities.User
-import com.example.hackernews.model.repository.UserRepository
+import com.example.hackernews.data.user.UserRepository
+import com.example.hackernews.database.entities.User
 import java.util.*
 
 class LoginViewModel(private val userRepository: UserRepository) : BaseViewModel() {

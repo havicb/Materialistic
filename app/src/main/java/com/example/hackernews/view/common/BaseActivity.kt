@@ -34,14 +34,11 @@ abstract class BaseActivity<VBinding : ViewBinding, ViewModel : BaseViewModel> :
     protected abstract fun getViewModelClass(): ViewModel
 
     protected open fun setUpScreen() {
-
     }
 
     protected open fun bindObservers() {
-
     }
 
     protected open fun setListeners() {
-
     }
 }

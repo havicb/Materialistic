@@ -8,8 +8,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
 import com.example.hackernews.viewmodel.BaseViewModel
 
-
-abstract class BaseDialog<VBinding : ViewBinding, ViewModel: BaseViewModel>(val onInitialized: (AlertDialog.Builder, VBinding, ViewModel) -> Unit) : DialogFragment() {
+abstract class BaseDialog<VBinding : ViewBinding, ViewModel : BaseViewModel>(val onInitialized: (AlertDialog.Builder, VBinding, ViewModel) -> Unit) :
+    DialogFragment() {
 
     protected lateinit var binding: VBinding
     protected lateinit var viewModel: ViewModel
@@ -31,6 +31,6 @@ abstract class BaseDialog<VBinding : ViewBinding, ViewModel: BaseViewModel>(val 
     }
 
     protected abstract fun bindObservers()
-    protected abstract fun getViewModelClass() : ViewModel
+    protected abstract fun getViewModelClass(): ViewModel
     protected abstract fun getViewBinding(): VBinding
 }

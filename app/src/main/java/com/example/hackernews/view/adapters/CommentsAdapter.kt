@@ -3,8 +3,8 @@ package com.example.hackernews.view.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.hackernews.database.entities.Comment
 import com.example.hackernews.databinding.CommentRowBinding
-import com.example.hackernews.model.entities.Comment
 
 class CommentsAdapter(
     private val comments: ArrayList<Comment> = arrayListOf()

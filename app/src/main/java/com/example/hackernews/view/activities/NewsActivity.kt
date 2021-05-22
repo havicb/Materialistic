@@ -6,12 +6,12 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.viewpager2.widget.ViewPager2
 import com.example.hackernews.R
-import com.example.hackernews.common.constants.Constants
-import com.example.hackernews.common.helpers.Helper
+import com.example.hackernews.core.constants.Constants
+import com.example.hackernews.core.helpers.Helper
+import com.example.hackernews.data.comments.CommentsRepository
+import com.example.hackernews.database.entities.News
 import com.example.hackernews.databinding.ActivityNewsBinding
 import com.example.hackernews.factories.NewsViewModelFactory
-import com.example.hackernews.model.entities.News
-import com.example.hackernews.model.repository.CommentsRepository
 import com.example.hackernews.view.adapters.news.NewsTabsAdapter
 import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.viewmodel.NewsViewModel
@@ -20,7 +20,8 @@ import javax.inject.Inject
 
 class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
 
-    @Inject lateinit var commentsRepository: CommentsRepository
+    @Inject
+    lateinit var commentsRepository: CommentsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         activityComponent.inject(this)
@@ -51,7 +52,7 @@ class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
         binding.newsUserPublished.text = selectedNews.by
     }
 
-    //View pager
+    // View pager
     private fun initViewPagerAndTabs(selectedNews: News) {
         binding.viewPager2.adapter =
             NewsTabsAdapter(supportFragmentManager, lifecycle, selectedNews)

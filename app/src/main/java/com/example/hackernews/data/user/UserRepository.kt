@@ -1,13 +1,13 @@
-package com.example.hackernews.model.repository
+package com.example.hackernews.data.user
 
 import androidx.annotation.WorkerThread
-import com.example.hackernews.common.enums.Dispatchers
-import com.example.hackernews.common.helpers.Dispatcher
-import com.example.hackernews.model.database.dao.UserDao
-import com.example.hackernews.model.database.dao.UserNewsDao
-import com.example.hackernews.model.entities.User
-import com.example.hackernews.model.entities.UserNews
-import com.example.hackernews.model.entities.UserSavedNews
+import com.example.hackernews.core.enums.Dispatchers
+import com.example.hackernews.core.helpers.Dispatcher
+import com.example.hackernews.database.dao.UserDao
+import com.example.hackernews.database.dao.UserNewsDao
+import com.example.hackernews.database.entities.User
+import com.example.hackernews.database.entities.UserNews
+import com.example.hackernews.database.entities.UserSavedNews
 
 typealias OnFetchUser = (User?) -> Unit
 
@@ -36,7 +36,7 @@ class UserRepository(
 
     @WorkerThread
     fun update(user: User) {
-        dispatcher.launch(Dispatchers.IO){
+        dispatcher.launch(Dispatchers.IO) {
             userDao.update(user)
         }
     }

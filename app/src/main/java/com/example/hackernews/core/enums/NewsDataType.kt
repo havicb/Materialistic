@@ -1,4 +1,4 @@
-package com.example.hackernews.common.enums
+package com.example.hackernews.core.enums
 
 enum class NewsDataType(val rawValue: String) {
     TOP_STORIES("topstories"),

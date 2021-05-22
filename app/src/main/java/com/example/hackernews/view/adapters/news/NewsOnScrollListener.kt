@@ -9,7 +9,6 @@ class NewsOnScrollListener(val loadMore: () -> Unit) : RecyclerView.OnScrollList
     private var visibleItemCount: Int = 0
     private var totalItemCount: Int = 0
 
-
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         val lm = recyclerView.layoutManager!! as LinearLayoutManager
         if (dy > 0) {

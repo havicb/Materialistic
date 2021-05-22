@@ -1,7 +1,5 @@
 package com.example.hackernews.viewmodel
 
-import com.example.hackernews.model.repository.UserRepository
+import com.example.hackernews.data.user.UserRepository
 
-class UserViewModel(private val userRepository: UserRepository) : BaseViewModel() {
-
-}
+class UserViewModel(private val userRepository: UserRepository) : BaseViewModel()

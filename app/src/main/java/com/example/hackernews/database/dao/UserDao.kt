@@ -1,8 +1,8 @@
-package com.example.hackernews.model.database.dao
+package com.example.hackernews.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.example.hackernews.model.entities.User
+import com.example.hackernews.database.entities.User
 
 @Dao
 interface UserDao : BaseDao<User> {

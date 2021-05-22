@@ -2,13 +2,13 @@ package com.example.hackernews.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.hackernews.model.entities.Comment
-import com.example.hackernews.model.entities.News
-import com.example.hackernews.model.repository.CommentsRepository
+import com.example.hackernews.data.comments.CommentsRepository
+import com.example.hackernews.database.entities.Comment
+import com.example.hackernews.database.entities.News
 
 class CommentsViewModel(
     private val commentsRepository: CommentsRepository,
-    private val selectedNews: News
+    selectedNews: News
 ) : BaseViewModel() {
 
     private var _comments = arrayListOf<Comment>()

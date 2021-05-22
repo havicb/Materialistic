@@ -1,8 +1,8 @@
-package com.example.hackernews.common.helpers
+package com.example.hackernews.core.helpers
 
 import android.os.Handler
 import androidx.annotation.WorkerThread
-import com.example.hackernews.common.enums.Dispatchers
+import com.example.hackernews.core.enums.Dispatchers
 import java.util.concurrent.ExecutorService
 
 class Dispatcher(
@@ -11,7 +11,7 @@ class Dispatcher(
 ) {
 
     fun launch(dispatchers: Dispatchers, runnable: Runnable) {
-        if(dispatchers == Dispatchers.IO) {
+        if (dispatchers == Dispatchers.IO) {
             io(runnable)
             return
         }

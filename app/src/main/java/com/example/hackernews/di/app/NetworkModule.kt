@@ -1,6 +1,6 @@
 package com.example.hackernews.di.app
 
-import com.example.hackernews.common.constants.Constants
+import com.example.hackernews.core.constants.Constants
 import com.example.hackernews.data.service.NewsService
 import dagger.Module
 import dagger.Provides
@@ -19,10 +19,10 @@ class NetworkModule {
     @AppScope
     @Provides
     fun client(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY;
+        httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
-            .build();
+            .build()
     }
 
     @AppScope

@@ -1,4 +1,4 @@
-package com.example.hackernews.common.callbacks
+package com.example.hackernews.core.callbacks
 
 interface OnSwipe {
     fun swipeOnLeft(currentElement: Int)

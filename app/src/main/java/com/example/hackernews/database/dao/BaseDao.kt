@@ -1,7 +1,6 @@
-package com.example.hackernews.model.database.dao
+package com.example.hackernews.database.dao
 
 import androidx.room.*
-
 
 // define generic base Dao object for common db operations(CRUD)
 @Dao

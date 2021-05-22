@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.hackernews.model.entities.News
+import com.example.hackernews.database.entities.News
 import com.example.hackernews.view.fragments.ArticleFragment
 import com.example.hackernews.view.fragments.CommentFragment
 

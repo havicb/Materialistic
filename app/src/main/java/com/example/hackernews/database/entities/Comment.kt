@@ -1,4 +1,4 @@
-package com.example.hackernews.model.entities
+package com.example.hackernews.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -12,14 +12,13 @@ import java.io.Serializable
 // but the main problem of this approach it would duplicate all the data inside these two tables
 @Entity
 data class Comment(
-        @PrimaryKey(autoGenerate = false)
-        @ColumnInfo(name = "comment_id") // tbl_name prefix increases readability when using joins over multiple tables
-        var id: Int,
-        var by: String,
-        @ColumnInfo(name = "parent_id") // for now we will use just parent_id, if we decide to separate two tables this would be "post_id"
-        var parent: Int,
-        var text: String,
-        var time: Long,
-        var type: String
+    @PrimaryKey(autoGenerate = false)
+    @ColumnInfo(name = "comment_id") // tbl_name prefix increases readability when using joins over multiple tables
+    var id: Int,
+    var by: String,
+    @ColumnInfo(name = "parent_id") // for now we will use just parent_id, if we decide to separate two tables this would be "post_id"
+    var parent: Int,
+    var text: String,
+    var time: Long,
+    var type: String
 ) : Serializable
-

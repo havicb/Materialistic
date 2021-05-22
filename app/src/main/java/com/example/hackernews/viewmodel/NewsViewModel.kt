@@ -1,9 +1,7 @@
 package com.example.hackernews.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import com.example.hackernews.factories.CommentViewModelFactory
-import com.example.hackernews.model.entities.Comment
-import com.example.hackernews.model.entities.News
+import com.example.hackernews.database.entities.News
 
 class NewsViewModel(_selectedNews: News) : BaseViewModel() {
 

@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hackernews.database.entities.News
 import com.example.hackernews.databinding.FragmentCommentBinding
 import com.example.hackernews.factories.CommentViewModelFactory
-import com.example.hackernews.model.entities.News
 import com.example.hackernews.view.activities.NewsActivity
 import com.example.hackernews.view.adapters.CommentsAdapter
 import com.example.hackernews.view.common.BaseFragment

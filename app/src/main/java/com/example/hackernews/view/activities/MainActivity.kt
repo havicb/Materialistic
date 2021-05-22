@@ -3,6 +3,7 @@ package com.example.hackernews.view.activities
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
@@ -11,15 +12,15 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hackernews.R
-import com.example.hackernews.common.callbacks.OnSwipe
-import com.example.hackernews.common.constants.Constants
+import com.example.hackernews.core.callbacks.OnSwipe
+import com.example.hackernews.core.constants.Constants
+import com.example.hackernews.data.news.NewsRepository
+import com.example.hackernews.data.user.UserRepository
+import com.example.hackernews.database.entities.News
+import com.example.hackernews.database.entities.User
 import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.databinding.NavigationHeaderBinding
 import com.example.hackernews.factories.MainViewModelFactory
-import com.example.hackernews.model.entities.News
-import com.example.hackernews.model.entities.User
-import com.example.hackernews.model.repository.NewsRepository
-import com.example.hackernews.model.repository.UserRepository
 import com.example.hackernews.view.adapters.news.NewsAdapter
 import com.example.hackernews.view.adapters.news.NewsOnScrollListener
 import com.example.hackernews.view.adapters.news.NewsOnSearchListener
@@ -39,8 +40,10 @@ class MainActivity :
     Serializable,
     OnSwipe {
 
-    @Inject lateinit var newsRepository: NewsRepository
-    @Inject lateinit var userRepository: UserRepository
+    @Inject
+    lateinit var newsRepository: NewsRepository
+    @Inject
+    lateinit var userRepository: UserRepository
     private lateinit var navigationHeaderBinding: NavigationHeaderBinding
     private val newsAdapter: NewsAdapter by lazy {
         NewsAdapter(listener = viewModel::onNewsSelected, itemMenuListener = showItemMenu)
@@ -216,7 +219,8 @@ class MainActivity :
         when (item.itemId) {
             R.id.list_display_options_id -> {
                 Toast.makeText(this, "List display options!", Toast.LENGTH_SHORT).show()
-            } else -> {
+            }
+            else -> {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
             }
         }

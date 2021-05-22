@@ -1,10 +1,10 @@
-package com.example.hackernews.model.database.dao
+package com.example.hackernews.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import com.example.hackernews.model.entities.UserNews
-import com.example.hackernews.model.entities.UserSavedNews
+import com.example.hackernews.database.entities.UserNews
+import com.example.hackernews.database.entities.UserSavedNews
 
 @Dao
 interface UserNewsDao : BaseDao<UserNews> {

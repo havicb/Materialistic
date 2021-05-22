@@ -1,4 +1,4 @@
-package com.example.hackernews.model.entities
+package com.example.hackernews.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

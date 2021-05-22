@@ -4,9 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.hackernews.common.helpers.Helper
+import com.example.hackernews.core.helpers.Helper
+import com.example.hackernews.database.entities.News
 import com.example.hackernews.databinding.NewsRowBinding
-import com.example.hackernews.model.entities.News
 
 typealias SelectedNewsListener = (News) -> Unit
 

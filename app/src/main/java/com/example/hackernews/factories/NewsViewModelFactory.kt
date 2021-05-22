@@ -2,7 +2,7 @@ package com.example.hackernews.factories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.hackernews.model.entities.News
+import com.example.hackernews.database.entities.News
 import com.example.hackernews.viewmodel.NewsViewModel
 
 class NewsViewModelFactory(private val selectedNews: News) : ViewModelProvider.Factory {
