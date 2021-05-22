@@ -39,13 +39,8 @@ class MainActivity :
     Serializable,
     OnSwipe {
 
-    @Inject
-    lateinit var newsRepository: NewsRepository
-
-    var isLoading: Boolean = true
-
-    @Inject
-    lateinit var userRepository: UserRepository
+    @Inject lateinit var newsRepository: NewsRepository
+    @Inject lateinit var userRepository: UserRepository
     private lateinit var navigationHeaderBinding: NavigationHeaderBinding
     private val newsAdapter: NewsAdapter by lazy {
         NewsAdapter(listener = viewModel::onNewsSelected, itemMenuListener = showItemMenu)
@@ -93,27 +88,39 @@ class MainActivity :
             }
             hideProgressBar()
         }
-        viewModel.news.observe(this, { news ->
-            newsAdapter.addNews(news)
-        })
-        viewModel.selectedNews.observe(this, { selectedNews ->
-            val intent = Intent(this, NewsActivity::class.java)
-            intent.putExtra(Constants.SELECTED_NEWS, selectedNews)
-            startActivity(intent)
-        })
-        viewModel.loggedUser().observe(this, { currentUser ->
-            if (currentUser != null) {
-                onSuccessUpdateUI(currentUser)
-                return@observe
+        viewModel.news.observe(
+            this,
+            { news ->
+                newsAdapter.addNews(news)
             }
-        })
-        viewModel.hasNewsSaved.observe(this, { hasSaved ->
-            if (hasSaved) {
-                Toast.makeText(this, "Successfully saved!", Toast.LENGTH_SHORT).show()
-                return@observe
+        )
+        viewModel.selectedNews.observe(
+            this,
+            { selectedNews ->
+                val intent = Intent(this, NewsActivity::class.java)
+                intent.putExtra(Constants.SELECTED_NEWS, selectedNews)
+                startActivity(intent)
             }
-            Toast.makeText(this, "You need to be logged to do that!", Toast.LENGTH_SHORT).show()
-        })
+        )
+        viewModel.loggedUser().observe(
+            this,
+            { currentUser ->
+                if (currentUser != null) {
+                    onSuccessUpdateUI(currentUser)
+                    return@observe
+                }
+            }
+        )
+        viewModel.hasNewsSaved.observe(
+            this,
+            { hasSaved ->
+                if (hasSaved) {
+                    Toast.makeText(this, "Successfully saved!", Toast.LENGTH_SHORT).show()
+                    return@observe
+                }
+                Toast.makeText(this, "You need to be logged to do that!", Toast.LENGTH_SHORT).show()
+            }
+        )
     }
 
     @SuppressLint("SetTextI18n")
@@ -141,7 +148,6 @@ class MainActivity :
                 }
                 R.id.item_share_id -> {
                     Toast.makeText(this, "Sharing", Toast.LENGTH_SHORT).show()
-
                 }
                 R.id.item_view_user_id -> {
                     Toast.makeText(this, "View user", Toast.LENGTH_SHORT).show()
@@ -168,7 +174,6 @@ class MainActivity :
     }
 
     override fun swipeOnRight(currentElement: Int) {
-
     }
 
     private fun setUpMainRecyclerView() {
@@ -176,9 +181,11 @@ class MainActivity :
         binding.newsRecyclerView.adapter = newsAdapter
         val itemTouchHelper = ItemTouchHelper(Swipes(this, this))
         itemTouchHelper.attachToRecyclerView(binding.newsRecyclerView)
-        binding.newsRecyclerView.addOnScrollListener(NewsOnScrollListener() {
-            viewModel.loadMore()
-        })
+        binding.newsRecyclerView.addOnScrollListener(
+            NewsOnScrollListener() {
+                viewModel.loadMore()
+            }
+        )
     }
 
     // Navigation drawer methods
@@ -197,9 +204,11 @@ class MainActivity :
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
         val searchItem = menu!!.findItem(R.id.search_icon).actionView as SearchView
-        searchItem.setOnQueryTextListener(NewsOnSearchListener() { userSearch ->
-            newsAdapter.filter(userSearch)
-        })
+        searchItem.setOnQueryTextListener(
+            NewsOnSearchListener() { userSearch ->
+                newsAdapter.filter(userSearch)
+            }
+        )
         return true
     }
 
@@ -207,6 +216,8 @@ class MainActivity :
         when (item.itemId) {
             R.id.list_display_options_id -> {
                 Toast.makeText(this, "List display options!", Toast.LENGTH_SHORT).show()
+            } else -> {
+                binding.drawerLayout.openDrawer(GravityCompat.START)
             }
         }
         return super.onOptionsItemSelected(item)
