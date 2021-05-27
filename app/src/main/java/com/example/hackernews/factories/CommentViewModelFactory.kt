@@ -6,7 +6,10 @@ import com.example.hackernews.data.comments.CommentsRepository
 import com.example.hackernews.database.entities.News
 import com.example.hackernews.viewmodel.CommentsViewModel
 
-class CommentViewModelFactory(private val commentsRepository: CommentsRepository, private val selectedNews: News) : ViewModelProvider.Factory {
+class CommentViewModelFactory(
+    private val commentsRepository: CommentsRepository,
+    private val selectedNews: News
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CommentsViewModel::class.java)) {
             return CommentsViewModel(commentsRepository, selectedNews) as T

@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import com.example.hackernews.data.user.UserRepository
 import com.example.hackernews.database.entities.User
 import java.util.*
+import javax.inject.Inject
 
-class LoginViewModel(private val userRepository: UserRepository) : BaseViewModel() {
+class LoginViewModel @Inject constructor(private val userRepository: UserRepository) :
+    BaseViewModel() {
 
     private val _loggedUser = MutableLiveData<User?>()
 

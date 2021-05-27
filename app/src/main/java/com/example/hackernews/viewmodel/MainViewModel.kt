@@ -1,6 +1,5 @@
 package com.example.hackernews.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.hackernews.core.enums.NewsDataType
 import com.example.hackernews.data.news.ApiError
@@ -8,12 +7,13 @@ import com.example.hackernews.data.news.NewsRepository
 import com.example.hackernews.data.user.UserRepository
 import com.example.hackernews.database.entities.News
 import com.example.hackernews.database.entities.User
-import com.example.hackernews.factories.LoginViewModelFactory
 import java.util.*
+import javax.inject.Inject
 
-class MainViewModel(
+class MainViewModel @Inject constructor (
     private val newsRepository: NewsRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val loginViewModel: LoginViewModel
 ) : BaseViewModel() {
 
     private var selectedNewsType: NewsDataType = NewsDataType.TOP_STORIES
@@ -32,9 +32,6 @@ class MainViewModel(
     private val _hasNewsSaved = MutableLiveData<Boolean>()
     private val _areNewsWaitingToBeLoaded = MutableLiveData(true)
     private val _selectedNews = MutableLiveData<News>()
-    private val loginViewModel: LoginViewModel by lazy {
-        LoginViewModelFactory(userRepository).create(LoginViewModel::class.java)
-    }
 
     // immutability stuff
     val areNewsWaitingToBeLoaded: LiveData<Boolean>

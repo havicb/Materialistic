@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentManager
 import com.example.hackernews.R
 import com.example.hackernews.core.enums.NewsDataType
 import com.example.hackernews.view.dialog.FeedbackDialog
+import com.example.hackernews.viewmodel.FeedbackViewModel
 import com.example.hackernews.viewmodel.MainViewModel
 
 class MainActivityNavigation {
@@ -12,6 +13,7 @@ class MainActivityNavigation {
 
         fun onNavigationItemSelected(
             viewModel: MainViewModel,
+            feedbackViewModel: FeedbackViewModel,
             supportFragmentManager: FragmentManager,
             item: MenuItem,
             onNewsTabSelected: (type: NewsDataType) -> Unit
@@ -30,7 +32,10 @@ class MainActivityNavigation {
                     viewModel.newStoriesSelected()
                 }
                 R.id.side_feedback -> {
-                    FeedbackDialog().show(supportFragmentManager, "feedback_dialog")
+                    FeedbackDialog(feedbackViewModel).show(
+                        supportFragmentManager,
+                        "feedback_dialog"
+                    )
                 }
                 R.id.side_saved_stories -> {
                     onNewsTabSelected(NewsDataType.SAVED_STORIES)

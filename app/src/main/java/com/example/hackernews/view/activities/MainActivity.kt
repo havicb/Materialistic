@@ -3,12 +3,12 @@ package com.example.hackernews.view.activities
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hackernews.R
@@ -20,7 +20,7 @@ import com.example.hackernews.database.entities.News
 import com.example.hackernews.database.entities.User
 import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.databinding.NavigationHeaderBinding
-import com.example.hackernews.factories.MainViewModelFactory
+import com.example.hackernews.factories.ViewModelFactory
 import com.example.hackernews.view.adapters.news.NewsAdapter
 import com.example.hackernews.view.adapters.news.NewsOnScrollListener
 import com.example.hackernews.view.adapters.news.NewsOnSearchListener
@@ -28,6 +28,8 @@ import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.view.dialog.LoginDialog
 import com.example.hackernews.view.navigation.MainActivityNavigation
 import com.example.hackernews.view.swipes.Swipes
+import com.example.hackernews.viewmodel.FeedbackViewModel
+import com.example.hackernews.viewmodel.LoginViewModel
 import com.example.hackernews.viewmodel.MainViewModel
 import com.google.android.material.navigation.NavigationView
 import java.io.Serializable
@@ -44,6 +46,13 @@ class MainActivity :
     lateinit var newsRepository: NewsRepository
     @Inject
     lateinit var userRepository: UserRepository
+    @Inject
+    lateinit var factory: ViewModelFactory
+
+    lateinit var mainViewModel: MainViewModel
+    lateinit var loginViewModel: LoginViewModel
+    lateinit var feedbackViewModel: FeedbackViewModel
+
     private lateinit var navigationHeaderBinding: NavigationHeaderBinding
     private val newsAdapter: NewsAdapter by lazy {
         NewsAdapter(listener = viewModel::onNewsSelected, itemMenuListener = showItemMenu)
@@ -51,7 +60,14 @@ class MainActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         activityComponent.inject(this)
+        initViewModels()
         super.onCreate(savedInstanceState)
+    }
+
+    private fun initViewModels() {
+        mainViewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
+        loginViewModel = ViewModelProvider(this, factory).get(LoginViewModel::class.java)
+        feedbackViewModel = ViewModelProvider(this, factory).get(FeedbackViewModel::class.java)
     }
 
     override fun setUpScreen() {
@@ -75,10 +91,11 @@ class MainActivity :
         )
         binding.navigationView.addHeaderView(navigationHeaderBinding.root)
         navigationHeaderBinding.navHeaderLoginTextView.setOnClickListener { currentView ->
-            LoginDialog(onSuccessUpdateUI).show(
-                supportFragmentManager,
-                "Login dialog"
+            LoginDialog(
+                onSuccessUpdateUI,
+                loginViewModel
             )
+                .show(supportFragmentManager, "Login dialog")
         }
         binding.navigationView.setNavigationItemSelectedListener(this)
     }
@@ -196,6 +213,7 @@ class MainActivity :
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return MainActivityNavigation.onNavigationItemSelected(
             viewModel,
+            feedbackViewModel,
             supportFragmentManager,
             item
         ) { dataType ->
@@ -229,8 +247,5 @@ class MainActivity :
 
     // Binding methods for base activity
     override fun getViewBinding() = ActivityMainBinding.inflate(layoutInflater)
-    override fun getViewModelClass() = MainViewModelFactory(
-        newsRepository,
-        userRepository
-    ).create(MainViewModel::class.java)
+    override fun getViewModelClass() = mainViewModel
 }

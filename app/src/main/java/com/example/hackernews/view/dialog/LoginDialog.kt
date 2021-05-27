@@ -4,8 +4,6 @@ import android.app.Dialog
 import android.widget.Toast
 import com.example.hackernews.database.entities.User
 import com.example.hackernews.databinding.LoginLayoutBinding
-import com.example.hackernews.factories.LoginViewModelFactory
-import com.example.hackernews.view.activities.MainActivity
 import com.example.hackernews.view.common.BaseDialog
 import com.example.hackernews.viewmodel.LoginViewModel
 import java.util.*
@@ -13,7 +11,8 @@ import java.util.*
 typealias UpdateUICallBack = (User) -> Unit
 
 class LoginDialog(
-    private val onSuccess: UpdateUICallBack
+    private val onSuccess: UpdateUICallBack,
+    private val loginViewModel: LoginViewModel
 ) : BaseDialog<LoginLayoutBinding, LoginViewModel>(
     onInitialized = { alertDialogBuilder, binding, viewModel ->
         alertDialogBuilder.setPositiveButton("Register") { _, _ ->
@@ -59,8 +58,7 @@ class LoginDialog(
     }
 
     override fun setupDialog(dialog: Dialog, style: Int) = dialog.setTitle("Login to hacker news")
-    override fun getViewModelClass() =
-        LoginViewModelFactory((activity as MainActivity).userRepository).create(LoginViewModel::class.java)
+    override fun getViewModelClass() = loginViewModel
 
     override fun getViewBinding() = LoginLayoutBinding.inflate(layoutInflater)
 }
