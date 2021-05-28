@@ -24,7 +24,7 @@ class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
     lateinit var commentsRepository: CommentsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        activityComponent.inject(this)
+        presentationComponent.inject(this)
         super.onCreate(savedInstanceState)
     }
 

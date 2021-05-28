@@ -4,17 +4,22 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
 import com.example.hackernews.BaseApplication
-import com.example.hackernews.di.activity.ActivityModule
 import com.example.hackernews.viewmodel.BaseViewModel
 
 // creating base activity class for all activities and moving common behaviour into this activity
 abstract class BaseActivity<VBinding : ViewBinding, ViewModel : BaseViewModel> :
     AppCompatActivity() {
 
-    private val appCompositionRoot get() = (application as BaseApplication).appComponent
+    private val appComponent get() = (application as BaseApplication).appComponent
 
-    val activityComponent by lazy {
-        appCompositionRoot.newActivityComponent(ActivityModule(this))
+    private val activityComponent by lazy {
+        appComponent.newActivityComponentBuilder()
+            .activity(this)
+            .build()
+    }
+
+    val presentationComponent by lazy {
+        activityComponent.presentationComponent()
     }
 
     protected lateinit var binding: VBinding

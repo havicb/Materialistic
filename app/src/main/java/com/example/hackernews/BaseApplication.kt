@@ -2,12 +2,13 @@ package com.example.hackernews
 
 import android.app.Application
 import android.content.Context
+import com.example.hackernews.di.app.AppComponent
 import com.example.hackernews.di.app.AppModule
 import com.example.hackernews.di.app.DaggerAppComponent
 
 class BaseApplication : Application() {
 
-    val appComponent by lazy {
+    val appComponent: AppComponent by lazy {
         DaggerAppComponent.builder()
             .appModule(AppModule(this))
             .build()

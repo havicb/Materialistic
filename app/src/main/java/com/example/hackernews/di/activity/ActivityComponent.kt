@@ -1,13 +1,21 @@
 package com.example.hackernews.di.activity
 
-import com.example.hackernews.di.ViewModelModule
-import com.example.hackernews.view.activities.MainActivity
-import com.example.hackernews.view.activities.NewsActivity
+import androidx.appcompat.app.AppCompatActivity
+import com.example.hackernews.di.presentation.PresentationComponent
+import dagger.BindsInstance
 import dagger.Subcomponent
 
 @ActivityScope
-@Subcomponent(modules = [ActivityModule::class, ViewModelModule::class])
+@Subcomponent(modules = [ActivityModule::class])
 interface ActivityComponent {
-    fun inject(mainActivity: MainActivity)
-    fun inject(newsActivity: NewsActivity)
+
+    fun presentationComponent(): PresentationComponent
+
+    // convention
+    @Subcomponent.Builder
+    interface Builder {
+        @BindsInstance fun activity(activity: AppCompatActivity): Builder
+        fun activityModule(activityModule: ActivityModule): Builder // convention
+        fun build(): ActivityComponent // activity component, but this needs activity
+    }
 }

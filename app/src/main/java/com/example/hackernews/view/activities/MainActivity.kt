@@ -42,12 +42,9 @@ class MainActivity :
     Serializable,
     OnSwipe {
 
-    @Inject
-    lateinit var newsRepository: NewsRepository
-    @Inject
-    lateinit var userRepository: UserRepository
-    @Inject
-    lateinit var factory: ViewModelFactory
+    @Inject lateinit var newsRepository: NewsRepository
+    @Inject lateinit var userRepository: UserRepository
+    @Inject lateinit var factory: ViewModelFactory
 
     lateinit var mainViewModel: MainViewModel
     lateinit var loginViewModel: LoginViewModel
@@ -59,7 +56,7 @@ class MainActivity :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        activityComponent.inject(this)
+        presentationComponent.inject(this)
         initViewModels()
         super.onCreate(savedInstanceState)
     }
