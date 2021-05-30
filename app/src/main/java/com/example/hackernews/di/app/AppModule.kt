@@ -1,6 +1,5 @@
 package com.example.hackernews.di.app
 
-import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import com.example.hackernews.core.helpers.Dispatcher
@@ -11,15 +10,14 @@ import com.example.hackernews.data.user.UserRepository
 import com.example.hackernews.database.MaterialisticDatabase
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 @Module
-class AppModule(private val application: Application) {
-
-    @AppScope
-    @Provides
-    fun provideApp() = application
+@InstallIn(SingletonComponent::class)
+class AppModule {
 
     @Provides
     fun executor() = Executors.newSingleThreadExecutor()
@@ -43,7 +41,6 @@ class AppModule(private val application: Application) {
     @Provides
     fun commentsRepository(newsService: NewsService) = CommentsRepository(newsService)
 
-    @AppScope
     @Provides
     fun DISPATCHER(executorService: ExecutorService, mainThreadHandler: Handler) =
         Dispatcher(executorService, mainThreadHandler)

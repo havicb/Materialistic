@@ -16,15 +16,16 @@ import com.example.hackernews.view.adapters.news.NewsTabsAdapter
 import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.viewmodel.NewsViewModel
 import com.google.android.material.tabs.TabLayout
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
 
     @Inject
     lateinit var commentsRepository: CommentsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        presentationComponent.inject(this)
         super.onCreate(savedInstanceState)
     }
 

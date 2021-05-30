@@ -7,13 +7,14 @@ import com.example.hackernews.data.news.NewsRepository
 import com.example.hackernews.data.user.UserRepository
 import com.example.hackernews.database.entities.News
 import com.example.hackernews.database.entities.User
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
 import javax.inject.Inject
 
+@HiltViewModel
 class MainViewModel @Inject constructor (
     private val newsRepository: NewsRepository,
     private val userRepository: UserRepository,
-    private val loginViewModel: LoginViewModel
 ) : BaseViewModel() {
 
     private var selectedNewsType: NewsDataType = NewsDataType.TOP_STORIES
@@ -183,13 +184,14 @@ class MainViewModel @Inject constructor (
         _areNewsWaitingToBeLoaded.value = true
     }
 
+    /*
     fun loggedUser(): LiveData<User?> {
         return loginViewModel.loggedUser
     }
 
     fun logoutUser() {
         loginViewModel.logoutUser()
-    }
+    }*/
 
     private fun handleError(error: ApiError) {
     }

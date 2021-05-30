@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.hackernews.data.user.UserRepository
 import com.example.hackernews.database.entities.User
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
 import javax.inject.Inject
 
+@HiltViewModel
 class LoginViewModel @Inject constructor(private val userRepository: UserRepository) :
     BaseViewModel() {
 

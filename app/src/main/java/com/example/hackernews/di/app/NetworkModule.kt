@@ -4,19 +4,20 @@ import com.example.hackernews.core.constants.Constants
 import com.example.hackernews.data.service.NewsService
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
+@InstallIn(SingletonComponent::class)
 class NetworkModule {
 
-    @AppScope
     @Provides
     fun httpLoggingInterceptor() = HttpLoggingInterceptor()
 
-    @AppScope
     @Provides
     fun client(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
@@ -25,7 +26,6 @@ class NetworkModule {
             .build()
     }
 
-    @AppScope
     @Provides
     fun retrofit(client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
@@ -35,7 +35,6 @@ class NetworkModule {
             .build()
     }
 
-    @AppScope
     @Provides
     fun newsService(retrofit: Retrofit) = retrofit.create(NewsService::class.java)
 }

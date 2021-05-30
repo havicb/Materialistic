@@ -10,18 +10,6 @@ import com.example.hackernews.viewmodel.BaseViewModel
 abstract class BaseActivity<VBinding : ViewBinding, ViewModel : BaseViewModel> :
     AppCompatActivity() {
 
-    private val appComponent get() = (application as BaseApplication).appComponent
-
-    private val activityComponent by lazy {
-        appComponent.newActivityComponentBuilder()
-            .activity(this)
-            .build()
-    }
-
-    val presentationComponent by lazy {
-        activityComponent.presentationComponent()
-    }
-
     protected lateinit var binding: VBinding
     protected lateinit var viewModel: ViewModel
 

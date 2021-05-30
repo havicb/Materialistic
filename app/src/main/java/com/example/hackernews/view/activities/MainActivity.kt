@@ -2,25 +2,21 @@ package com.example.hackernews.view.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.GravityCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hackernews.R
 import com.example.hackernews.core.callbacks.OnSwipe
 import com.example.hackernews.core.constants.Constants
-import com.example.hackernews.data.news.NewsRepository
-import com.example.hackernews.data.user.UserRepository
 import com.example.hackernews.database.entities.News
 import com.example.hackernews.database.entities.User
 import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.databinding.NavigationHeaderBinding
-import com.example.hackernews.factories.ViewModelFactory
 import com.example.hackernews.view.adapters.news.NewsAdapter
 import com.example.hackernews.view.adapters.news.NewsOnScrollListener
 import com.example.hackernews.view.adapters.news.NewsOnSearchListener
@@ -32,39 +28,24 @@ import com.example.hackernews.viewmodel.FeedbackViewModel
 import com.example.hackernews.viewmodel.LoginViewModel
 import com.example.hackernews.viewmodel.MainViewModel
 import com.google.android.material.navigation.NavigationView
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 import java.util.*
-import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity :
     BaseActivity<ActivityMainBinding, MainViewModel>(),
     NavigationView.OnNavigationItemSelectedListener,
     Serializable,
     OnSwipe {
 
-    @Inject lateinit var newsRepository: NewsRepository
-    @Inject lateinit var userRepository: UserRepository
-    @Inject lateinit var factory: ViewModelFactory
-
-    lateinit var mainViewModel: MainViewModel
-    lateinit var loginViewModel: LoginViewModel
-    lateinit var feedbackViewModel: FeedbackViewModel
+    val mainViewModel: MainViewModel by viewModels()
+    val loginViewModel: LoginViewModel by viewModels()
+    val feedbackViewModel: FeedbackViewModel by viewModels()
 
     private lateinit var navigationHeaderBinding: NavigationHeaderBinding
     private val newsAdapter: NewsAdapter by lazy {
         NewsAdapter(listener = viewModel::onNewsSelected, itemMenuListener = showItemMenu)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        presentationComponent.inject(this)
-        initViewModels()
-        super.onCreate(savedInstanceState)
-    }
-
-    private fun initViewModels() {
-        mainViewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
-        loginViewModel = ViewModelProvider(this, factory).get(LoginViewModel::class.java)
-        feedbackViewModel = ViewModelProvider(this, factory).get(FeedbackViewModel::class.java)
     }
 
     override fun setUpScreen() {
@@ -119,6 +100,7 @@ class MainActivity :
                 startActivity(intent)
             }
         )
+        /*
         viewModel.loggedUser().observe(
             this,
             { currentUser ->
@@ -127,7 +109,7 @@ class MainActivity :
                     return@observe
                 }
             }
-        )
+        )*/
         viewModel.hasNewsSaved.observe(
             this,
             { hasSaved ->
@@ -150,7 +132,7 @@ class MainActivity :
             navigationHeaderBinding.navHeaderLoginTextView.text = "Login"
             navigationHeaderBinding.logOutBtn.visibility = View.GONE
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-            viewModel.logoutUser()
+            // viewModel.logoutUser()
             Toast.makeText(this, "Successfully logged out", Toast.LENGTH_LONG).show()
         }
     }
