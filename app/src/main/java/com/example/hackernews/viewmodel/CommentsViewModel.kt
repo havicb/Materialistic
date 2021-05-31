@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import com.example.hackernews.data.comments.CommentsRepository
 import com.example.hackernews.database.entities.Comment
 import com.example.hackernews.database.entities.News
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
-class CommentsViewModel(
+class CommentsViewModel @AssistedInject constructor(
     private val commentsRepository: CommentsRepository,
-    selectedNews: News
+    @Assisted selectedNews: News
 ) : BaseViewModel() {
 
     private var _comments = arrayListOf<Comment>()

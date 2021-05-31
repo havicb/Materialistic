@@ -8,12 +8,15 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hackernews.database.entities.News
 import com.example.hackernews.databinding.FragmentCommentBinding
-import com.example.hackernews.factories.CommentViewModelFactory
-import com.example.hackernews.view.activities.NewsActivity
+import com.example.hackernews.di.factories.CommentViewModelFactory
+import com.example.hackernews.di.factories.provideCommentVMFactory
 import com.example.hackernews.view.adapters.CommentsAdapter
 import com.example.hackernews.view.common.BaseFragment
 import com.example.hackernews.viewmodel.CommentsViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class CommentFragment(private val selectedNews: News) : BaseFragment() {
 
     private lateinit var binding: FragmentCommentBinding
@@ -21,8 +24,11 @@ class CommentFragment(private val selectedNews: News) : BaseFragment() {
         CommentsAdapter()
     }
 
+    @Inject lateinit var commentViewModelFactory: CommentViewModelFactory
     private val viewModel: CommentsViewModel by viewModels {
-        CommentViewModelFactory((activity as NewsActivity).commentsRepository, selectedNews)
+        provideCommentVMFactory(
+            commentViewModelFactory, selectedNews
+        )
     }
 
     override fun onCreateView(

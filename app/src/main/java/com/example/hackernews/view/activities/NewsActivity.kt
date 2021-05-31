@@ -1,17 +1,17 @@
 package com.example.hackernews.view.activities
 
-import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.example.hackernews.R
 import com.example.hackernews.core.constants.Constants
 import com.example.hackernews.core.helpers.Helper
-import com.example.hackernews.data.comments.CommentsRepository
 import com.example.hackernews.database.entities.News
 import com.example.hackernews.databinding.ActivityNewsBinding
-import com.example.hackernews.factories.NewsViewModelFactory
+import com.example.hackernews.di.factories.NewsViewModelFactory
+import com.example.hackernews.di.factories.provideNewsVMFactory
 import com.example.hackernews.view.adapters.news.NewsTabsAdapter
 import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.viewmodel.NewsViewModel
@@ -22,11 +22,12 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
 
-    @Inject
-    lateinit var commentsRepository: CommentsRepository
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    @Inject lateinit var newsViewModelFactory: NewsViewModelFactory
+    private val newsViewModel: NewsViewModel by viewModels {
+        provideNewsVMFactory(
+            newsViewModelFactory,
+            intent.extras?.get(Constants.SELECTED_NEWS) as News
+        )
     }
 
     override fun setUpScreen() {
@@ -108,8 +109,5 @@ class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
     }
 
     override fun getViewBinding() = ActivityNewsBinding.inflate(layoutInflater)
-    override fun getViewModelClass() =
-        NewsViewModelFactory(intent.getSerializableExtra(Constants.SELECTED_NEWS) as News).create(
-            NewsViewModel::class.java
-        )
+    override fun getViewModelClass() = newsViewModel
 }

@@ -39,9 +39,9 @@ class MainActivity :
     Serializable,
     OnSwipe {
 
-    val mainViewModel: MainViewModel by viewModels()
-    val loginViewModel: LoginViewModel by viewModels()
-    val feedbackViewModel: FeedbackViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels()
+    private val feedbackViewModel: FeedbackViewModel by viewModels()
 
     private lateinit var navigationHeaderBinding: NavigationHeaderBinding
     private val newsAdapter: NewsAdapter by lazy {
