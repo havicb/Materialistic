@@ -1,4 +1,4 @@
-package com.example.hackernews.view.adapters.news
+package com.example.hackernews.presentation.view.adapters.news
 
 import androidx.appcompat.widget.SearchView
 

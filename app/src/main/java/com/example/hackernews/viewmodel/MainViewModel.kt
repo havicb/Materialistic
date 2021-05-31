@@ -5,7 +5,10 @@ import com.example.hackernews.core.enums.NewsDataType
 import com.example.hackernews.data.news.ApiError
 import com.example.hackernews.data.news.NewsRepository
 import com.example.hackernews.data.user.UserRepository
-import com.example.hackernews.database.entities.News
+import com.example.hackernews.domain.entities.News
+import com.example.hackernews.domain.entities.toDomain
+import com.example.hackernews.presentation.view.news.NewsView
+import com.example.hackernews.presentation.view.news.toView
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
 import javax.inject.Inject
@@ -39,7 +42,7 @@ class MainViewModel @Inject constructor(
     val hasNewsSaved: LiveData<Boolean>
         get() = _hasNewsSaved
     val news = MutableLiveData<List<News>>()
-    val selectedNews: LiveData<News>
+    val selectedNewsEntity: LiveData<News>
         get() = _selectedNews
 
     init {
@@ -80,7 +83,7 @@ class MainViewModel @Inject constructor(
             } else if (selectedNewsType == type) {
                 disableProgressBar()
             }
-            handleNews(type, singleNews)
+            handleNews(type, singleNews.toDomain())
         }
     }
 
@@ -125,7 +128,11 @@ class MainViewModel @Inject constructor(
         userRepository.loadSavedStories { userSavedNews ->
             if (userSavedNews == null)
                 return@loadSavedStories
-            _savedStories.addAll(userSavedNews.list)
+            _savedStories.addAll(
+                userSavedNews.list.map {
+                    it.toDomain()
+                }
+            )
         }
         disableProgressBar()
         news.value = _savedStories

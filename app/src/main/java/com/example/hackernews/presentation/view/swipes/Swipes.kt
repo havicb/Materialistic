@@ -1,4 +1,4 @@
-package com.example.hackernews.view.swipes
+package com.example.hackernews.presentation.view.swipes
 
 import android.content.Context
 import android.graphics.Canvas

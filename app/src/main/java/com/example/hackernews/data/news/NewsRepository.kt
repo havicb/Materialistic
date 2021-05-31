@@ -6,12 +6,12 @@ import com.example.hackernews.core.enums.NewsDataType
 import com.example.hackernews.core.helpers.Dispatcher
 import com.example.hackernews.data.service.NewsService
 import com.example.hackernews.database.dao.NewsDao
-import com.example.hackernews.database.entities.News
+import com.example.hackernews.database.entities.NewsEntity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-typealias GetNewsCallback = (News?, ApiError?) -> Unit
+typealias GetNewsCallback = (NewsDTO?, ApiError?) -> Unit
 
 class NewsRepository(
     private val newsApi: NewsService,
@@ -39,22 +39,22 @@ class NewsRepository(
         callback: GetNewsCallback,
     ) {
         storiedIds.forEach { storyId ->
-            newsApi.getStory(storyId).enqueue(object : Callback<News> {
-                override fun onResponse(call: Call<News>, response: Response<News>) {
+            newsApi.getStory(storyId).enqueue(object : Callback<NewsDTO> {
+                override fun onResponse(call: Call<NewsDTO>, response: Response<NewsDTO>) {
                     if (response.isSuccessful) {
                         callback(response.body(), null)
                     } else
                         callback(null, ApiError(response.errorBody().toString()))
                 }
 
-                override fun onFailure(call: Call<News>, t: Throwable) {
+                override fun onFailure(call: Call<NewsDTO>, t: Throwable) {
                     callback(null, ApiError(t.toString()))
                 }
             })
         }
     }
 
-    fun loadLocalStories(type: String, onLoad: (List<News>?) -> Unit) {
+    fun loadLocalStories(type: String, onLoad: (List<NewsEntity>?) -> Unit) {
         dispatcher.launch(Dispatchers.IO) {
             val localStories = newsDao.loadStories(type)
             dispatcher.launch(Dispatchers.MAIN) {

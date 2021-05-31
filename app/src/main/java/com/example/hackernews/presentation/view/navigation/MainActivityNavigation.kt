@@ -1,11 +1,10 @@
-package com.example.hackernews.view.navigation
+package com.example.hackernews.presentation.view.navigation
 
 import android.view.MenuItem
 import androidx.fragment.app.FragmentManager
 import com.example.hackernews.R
 import com.example.hackernews.core.enums.NewsDataType
-import com.example.hackernews.view.dialog.FeedbackDialog
-import com.example.hackernews.viewmodel.FeedbackViewModel
+import com.example.hackernews.presentation.view.dialog.FeedbackDialog
 import com.example.hackernews.viewmodel.MainViewModel
 
 class MainActivityNavigation {

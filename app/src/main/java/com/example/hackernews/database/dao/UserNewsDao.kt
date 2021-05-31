@@ -9,6 +9,6 @@ import com.example.hackernews.database.entities.UserSavedNews
 @Dao
 interface UserNewsDao : BaseDao<UserNews> {
     @Transaction
-    @Query("SELECT * from User where user_id = 1")
+    @Query("SELECT * from UserEntity where user_id = 1")
     fun loadSavedPosts(): UserSavedNews?
 }

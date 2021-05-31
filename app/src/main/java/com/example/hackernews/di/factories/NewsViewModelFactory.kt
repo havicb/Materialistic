@@ -2,7 +2,8 @@ package com.example.hackernews.di.factories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.hackernews.database.entities.News
+import com.example.hackernews.domain.entities.News
+import com.example.hackernews.presentation.view.news.NewsView
 import com.example.hackernews.viewmodel.NewsViewModel
 import dagger.assisted.AssistedFactory
 

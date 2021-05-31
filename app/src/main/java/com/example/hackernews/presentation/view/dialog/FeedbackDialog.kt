@@ -1,8 +1,8 @@
-package com.example.hackernews.view.dialog
+package com.example.hackernews.presentation.view.dialog
 
 import androidx.fragment.app.viewModels
 import com.example.hackernews.databinding.FeedbackDialogBinding
-import com.example.hackernews.view.common.BaseDialog
+import com.example.hackernews.presentation.view.common.BaseDialog
 import com.example.hackernews.viewmodel.FeedbackViewModel
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -1,4 +1,4 @@
-package com.example.hackernews.view.fragments
+package com.example.hackernews.presentation.view.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import com.example.hackernews.databinding.FragmentArticleBinding
 import com.example.hackernews.di.factories.ArticleViewModelFactory
 import com.example.hackernews.di.factories.provideArticleViewModelFactory
-import com.example.hackernews.view.common.BaseFragment
+import com.example.hackernews.presentation.view.common.BaseFragment
 import com.example.hackernews.viewmodel.ArticleViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

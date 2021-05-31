@@ -1,4 +1,4 @@
-package com.example.hackernews.view.activities
+package com.example.hackernews.presentation.view.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -13,17 +13,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hackernews.R
 import com.example.hackernews.core.callbacks.OnSwipe
 import com.example.hackernews.core.constants.Constants
-import com.example.hackernews.database.entities.News
-import com.example.hackernews.database.entities.User
+import com.example.hackernews.database.entities.UserEntity
 import com.example.hackernews.databinding.ActivityMainBinding
 import com.example.hackernews.databinding.NavigationHeaderBinding
-import com.example.hackernews.view.adapters.news.NewsAdapter
-import com.example.hackernews.view.adapters.news.NewsOnScrollListener
-import com.example.hackernews.view.adapters.news.NewsOnSearchListener
-import com.example.hackernews.view.common.BaseActivity
-import com.example.hackernews.view.dialog.LoginDialog
-import com.example.hackernews.view.navigation.MainActivityNavigation
-import com.example.hackernews.view.swipes.Swipes
+import com.example.hackernews.domain.entities.News
+import com.example.hackernews.presentation.view.adapters.news.NewsAdapter
+import com.example.hackernews.presentation.view.adapters.news.NewsOnScrollListener
+import com.example.hackernews.presentation.view.adapters.news.NewsOnSearchListener
+import com.example.hackernews.presentation.view.common.BaseActivity
+import com.example.hackernews.presentation.view.dialog.LoginDialog
+import com.example.hackernews.presentation.view.navigation.MainActivityNavigation
+import com.example.hackernews.presentation.view.swipes.Swipes
 import com.example.hackernews.viewmodel.MainViewModel
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
@@ -84,7 +84,7 @@ class MainActivity :
                 newsAdapter.addNews(news)
             }
         )
-        viewModel.selectedNews.observe(
+        viewModel.selectedNewsEntity.observe(
             this,
             { selectedNews ->
                 val intent = Intent(this, NewsActivity::class.java)
@@ -115,7 +115,7 @@ class MainActivity :
     }
 
     @SuppressLint("SetTextI18n")
-    private val onSuccessUpdateUI: (User) -> Unit = { user ->
+    private val onSuccessUpdateUI: (UserEntity) -> Unit = { user ->
         Toast.makeText(this, "Welcome ${user.username}", Toast.LENGTH_SHORT).show()
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         navigationHeaderBinding.navHeaderLoginTextView.text = user.username.capitalize(Locale.ROOT)

@@ -7,13 +7,13 @@ import androidx.room.RoomDatabase
 import com.example.hackernews.database.dao.NewsDao
 import com.example.hackernews.database.dao.UserDao
 import com.example.hackernews.database.dao.UserNewsDao
-import com.example.hackernews.database.entities.Comment
-import com.example.hackernews.database.entities.News
-import com.example.hackernews.database.entities.User
+import com.example.hackernews.database.entities.CommentEntity
+import com.example.hackernews.database.entities.NewsEntity
+import com.example.hackernews.database.entities.UserEntity
 import com.example.hackernews.database.entities.UserNews
 
 @Database(
-    entities = [User::class, Comment::class, News::class, UserNews::class],
+    entities = [UserEntity::class, CommentEntity::class, NewsEntity::class, UserNews::class],
     version = 11,
     exportSchema = false
 )

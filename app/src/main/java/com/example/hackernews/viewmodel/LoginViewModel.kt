@@ -3,7 +3,7 @@ package com.example.hackernews.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.hackernews.data.user.UserRepository
-import com.example.hackernews.database.entities.User
+import com.example.hackernews.database.entities.UserEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
 import javax.inject.Inject
@@ -12,12 +12,12 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(private val userRepository: UserRepository) :
     BaseViewModel() {
 
-    private val _loggedUser = MutableLiveData<User?>()
+    private val _loggedUser = MutableLiveData<UserEntity?>()
 
     val registerErrors = MutableLiveData<List<String>>()
 
     // doing immutability stuff
-    val loggedUser: LiveData<User?>
+    val loggedUserEntity: LiveData<UserEntity?>
         get() = _loggedUser
 
     init {
@@ -52,7 +52,7 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
     fun registerUser(username: String, password: String) {
         val errors = checkErrors(username, password)
         if (errors.isEmpty()) {
-            val user = User(0, username, password, UUID.randomUUID().toString(), true)
+            val user = UserEntity(0, username, password, UUID.randomUUID().toString(), true)
             userRepository.insert(user)
             _loggedUser.value = user
         } else {

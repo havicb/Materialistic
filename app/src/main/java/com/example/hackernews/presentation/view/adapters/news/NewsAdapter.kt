@@ -1,12 +1,13 @@
-package com.example.hackernews.view.adapters.news
+package com.example.hackernews.presentation.view.adapters.news
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.hackernews.core.helpers.Helper
-import com.example.hackernews.database.entities.News
 import com.example.hackernews.databinding.NewsRowBinding
+import com.example.hackernews.domain.entities.News
+import com.example.hackernews.presentation.view.news.NewsView
+import com.example.hackernews.presentation.view.news.toView
 
 typealias SelectedNewsListener = (News) -> Unit
 
@@ -34,7 +35,7 @@ class NewsAdapter(
 
     override fun getItemCount(): Int = news.size
 
-    override fun getItemId(position: Int): Long = news[position].id
+    override fun getItemId(position: Int): Long = news[position].id.toLong()
 
     fun addNews(data: List<News>) {
         news.clear()
@@ -67,13 +68,15 @@ class NewsAdapter(
             itemMenuListener: (News, View) -> Unit,
             position: Int
         ) {
+            // bad
+            val nView = news.toView()
             binding.newsId.text = (position + 1).toString()
-            binding.newsTitle.text = news.title
-            binding.newsScore.text = news.score.toString().plus("p")
-            binding.newsUrl.text = Helper.getMainUrl(news.url)
-            binding.timePublished.text = Helper.formatDate(news.time)
-            binding.newsPublisher.text = news.by
-            binding.tvNumComments.text = (news.kids?.size ?: "0").toString()
+            binding.newsTitle.text = nView.title
+            binding.newsScore.text = nView.score.plus("p")
+            binding.newsUrl.text = nView.url
+            binding.timePublished.text = nView.time
+            binding.newsPublisher.text = nView.by
+            binding.tvNumComments.text = nView.commentsNum
             binding.root.setOnClickListener {
                 listener(news)
             }

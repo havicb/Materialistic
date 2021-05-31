@@ -5,11 +5,11 @@ import com.example.hackernews.core.enums.Dispatchers
 import com.example.hackernews.core.helpers.Dispatcher
 import com.example.hackernews.database.dao.UserDao
 import com.example.hackernews.database.dao.UserNewsDao
-import com.example.hackernews.database.entities.User
+import com.example.hackernews.database.entities.UserEntity
 import com.example.hackernews.database.entities.UserNews
 import com.example.hackernews.database.entities.UserSavedNews
 
-typealias OnFetchUser = (User?) -> Unit
+typealias OnFetchUser = (UserEntity?) -> Unit
 
 class UserRepository(
     private val userDao: UserDao,
@@ -17,27 +17,27 @@ class UserRepository(
     private val dispatcher: Dispatcher
 ) {
 
-    private var currentLoggedUser: User? = null
+    private var currentLoggedUserEntity: UserEntity? = null
 
-    fun saveUserLoginState(user: User?) {
-        currentLoggedUser = user
+    fun saveUserLoginState(userEntity: UserEntity?) {
+        currentLoggedUserEntity = userEntity
     }
 
-    fun currentUser(): User? {
-        return currentLoggedUser
+    fun currentUser(): UserEntity? {
+        return currentLoggedUserEntity
     }
 
     @WorkerThread
-    fun insert(user: User) {
+    fun insert(userEntity: UserEntity) {
         dispatcher.launch(Dispatchers.IO) {
-            userDao.save(user)
+            userDao.save(userEntity)
         }
     }
 
     @WorkerThread
-    fun update(user: User) {
+    fun update(userEntity: UserEntity) {
         dispatcher.launch(Dispatchers.IO) {
-            userDao.update(user)
+            userDao.update(userEntity)
         }
     }
 

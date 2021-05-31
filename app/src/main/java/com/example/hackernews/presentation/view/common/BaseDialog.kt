@@ -1,4 +1,4 @@
-package com.example.hackernews.view.common
+package com.example.hackernews.presentation.view.common
 
 import android.app.AlertDialog
 import android.app.Dialog

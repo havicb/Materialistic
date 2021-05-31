@@ -1,7 +1,8 @@
 package com.example.hackernews.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import com.example.hackernews.database.entities.News
+import com.example.hackernews.database.entities.NewsEntity
+import com.example.hackernews.domain.entities.News
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 

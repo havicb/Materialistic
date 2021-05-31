@@ -1,4 +1,4 @@
-package com.example.hackernews.view.activities
+package com.example.hackernews.presentation.view.activities
 
 import android.view.Menu
 import android.view.MenuItem
@@ -8,12 +8,13 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.hackernews.R
 import com.example.hackernews.core.constants.Constants
 import com.example.hackernews.core.helpers.Helper
-import com.example.hackernews.database.entities.News
+import com.example.hackernews.database.entities.NewsEntity
 import com.example.hackernews.databinding.ActivityNewsBinding
 import com.example.hackernews.di.factories.NewsViewModelFactory
 import com.example.hackernews.di.factories.provideNewsVMFactory
-import com.example.hackernews.view.adapters.news.NewsTabsAdapter
-import com.example.hackernews.view.common.BaseActivity
+import com.example.hackernews.domain.entities.News
+import com.example.hackernews.presentation.view.adapters.news.NewsTabsAdapter
+import com.example.hackernews.presentation.view.common.BaseActivity
 import com.example.hackernews.viewmodel.NewsViewModel
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +23,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class NewsActivity : BaseActivity<ActivityNewsBinding, NewsViewModel>() {
 
-    @Inject lateinit var newsViewModelFactory: NewsViewModelFactory
+    @Inject
+    lateinit var newsViewModelFactory: NewsViewModelFactory
     private val newsViewModel: NewsViewModel by viewModels {
         provideNewsVMFactory(
             newsViewModelFactory,

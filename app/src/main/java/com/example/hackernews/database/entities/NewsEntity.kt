@@ -2,20 +2,17 @@ package com.example.hackernews.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
 @Entity
-data class News(
+data class NewsEntity(
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = "news_id") // i will use api ID for PK
+    @ColumnInfo(name = "news_id") // I will use api ID for PK
     var id: Long,
     var by: String,
     @ColumnInfo(name = "comments_number")
     var descendants: Int,
-    @ColumnInfo(name = "public_id")
-    var idToShow: Int,
     var score: Int,
     var time: Long,
     var title: String,
@@ -23,7 +20,4 @@ data class News(
     @ColumnInfo(defaultValue = "")
     var url: String,
     var newsType: String
-) : Serializable {
-    @Ignore
-    var kids: List<Int>? = null
-}
+) : Serializable

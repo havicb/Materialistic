@@ -11,7 +11,7 @@ import java.io.Serializable
 // and when I save replies, I know that parent column is another Comment so I can also achieve this one to many relationship with Comment table
 // but the main problem of this approach it would duplicate all the data inside these two tables
 @Entity
-data class Comment(
+data class CommentEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "comment_id") // tbl_name prefix increases readability when using joins over multiple tables
     var id: Int,

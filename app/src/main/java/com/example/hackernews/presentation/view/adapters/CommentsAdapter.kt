@@ -1,13 +1,13 @@
-package com.example.hackernews.view.adapters
+package com.example.hackernews.presentation.view.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.hackernews.database.entities.Comment
+import com.example.hackernews.database.entities.CommentEntity
 import com.example.hackernews.databinding.CommentRowBinding
 
 class CommentsAdapter(
-    private val comments: ArrayList<Comment> = arrayListOf()
+    private val commentEntities: ArrayList<CommentEntity> = arrayListOf()
 ) : RecyclerView.Adapter<CommentsAdapter.CommentsViewHolder>() {
 
     init {
@@ -16,10 +16,10 @@ class CommentsAdapter(
 
     inner class CommentsViewHolder(private val binding: CommentRowBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(comment: Comment) {
-            binding.commentText.text = comment.text
-            binding.commentPublishedAt.text = comment.time.toString()
-            binding.commentPublisher.text = comment.by
+        fun bind(commentEntity: CommentEntity) {
+            binding.commentText.text = commentEntity.text
+            binding.commentPublishedAt.text = commentEntity.time.toString()
+            binding.commentPublisher.text = commentEntity.by
         }
     }
 
@@ -29,18 +29,18 @@ class CommentsAdapter(
     }
 
     override fun onBindViewHolder(holder: CommentsViewHolder, position: Int) {
-        holder.bind(comments[position])
+        holder.bind(commentEntities[position])
     }
 
-    override fun getItemId(position: Int): Long = comments[position].id.toLong()
+    override fun getItemId(position: Int): Long = commentEntities[position].id.toLong()
 
     override fun getItemCount(): Int {
-        return comments.size
+        return commentEntities.size
     }
 
-    fun addComments(data: List<Comment>) {
-        comments.clear()
-        comments.addAll(data)
+    fun addComments(data: List<CommentEntity>) {
+        commentEntities.clear()
+        commentEntities.addAll(data)
         notifyDataSetChanged()
     }
 }

@@ -1,4 +1,4 @@
-package com.example.hackernews.view.fragments
+package com.example.hackernews.presentation.view.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.hackernews.database.entities.News
 import com.example.hackernews.databinding.FragmentCommentBinding
 import com.example.hackernews.di.factories.CommentViewModelFactory
 import com.example.hackernews.di.factories.provideCommentVMFactory
-import com.example.hackernews.view.adapters.CommentsAdapter
-import com.example.hackernews.view.common.BaseFragment
+import com.example.hackernews.domain.entities.News
+import com.example.hackernews.presentation.view.adapters.CommentsAdapter
+import com.example.hackernews.presentation.view.common.BaseFragment
 import com.example.hackernews.viewmodel.CommentsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -61,6 +61,6 @@ class CommentFragment(private val selectedNews: News) : BaseFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(news: News) = CommentFragment(news)
+        fun newInstance(newsEntity: News) = CommentFragment(newsEntity)
     }
 }

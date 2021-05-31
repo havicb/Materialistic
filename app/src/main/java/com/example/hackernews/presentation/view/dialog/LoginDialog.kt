@@ -1,16 +1,16 @@
-package com.example.hackernews.view.dialog
+package com.example.hackernews.presentation.view.dialog
 
 import android.app.Dialog
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import com.example.hackernews.database.entities.User
+import com.example.hackernews.database.entities.UserEntity
 import com.example.hackernews.databinding.LoginLayoutBinding
-import com.example.hackernews.view.common.BaseDialog
+import com.example.hackernews.presentation.view.common.BaseDialog
 import com.example.hackernews.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
-typealias UpdateUICallBack = (User) -> Unit
+typealias UpdateUICallBack = (UserEntity) -> Unit
 
 @AndroidEntryPoint
 class LoginDialog(
@@ -33,7 +33,7 @@ class LoginDialog(
     private val loginViewModel: LoginViewModel by viewModels()
 
     override fun bindObservers() {
-        viewModel.loggedUser.observe(
+        viewModel.loggedUserEntity.observe(
             this,
             { currentUser ->
                 if (currentUser != null) {

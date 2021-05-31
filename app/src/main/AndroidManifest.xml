@@ -13,8 +13,8 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="false"
         android:theme="@style/AppTheme.MainTheme">
-        <activity android:name=".view.activities.NewsActivity"></activity>
-        <activity android:name=".view.activities.MainActivity"
+        <activity android:name="com.example.hackernews.presentation.view.activities.NewsActivity"></activity>
+        <activity android:name="com.example.hackernews.presentation.view.activities.MainActivity"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
