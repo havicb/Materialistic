@@ -24,8 +24,6 @@ import com.example.hackernews.view.common.BaseActivity
 import com.example.hackernews.view.dialog.LoginDialog
 import com.example.hackernews.view.navigation.MainActivityNavigation
 import com.example.hackernews.view.swipes.Swipes
-import com.example.hackernews.viewmodel.FeedbackViewModel
-import com.example.hackernews.viewmodel.LoginViewModel
 import com.example.hackernews.viewmodel.MainViewModel
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,8 +38,6 @@ class MainActivity :
     OnSwipe {
 
     private val mainViewModel: MainViewModel by viewModels()
-    private val loginViewModel: LoginViewModel by viewModels()
-    private val feedbackViewModel: FeedbackViewModel by viewModels()
 
     private lateinit var navigationHeaderBinding: NavigationHeaderBinding
     private val newsAdapter: NewsAdapter by lazy {
@@ -68,12 +64,8 @@ class MainActivity :
             false
         )
         binding.navigationView.addHeaderView(navigationHeaderBinding.root)
-        navigationHeaderBinding.navHeaderLoginTextView.setOnClickListener { currentView ->
-            LoginDialog(
-                onSuccessUpdateUI,
-                loginViewModel
-            )
-                .show(supportFragmentManager, "Login dialog")
+        navigationHeaderBinding.navHeaderLoginTextView.setOnClickListener {
+            LoginDialog(onSuccessUpdateUI).show(supportFragmentManager, "Login dialog")
         }
         binding.navigationView.setNavigationItemSelectedListener(this)
     }
@@ -192,7 +184,6 @@ class MainActivity :
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return MainActivityNavigation.onNavigationItemSelected(
             viewModel,
-            feedbackViewModel,
             supportFragmentManager,
             item
         ) { dataType ->

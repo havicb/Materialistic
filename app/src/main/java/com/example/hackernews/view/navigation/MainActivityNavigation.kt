@@ -13,7 +13,6 @@ class MainActivityNavigation {
 
         fun onNavigationItemSelected(
             viewModel: MainViewModel,
-            feedbackViewModel: FeedbackViewModel,
             supportFragmentManager: FragmentManager,
             item: MenuItem,
             onNewsTabSelected: (type: NewsDataType) -> Unit
@@ -32,7 +31,7 @@ class MainActivityNavigation {
                     viewModel.newStoriesSelected()
                 }
                 R.id.side_feedback -> {
-                    FeedbackDialog(feedbackViewModel).show(
+                    FeedbackDialog().show(
                         supportFragmentManager,
                         "feedback_dialog"
                     )

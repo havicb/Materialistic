@@ -6,13 +6,12 @@ import com.example.hackernews.data.news.ApiError
 import com.example.hackernews.data.news.NewsRepository
 import com.example.hackernews.data.user.UserRepository
 import com.example.hackernews.database.entities.News
-import com.example.hackernews.database.entities.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor (
+class MainViewModel @Inject constructor(
     private val newsRepository: NewsRepository,
     private val userRepository: UserRepository,
 ) : BaseViewModel() {
